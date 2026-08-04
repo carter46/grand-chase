@@ -24,61 +24,64 @@
 <section class="max-w-[1200px] mx-auto px-4 md:px-gutter -mt-12 md:-mt-24 relative z-20 pb-12 md:pb-stack-lg">
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
 <!-- Contact Cards Column -->
-<div class="lg:col-span-7 flex flex-col gap-gutter">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="lg:col-span-7 flex flex-col gap-gutter min-w-0">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter min-w-0">
 <!-- Personal Banking -->
-<div class="bg-surface-container-lowest p-stack-lg shadow-xl hover:shadow-2xl transition-shadow flex flex-col group">
+<div class="bg-surface-container-lowest p-stack-lg shadow-xl hover:shadow-2xl transition-shadow flex flex-col group min-w-0 overflow-hidden">
 <div class="flex items-center justify-between mb-stack-lg">
 <span class="material-symbols-outlined text-primary text-[32px]">person_pin</span>
 <span class="font-caption text-on-surface-variant bg-surface-container px-2 py-1 uppercase tracking-wider">Retail</span>
 </div>
 <h3 class="font-headline-md text-on-surface mb-2">Personal Banking</h3>
 <p class="font-body-sm text-on-surface-variant mb-6">Everyday accounts, mortgages, and private credit facilities.</p>
-<div class="mt-auto flex flex-col gap-2 border-t border-surface-container pt-4">
+<div class="mt-auto flex flex-col gap-2 border-t border-surface-container pt-4 min-w-0">
 @if ($contactValue)
-<a class="font-label-bold text-on-surface hover:text-primary transition-colors flex items-center gap-2" href="{{ $contactHref }}">
-<span class="material-symbols-outlined text-sm">{{ $contactIsEmail ? 'mail' : 'call' }}</span> {{ $contactValue }}
-              </a>
+<a class="font-label-bold text-on-surface hover:text-primary transition-colors flex items-start gap-2 min-w-0" href="{{ $contactHref }}">
+<span class="material-symbols-outlined text-sm shrink-0 mt-0.5">{{ $contactIsEmail ? 'mail' : 'call' }}</span>
+<span class="break-all text-sm leading-snug">{{ $contactValue }}</span>
+</a>
 @endif
 <span class="font-body-sm text-on-secondary-container">Mon–Fri: 8AM - 8PM EST</span>
 </div>
 </div>
 <!-- Business Banking -->
-<div class="bg-surface-container-lowest p-stack-lg shadow-xl hover:shadow-2xl transition-shadow flex flex-col group">
+<div class="bg-surface-container-lowest p-stack-lg shadow-xl hover:shadow-2xl transition-shadow flex flex-col group min-w-0 overflow-hidden">
 <div class="flex items-center justify-between mb-stack-lg">
 <span class="material-symbols-outlined text-primary text-[32px]">corporate_fare</span>
 <span class="font-caption text-on-surface-variant bg-surface-container px-2 py-1 uppercase tracking-wider">Commercial</span>
 </div>
 <h3 class="font-headline-md text-on-surface mb-2">Business Banking</h3>
 <p class="font-body-sm text-on-surface-variant mb-6">Treasury management, commercial lending, and merchant services.</p>
-<div class="mt-auto flex flex-col gap-2 border-t border-surface-container pt-4">
+<div class="mt-auto flex flex-col gap-2 border-t border-surface-container pt-4 min-w-0">
 @if ($settings->contact_email)
-<a class="font-label-bold text-on-surface hover:text-primary transition-colors flex items-center gap-2" href="mailto:{{ $settings->contact_email }}">
-<span class="material-symbols-outlined text-sm">mail</span> {{ $settings->contact_email }}
-              </a>
+<a class="font-label-bold text-on-surface hover:text-primary transition-colors flex items-start gap-2 min-w-0" href="mailto:{{ $settings->contact_email }}">
+<span class="material-symbols-outlined text-sm shrink-0 mt-0.5">mail</span>
+<span class="break-all text-sm leading-snug">{{ $settings->contact_email }}</span>
+</a>
 @endif
 <span class="font-body-sm text-on-secondary-container">Dedicated Account Support</span>
 </div>
 </div>
 <!-- Wealth Management -->
-<div class="bg-surface-container-lowest p-stack-lg shadow-xl hover:shadow-2xl transition-shadow flex flex-col group">
+<div class="bg-surface-container-lowest p-stack-lg shadow-xl hover:shadow-2xl transition-shadow flex flex-col group min-w-0 overflow-hidden">
 <div class="flex items-center justify-between mb-stack-lg">
 <span class="material-symbols-outlined text-primary text-[32px]">account_balance_wallet</span>
 <span class="font-caption text-on-surface-variant bg-surface-container px-2 py-1 uppercase tracking-wider">Advisory</span>
 </div>
 <h3 class="font-headline-md text-on-surface mb-2">Wealth Management</h3>
 <p class="font-body-sm text-on-surface-variant mb-6">Strategic portfolio planning and bespoke investment strategies.</p>
-<div class="mt-auto flex flex-col gap-2 border-t border-surface-container pt-4">
+<div class="mt-auto flex flex-col gap-2 border-t border-surface-container pt-4 min-w-0">
 @if ($contactValue)
-<a class="font-label-bold text-on-surface hover:text-primary transition-colors flex items-center gap-2" href="{{ $contactHref }}">
-<span class="material-symbols-outlined text-sm">{{ $contactIsEmail ? 'mail' : 'call' }}</span> {{ $contactValue }}
-              </a>
+<a class="font-label-bold text-on-surface hover:text-primary transition-colors flex items-start gap-2 min-w-0" href="{{ $contactHref }}">
+<span class="material-symbols-outlined text-sm shrink-0 mt-0.5">{{ $contactIsEmail ? 'mail' : 'call' }}</span>
+<span class="break-all text-sm leading-snug">{{ $contactValue }}</span>
+</a>
 @endif
 <span class="font-body-sm text-on-secondary-container">Consultation by Appointment</span>
 </div>
 </div>
 <!-- 24/7 Security -->
-<div class="bg-on-surface p-stack-lg shadow-xl flex flex-col text-white">
+<div class="bg-on-surface p-stack-lg shadow-xl flex flex-col text-white min-w-0 overflow-hidden">
 <div class="flex items-center justify-between mb-stack-lg">
 <span class="material-symbols-outlined text-primary-fixed-dim text-[32px]">shield_lock</span>
 <div class="flex items-center gap-2">
@@ -88,11 +91,12 @@
 </div>
 <h3 class="font-headline-md mb-2">24/7 Security Support</h3>
 <p class="font-body-sm text-white/70 mb-6">Immediate assistance for fraud reports, lost cards, or account lockouts.</p>
-<div class="mt-auto flex flex-col gap-2 border-t border-white/10 pt-4">
+<div class="mt-auto flex flex-col gap-2 border-t border-white/10 pt-4 min-w-0">
 @if ($contactValue)
-<a class="font-headline-md text-primary-fixed-dim flex items-center gap-2" href="{{ $contactHref }}">
-<span class="material-symbols-outlined">{{ $contactIsEmail ? 'mail' : 'support_agent' }}</span> {{ $contactValue }}
-              </a>
+<a class="font-label-bold text-primary-fixed-dim flex items-start gap-2 min-w-0" href="{{ $contactHref }}">
+<span class="material-symbols-outlined shrink-0 mt-0.5">{{ $contactIsEmail ? 'mail' : 'support_agent' }}</span>
+<span class="break-all text-sm leading-snug">{{ $contactValue }}</span>
+</a>
 @endif
 <span class="font-body-sm text-white/40 uppercase tracking-widest">Always Available</span>
 </div>
@@ -145,79 +149,6 @@
               <span class="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
 </button>
 </form>
-</div>
-</div>
-</div>
-</section>
-<!-- Global Offices Section -->
-<section class="bg-surface-container-low py-stack-lg overflow-hidden">
-<div class="max-w-[1200px] mx-auto px-4 md:px-gutter">
-<div class="flex items-end justify-between mb-16">
-<div class="flex flex-col">
-<h2 class="font-headline-xl text-on-surface">Global Footprint</h2>
-<p class="font-body-lg text-on-surface-variant">Our principal operational hubs around the world.</p>
-</div>
-<div class="hidden md:flex items-center gap-4 text-on-surface-variant font-label-bold uppercase tracking-widest text-[12px]">
-<span>London</span>
-<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
-<span>New York</span>
-<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
-<span>Singapore</span>
-</div>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-<!-- New York HQ -->
-<div class="flex flex-col gap-stack-md group">
-<div class="h-64 overflow-hidden relative">
-<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="Black and white street level view of a grand limestone bank building in New York City's Financial District. The architecture features massive columns and heavy bronze doors. Crisp, high-contrast shadows. The atmosphere is professional, timeless, and prestigious." style="background-image: url('{{ asset('assets/images/contact-nyc.jpg') }}')"></div>
-<div class="absolute top-4 left-4 bg-primary text-white font-label-bold uppercase px-3 py-1 text-[10px] tracking-widest">Headquarters</div>
-</div>
-<div>
-<h4 class="font-headline-md text-on-surface">New York City</h4>
-@if ($settings->site_address)
-<p class="font-body-sm text-on-surface-variant mt-2">{!! nl2br(e($settings->site_address)) !!}</p>
-@else
-<p class="font-body-sm text-on-surface-variant mt-2">
-              450 Park Avenue, Suite 1200<br/>
-              New York, NY 10022, USA
-            </p>
-@endif
-<div class="mt-4 flex gap-4">
-<span class="font-label-bold text-primary flex items-center gap-1 text-sm"><span class="material-symbols-outlined text-sm">schedule</span> 09:00 – 17:00 EST</span>
-</div>
-</div>
-</div>
-<!-- London Hub -->
-<div class="flex flex-col gap-stack-md group">
-<div class="h-64 overflow-hidden relative">
-<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="Modern architectural detail of a contemporary steel and glass tower in London's Canary Wharf. Low angle shot looking up at the sky. Sharp reflections, clean lines, corporate luxury aesthetic with a slight blue tint." style="background-image: url('{{ asset('assets/images/contact-london.jpg') }}')"></div>
-</div>
-<div>
-<h4 class="font-headline-md text-on-surface">London</h4>
-<p class="font-body-sm text-on-surface-variant mt-2">
-              10 Upper Bank Street, Canary Wharf<br/>
-              London E14 5NP, United Kingdom
-            </p>
-<div class="mt-4 flex gap-4">
-<span class="font-label-bold text-primary flex items-center gap-1 text-sm"><span class="material-symbols-outlined text-sm">schedule</span> 09:00 – 17:00 GMT</span>
-</div>
-</div>
-</div>
-<!-- Singapore Hub -->
-<div class="flex flex-col gap-stack-md group">
-<div class="h-64 overflow-hidden relative">
-<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="A sophisticated indoor office lobby in Singapore, featuring marble floors, lush interior greenery (biophilic design), and a large digital screen displaying financial charts. Natural sunlight streaming through floor-to-ceiling windows. Ultra-modern corporate elegance." style="background-image: url('{{ asset('assets/images/contact-singapore.jpg') }}')"></div>
-</div>
-<div>
-<h4 class="font-headline-md text-on-surface">Singapore</h4>
-<p class="font-body-sm text-on-surface-variant mt-2">
-              8 Marina View, Asia Square Tower 1<br/>
-              Singapore 018960
-            </p>
-<div class="mt-4 flex gap-4">
-<span class="font-label-bold text-primary flex items-center gap-1 text-sm"><span class="material-symbols-outlined text-sm">schedule</span> 09:00 – 18:00 SGT</span>
-</div>
-</div>
 </div>
 </div>
 </div>

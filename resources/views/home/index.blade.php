@@ -12,9 +12,17 @@
 @php
     $heroSlides = [
         [
+            'eyebrow' => 'Welcome to '.$settings->site_name,
+            'title_html' => 'YOUR <span class="text-primary italic">BANK</span> YOUR WAY',
+            'body' => 'A bank account that gives you more. Rewards checking from '.$settings->site_name.' offers the flexibility and convenience you deserve in a global marketplace.',
+            'image' => asset('assets/images/hero-home-desktop.jpg'),
+            'image_mobile' => asset('assets/images/hero-home-mobile.jpg'),
+            'cta_primary' => ['label' => 'Login', 'url' => url('login')],
+            'cta_secondary' => ['label' => 'Sign Up', 'url' => url('register')],
+        ],
+        [
             'eyebrow' => 'Personal Banking',
-            'title' => 'Banking Built Around Your Life',
-            'accent' => 'Your Life',
+            'title_html' => 'Banking Built Around <span class="text-primary italic">Your Life</span>',
             'body' => 'Everyday checking, high-yield savings, and tools that keep your household finances clear—online and on mobile.',
             'image' => asset('assets/images/hero-personal.jpg'),
             'cta_primary' => ['label' => 'Open Account', 'url' => url('register')],
@@ -22,8 +30,7 @@
         ],
         [
             'eyebrow' => 'Lending',
-                            'title' => 'Flexible Loans for What\'s Next',
-                            'accent' => 'What\'s Next',
+            'title_html' => 'Flexible Loans for <span class="text-primary italic">What\'s Next</span>',
             'body' => 'Personal, auto, and business lending with transparent terms—so you can fund goals without the guesswork.',
             'image' => asset('assets/images/hero-loans.jpg'),
             'cta_primary' => ['label' => 'Apply Now', 'url' => url('register')],
@@ -31,14 +38,19 @@
         ],
         [
             'eyebrow' => 'Credit Cards',
-            'title' => 'Cards That Work Harder',
-            'accent' => 'Harder',
+            'title_html' => 'Cards That Work <span class="text-primary italic">Harder</span>',
             'body' => 'From everyday spending to travel rewards—see card options designed for how you spend and pay.',
             'image' => asset('assets/images/hero-investments.jpg'),
             'cta_primary' => ['label' => 'View Cards', 'url' => url('cards')],
             'cta_secondary' => ['label' => 'Get Started', 'url' => url('register')],
         ],
     ];
+    // Clones for seamless endless loop: [last] + slides + [first]
+    $heroTrack = array_merge(
+        [array_merge(end($heroSlides), ['_clone' => true])],
+        $heroSlides,
+        [array_merge($heroSlides[0], ['_clone' => true])]
+    );
 @endphp
 <div class="flex flex-col w-full">
     {{-- Hero slider --}}
@@ -50,40 +62,39 @@
         @keydown.right.window="next()"
     >
         <div
-            class="flex h-full will-change-transform touch-pan-y"
-            :class="dragging ? '' : 'transition-transform duration-500 ease-out'"
-            :style="'transform: translate3d(' + (-(index * 100) + dragPct) + '%,0,0)'"
+            class="flex h-full will-change-transform"
+            :class="(dragging || jumping) ? '' : 'transition-transform duration-500 ease-out'"
+            :style="'transform: translate3d(' + (-(track * 100) + dragPct) + '%,0,0)'"
             @pointerdown="onPointerDown($event)"
             @pointermove="onPointerMove($event)"
             @pointerup="onPointerUp($event)"
             @pointercancel="onPointerUp($event)"
-            @wheel.prevent="onWheel($event)"
+            @transitionend="onTransitionEnd($event)"
         >
-            @foreach ($heroSlides as $i => $slide)
-            <article class="relative h-full w-full min-w-full flex-shrink-0 flex items-center justify-center overflow-hidden" aria-hidden="{{ $i === 0 ? 'false' : 'true' }}" :aria-hidden="index === {{ $i }} ? 'false' : 'true'">
+            @foreach ($heroTrack as $i => $slide)
+            <article class="relative h-full w-full min-w-full flex-shrink-0 flex items-center justify-center overflow-hidden">
                 <div class="absolute inset-0 z-0">
                     <img
                         src="{{ $slide['image'] }}"
                         alt="{{ $slide['eyebrow'] }}"
-                        class="no-reveal w-full h-full object-cover pointer-events-none"
+                        class="no-reveal w-full h-full object-cover pointer-events-none {{ !empty($slide['image_mobile']) ? 'hidden md:block' : '' }}"
                         draggable="false"
                     >
+                    @if (!empty($slide['image_mobile']))
+                    <img
+                        src="{{ $slide['image_mobile'] }}"
+                        alt="{{ $slide['eyebrow'] }}"
+                        class="no-reveal w-full h-full object-cover pointer-events-none md:hidden"
+                        draggable="false"
+                    >
+                    @endif
                     <div class="absolute inset-0 bg-black/55"></div>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20"></div>
                 </div>
                 <div class="relative z-10 max-w-[1200px] mx-auto px-4 md:px-gutter w-full text-center flex flex-col items-center py-12">
                     <span class="font-label-bold text-primary uppercase tracking-[0.2em] mb-stack-md">{{ $slide['eyebrow'] }}</span>
                     <h1 class="text-hero-large text-on-primary mb-stack-lg uppercase tracking-tighter max-w-4xl">
-                        @php
-                            $title = $slide['title'];
-                            $accent = $slide['accent'];
-                            if ($accent && str_contains($title, $accent)) {
-                                echo e(str_replace($accent, '', $title));
-                                echo '<span class="text-primary italic">' . e($accent) . '</span>';
-                            } else {
-                                echo e($title);
-                            }
-                        @endphp
+                        {!! $slide['title_html'] !!}
                     </h1>
                     <p class="font-body-md md:font-body-lg text-on-primary/90 max-w-[650px] mb-stack-lg leading-relaxed px-2">
                         {{ $slide['body'] }}
@@ -123,7 +134,7 @@
         </div>
 
         <p class="absolute left-4 bottom-6 z-20 hidden lg:block font-caption uppercase tracking-widest text-on-primary/50 pointer-events-none">
-            Swipe · drag · scroll
+            Swipe or drag
         </p>
     </section>
 
@@ -290,38 +301,70 @@
 <script>
 function homeHeroSlider(total) {
     return {
+        // logical slide 0..total-1 (for dots)
         index: 0,
+        // track position includes leading clone (+1)
+        track: 1,
         total: total,
         dragging: false,
+        jumping: false,
         dragPct: 0,
         startX: 0,
         width: 1,
-        wheelLock: false,
         autoTimer: null,
         init() {
             this.restartAuto();
-            this.$watch('index', () => this.restartAuto());
         },
         restartAuto() {
             clearInterval(this.autoTimer);
             this.autoTimer = setInterval(() => {
-                if (!this.dragging) this.next();
+                if (!this.dragging && !this.jumping) this.next();
             }, 7000);
         },
-        go(i) {
-            this.index = (i + this.total) % this.total;
-            this.dragPct = 0;
+        syncIndexFromTrack() {
+            if (this.track === 0) this.index = this.total - 1;
+            else if (this.track === this.total + 1) this.index = 0;
+            else this.index = this.track - 1;
         },
-        next() { this.go(this.index + 1); },
-        prev() { this.go(this.index - 1); },
-        onWheel(e) {
-            if (this.wheelLock) return;
-            var delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-            if (Math.abs(delta) < 12) return;
-            this.wheelLock = true;
-            if (delta > 0) this.next();
-            else this.prev();
-            setTimeout(() => { this.wheelLock = false; }, 550);
+        go(logical) {
+            this.jumping = false;
+            this.track = logical + 1;
+            this.index = logical;
+            this.dragPct = 0;
+            this.restartAuto();
+        },
+        next() {
+            if (this.jumping) return;
+            this.track = this.track + 1;
+            this.syncIndexFromTrack();
+            this.dragPct = 0;
+            this.restartAuto();
+        },
+        prev() {
+            if (this.jumping) return;
+            this.track = this.track - 1;
+            this.syncIndexFromTrack();
+            this.dragPct = 0;
+            this.restartAuto();
+        },
+        onTransitionEnd(e) {
+            if (e && e.target !== e.currentTarget) return;
+            // Seamless loop: snap from clones to real slides without animation
+            if (this.track === this.total + 1) {
+                this.jumping = true;
+                this.track = 1;
+                this.index = 0;
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => { this.jumping = false; });
+                });
+            } else if (this.track === 0) {
+                this.jumping = true;
+                this.track = this.total;
+                this.index = this.total - 1;
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => { this.jumping = false; });
+                });
+            }
         },
         onPointerDown(e) {
             if (e.pointerType === 'mouse' && e.button !== 0) return;
