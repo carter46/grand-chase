@@ -11,7 +11,7 @@
 @section('content')
 <section class="relative min-h-[calc(100vh-104px)] md:min-h-[calc(100vh-131px)] flex items-center overflow-hidden">
     <div class="absolute inset-0 z-0">
-        <div class="w-full h-full bg-cover bg-center" style="background-image: url('{{ asset('assets/images/hero-investments.jpg') }}')"></div>
+        <div class="w-full h-full bg-cover bg-center" style="background-image: url('{{ asset('assets/images/credit-card-payment-buy-sell-products-service.jpg') }}')"></div>
         <div class="absolute inset-0 bg-inverse-surface/70"></div>
     </div>
     <div class="relative z-10 max-w-[1200px] mx-auto px-4 md:px-gutter w-full py-12 md:py-16">

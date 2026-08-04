@@ -87,11 +87,8 @@
         <script src="{{ asset('dash2/libs/flatpickr/dist/flatpickr.min.js') }}"></script>
 
     @show
-@if($settings->tido)
-    <script src="//code.tidio.co/{{$settings->tido}}.js" async></script>
-    @endif
-    
-    
+@include('includes.live-chat-widget')
+
     <!-- GetButton.io widget -->
     @if($settings->whatsapp)
 <script type="text/javascript">

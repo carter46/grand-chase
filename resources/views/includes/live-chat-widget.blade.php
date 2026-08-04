@@ -1,19 +1,29 @@
-{{-- 
-    LIVE CHAT WIDGET
-    
-    To change the live chat script:
-    1. Open this file: resources/views/includes/live-chat-widget.blade.php
-    2. Replace the script below with your new live chat code
-    3. Upload this file to your server
-    4. Clear cache at: /admin/dashboard/clearcache
-    
-    Supported widgets: Smartsupp, Tawk.to, Crisp, Intercom, LiveChat, etc.
+{{--
+  Live chat: only one active provider (none | tidio | smartsupp | chatway).
+  Configure in Admin → App Settings (Website information).
+  Docs:
+  - Tidio:    <script src="//code.tidio.co/PUBLIC_KEY.js" async></script>
+  - Smartsupp: _smartsupp.key + loader.js (https://docs.smartsupp.com/chat-box/installation/)
+  - Chatway:  <script id="chatway" async src="https://cdn.chatway.app/widget.js?id=WIDGET_ID"></script>
 --}}
+@php
+    $provider = strtolower(trim((string) ($settings->livechat_provider ?? 'none')));
+    $tidioKey = trim((string) ($settings->tido ?? ''));
+    $smartsuppKey = trim((string) ($settings->smartsupp_key ?? ''));
+    $chatwayId = trim((string) ($settings->chatway_widget_id ?? ''));
 
-<!-- Smartsupp Live Chat script -->
+    // Normalize Tidio public key (dashboard may include .js)
+    if ($tidioKey !== '' && substr(strtolower($tidioKey), -3) === '.js') {
+        $tidioKey = substr($tidioKey, 0, -3);
+    }
+@endphp
+
+@if ($provider === 'tidio' && $tidioKey !== '')
+<script src="//code.tidio.co/{{ $tidioKey }}.js" async></script>
+@elseif ($provider === 'smartsupp' && $smartsuppKey !== '')
 <script type="text/javascript">
 var _smartsupp = _smartsupp || {};
-_smartsupp.key = '981552f3acb735de4aff60e78c1154b36c17fa30';
+_smartsupp.key = @json($smartsuppKey);
 window.smartsupp||(function(d) {
   var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
   s=d.getElementsByTagName('script')[0];c=d.createElement('script');
@@ -21,6 +31,6 @@ window.smartsupp||(function(d) {
   c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
 })(document);
 </script>
-<noscript> Powered by <a href=“https://www.smartsupp.com” target=“_blank”>Smartsupp</a></noscript>
-
-
+@elseif ($provider === 'chatway' && $chatwayId !== '')
+<script id="chatway" async="true" src="https://cdn.chatway.app/widget.js?id={{ $chatwayId }}"></script>
+@endif

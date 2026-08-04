@@ -50,31 +50,48 @@
                     <input name="whatsapp" class="form-control " type="text"
                         value="{{ $settings->whatsapp }}">
                 </div>
+            </div>
+
+            <div class="form-row border-top pt-4 mt-2">
+                <div class="form-group col-12">
+                    <h5 class="text-{{ $text }} mb-1">Live Chat Provider</h5>
+                    <p class="small text-muted mb-3">Choose one active widget. Leave unused keys blank. Only the selected provider is loaded on the site.</p>
+                </div>
                 <div class="form-group col-md-6">
-                    <h5 class="text-{{ $text }}">Tidio Livechat ID</h5>
-                    <input name="tido" class="form-control " type="text"
+                    <h5 class="text-{{ $text }}">Active Provider</h5>
+                    <select name="livechat_provider" id="livechat_provider" class="form-control">
+                        @php $lc = $settings->livechat_provider ?? 'none'; @endphp
+                        <option value="none" {{ $lc === 'none' ? 'selected' : '' }}>None</option>
+                        <option value="tidio" {{ $lc === 'tidio' ? 'selected' : '' }}>Tidio</option>
+                        <option value="smartsupp" {{ $lc === 'smartsupp' ? 'selected' : '' }}>Smartsupp</option>
+                        <option value="chatway" {{ $lc === 'chatway' ? 'selected' : '' }}>Chatway</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-6 livechat-field" data-provider="tidio">
+                    <h5 class="text-{{ $text }}">Tidio Public Key</h5>
+                    <input name="tido" class="form-control" type="text"
                         value="{{ $settings->tido }}"
-                        placeholder="e.g., abcd1234efgh5678">
-                    <small class="text-muted">Enter your Tidio chat widget ID (optional)</small>
+                        placeholder="e.g. fouwfr0cnygz4sj8kttyv0cz1rpaayva">
+                    <small class="text-muted">From Tidio → Settings → Live Chat → Installation. Use the key from <code>code.tidio.co/KEY.js</code> (with or without <code>.js</code>).</small>
                 </div>
-                <div class="form-group col-md-12">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> <strong>Live Chat Widget:</strong> 
-                        To update your live chat script, edit this file directly:
-                        <br><code>resources/views/includes/live-chat-widget.blade.php</code>
-                        <br><small>Upload the file to your server and clear cache to apply changes.</small>
-                    </div>
+                <div class="form-group col-md-6 livechat-field" data-provider="smartsupp">
+                    <h5 class="text-{{ $text }}">Smartsupp Key</h5>
+                    <input name="smartsupp_key" class="form-control" type="text"
+                        value="{{ $settings->smartsupp_key ?? '' }}"
+                        placeholder="Your Smartsupp chat key">
+                    <small class="text-muted">From <a href="https://www.smartsupp.com/" target="_blank" rel="noopener">Smartsupp</a> → Settings → Chat box → Chat code (<code>_smartsupp.key</code>).</small>
                 </div>
-                <!--<div class="form-group col-md-6">-->
-                <!--    <h5 class="text-{{ $text }}">Purchase/License Code</h5>-->
-                <!--    <input name="purchase_code" class="form-control " type="text"-->
-                <!--        value="{{ $moresettings->purchase_code }}">-->
-                <!--</div>-->
-                <!--<div class="form-group col-md-6">-->
-                <!--    <h5 class="text-{{ $text }}">Personal Access Token</h5>-->
-                <!--    <input name="merchant_key" class="form-control " type="text"-->
-                <!--        value="{{ $settings->merchant_key }}">-->
-                <!--</div>-->
+                <div class="form-group col-md-6 livechat-field" data-provider="chatway">
+                    <h5 class="text-{{ $text }}">Chatway Widget ID</h5>
+                    <input name="chatway_widget_id" class="form-control" type="text"
+                        value="{{ $settings->chatway_widget_id ?? '' }}"
+                        placeholder="id from cdn.chatway.app/widget.js?id=...">
+                    <small class="text-muted">From <a href="https://chatway.app/help/how-to-install-chatway/how-to-install-chatway-on-any-website" target="_blank" rel="noopener">Chatway install</a>: <code>widget.js?id=YOUR-ID</code>.</small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <!-- removed hardcoded live-chat-widget file notice -->
                 <div class="form-group col-md-6">
                     <h5 class="text-{{ $text }}">Timezone</h5>
                     <select name="timezone" class="form-control  select2">
@@ -146,3 +163,17 @@
         </form>
     </div>
 </div>
+<script>
+(function () {
+    var select = document.getElementById('livechat_provider');
+    if (!select) return;
+    function syncLivechatFields() {
+        var provider = select.value;
+        document.querySelectorAll('.livechat-field').forEach(function (el) {
+            el.style.display = el.getAttribute('data-provider') === provider ? '' : 'none';
+        });
+    }
+    select.addEventListener('change', syncLivechatFields);
+    syncLivechatFields();
+})();
+</script>

@@ -32,16 +32,16 @@
             'eyebrow' => 'Lending',
             'title_html' => 'Flexible Loans for <span class="text-primary italic">What\'s Next</span>',
             'body' => 'Personal, auto, and business lending with transparent terms—so you can fund goals without the guesswork.',
-            'image' => asset('assets/images/hero-loans.jpg'),
+            'image' => asset('assets/images/image33.jpg'),
             'cta_primary' => ['label' => 'Apply Now', 'url' => url('register')],
             'cta_secondary' => ['label' => 'Explore Loans', 'url' => url('loans')],
         ],
         [
-            'eyebrow' => 'Credit Cards',
-            'title_html' => 'Cards That Work <span class="text-primary italic">Harder</span>',
-            'body' => 'From everyday spending to travel rewards—see card options designed for how you spend and pay.',
+            'eyebrow' => 'Investments',
+            'title_html' => 'Grow Wealth with <span class="text-primary italic">Confidence</span>',
+            'body' => 'Portfolios, advisory support, and long-term strategies built for clarity—so your money works as hard as you do.',
             'image' => asset('assets/images/hero-investments.jpg'),
-            'cta_primary' => ['label' => 'View Cards', 'url' => url('cards')],
+            'cta_primary' => ['label' => 'Explore Investing', 'url' => url('investments')],
             'cta_secondary' => ['label' => 'Get Started', 'url' => url('register')],
         ],
     ];
@@ -56,7 +56,7 @@
     {{-- Hero slider --}}
     <section
         id="home-hero-slider"
-        class="hero-slider relative h-[calc(100vh-104px)] md:h-[calc(100vh-131px)] min-h-[520px] overflow-hidden select-none bg-inverse-surface"
+        class="hero-slider relative h-[calc(100vh-104px)] md:h-[calc(100vh-131px)] min-h-[520px] overflow-hidden select-none bg-black"
         style="touch-action: pan-y;"
         x-data="homeHeroSlider({{ count($heroSlides) }})"
         @keydown.left.window="prev()"
@@ -65,7 +65,7 @@
         <div
             class="relative z-0 flex h-full w-full will-change-transform cursor-grab active:cursor-grabbing"
             :class="(dragging || jumping) ? '' : 'transition-transform duration-500 ease-out'"
-            :style="'transform: translate3d(' + (-(track * 100) + dragPct) + '%,0,0)'"
+            :style="'transform: translate3d(' + (-(track * 100) + dragPct) + '%,0,0); backface-visibility: hidden;'"
             @pointerdown="onPointerDown($event)"
             @pointermove="onPointerMove($event)"
             @pointerup="onPointerUp($event)"
@@ -73,13 +73,18 @@
             @transitionend="onTransitionEnd($event)"
         >
             @foreach ($heroTrack as $i => $slide)
-            <article class="relative h-full w-full min-w-full flex-shrink-0 flex items-center justify-center overflow-hidden">
-                <div class="absolute inset-0 z-0 pointer-events-none">
+            <article class="relative h-full w-full min-w-full flex-shrink-0 flex items-center justify-center overflow-hidden bg-black" style="backface-visibility: hidden;">
+                <div
+                    class="absolute inset-0 z-0 pointer-events-none bg-cover bg-center"
+                    style="background-image: url('{{ $slide['image'] }}')"
+                >
                     <img
                         src="{{ $slide['image'] }}"
                         alt="{{ $slide['eyebrow'] }}"
                         class="no-reveal w-full h-full object-cover {{ !empty($slide['image_mobile']) ? 'hidden md:block' : '' }}"
                         draggable="false"
+                        loading="{{ $i <= 2 ? 'eager' : 'lazy' }}"
+                        decoding="async"
                     >
                     @if (!empty($slide['image_mobile']))
                     <img
@@ -87,6 +92,8 @@
                         alt="{{ $slide['eyebrow'] }}"
                         class="no-reveal w-full h-full object-cover md:hidden"
                         draggable="false"
+                        loading="{{ $i <= 2 ? 'eager' : 'lazy' }}"
+                        decoding="async"
                     >
                     @endif
                     <div class="absolute inset-0 bg-black/55"></div>
@@ -175,7 +182,7 @@
             <div class="relative w-full lg:w-1/2">
                 <div class="absolute -top-6 -left-6 w-32 h-32 border-t-4 border-l-4 border-primary/20 hidden md:block"></div>
                 <div class="relative z-10 aspect-[4/3] md:aspect-[4/5] overflow-hidden shadow-2xl">
-                    <img class="w-full h-full object-cover" alt="Private banker" src="{{ asset('assets/images/home-private-banker.jpg') }}">
+                    <img class="w-full h-full object-cover" alt="Private banker" src="{{ asset('assets/images/weratm.jpg') }}">
                 </div>
                 <div class="absolute -bottom-10 -right-10 bg-primary p-8 text-on-primary max-w-xs shadow-xl hidden md:block">
                     <p class="font-headline-md italic mb-2">"Stability is not just a promise; it's our legacy."</p>
@@ -235,7 +242,7 @@
             </div>
             <div class="w-full lg:w-1/2 order-1 lg:order-2">
                 <div class="relative aspect-[4/3] overflow-hidden shadow-2xl">
-                    <img class="w-full h-full object-cover" alt="Global financial district" src="{{ asset('assets/images/contact-nyc.jpg') }}">
+                    <img class="w-full h-full object-cover" alt="Global financial district" src="{{ asset('assets/images/image44.jpg') }}">
                     <div class="absolute inset-0 bg-gradient-to-t from-bank-charcoal/50 to-transparent"></div>
                 </div>
             </div>
@@ -247,7 +254,7 @@
         <div class="max-w-[1200px] mx-auto md:px-gutter flex flex-col lg:flex-row items-center gap-10 md:gap-16">
             <div class="w-full lg:w-1/2">
                 <div class="relative aspect-[4/5] max-w-md mx-auto lg:mx-0 overflow-hidden shadow-2xl">
-                    <img class="w-full h-full object-cover" alt="Mobile banking app" src="{{ asset('assets/images/personal-mobile-app.jpg') }}">
+                    <img class="w-full h-full object-cover" alt="Mobile banking app" src="{{ asset('assets/images/phone-credit-card-online-banking.jpg') }}">
                 </div>
             </div>
             <div class="w-full lg:w-1/2">
@@ -356,19 +363,25 @@ function homeHeroSlider(total) {
         },
         onTransitionEnd(e) {
             if (e && e.target !== e.currentTarget) return;
+            var jumpTo = null;
             if (this.track === this.total + 1) {
-                this.jumping = true;
-                this.track = 1;
+                jumpTo = 1;
                 this.index = 0;
-                clearTimeout(this.jumpTimer);
-                this.jumpTimer = setTimeout(() => { this.jumping = false; }, 60);
             } else if (this.track === 0) {
-                this.jumping = true;
-                this.track = this.total;
+                jumpTo = this.total;
                 this.index = this.total - 1;
-                clearTimeout(this.jumpTimer);
-                this.jumpTimer = setTimeout(() => { this.jumping = false; }, 60);
             }
+            if (jumpTo === null) return;
+            // Disable transition, snap to real slide on next frames (avoids dark flash)
+            this.jumping = true;
+            this.track = jumpTo;
+            clearTimeout(this.jumpTimer);
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    this.jumping = false;
+                });
+            });
+            this.jumpTimer = setTimeout(() => { this.jumping = false; }, 120);
         },
         onPointerDown(e) {
             if (e.pointerType === 'mouse' && e.button !== 0) return;

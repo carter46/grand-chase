@@ -89,7 +89,7 @@
 <div class="relative">
 <div class="absolute -top-8 -left-8 w-48 h-48 bg-primary/5 rounded-full blur-3xl"></div>
 <div class="relative bg-surface p-8 -rotate-2 hover:rotate-0 transition-transform duration-700 shadow-xl">
-<img class="w-full aspect-[4/5] object-cover grayscale-[20%]" data-alt="A high-resolution close-up of a sleek, dark-themed mobile banking app interface being held by a businessman in a tailored charcoal suit. The screen displays a clean dashboard with a balance chart, recent transactions, and a 'transfer' button in vibrant {{ $settings->site_name }} orange. The background is a soft-focus corporate lobby with warm wood tones." src="{{ asset('assets/images/personal-mobile-app.jpg') }}"/>
+<img class="w-full aspect-[4/5] object-cover grayscale-[20%]" data-alt="A high-resolution close-up of a sleek, dark-themed mobile banking app interface being held by a businessman in a tailored charcoal suit. The screen displays a clean dashboard with a balance chart, recent transactions, and a 'transfer' button in vibrant {{ $settings->site_name }} orange. The background is a soft-focus corporate lobby with warm wood tones." src="{{ asset('assets/images/phone-credit-card-online-banking.jpg') }}"/>
 </div>
 <!-- Float Data Overlay -->
 <div class="absolute -bottom-10 -right-10 bg-on-background p-6 shadow-2xl hidden md:block">

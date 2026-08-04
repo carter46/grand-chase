@@ -1014,11 +1014,8 @@
     </script>
     @endif
     
-    <!-- Tidio Chat Widget -->
-    @if($settings->tido)
-    <script src="//code.tidio.co/{{$settings->tido}}" async></script>
-    @endif
-    
+    @include('includes.live-chat-widget')
+
     @yield('scripts')
 </body>
 </html>

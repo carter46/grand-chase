@@ -137,10 +137,6 @@
 
 @include('includes.public-footer')
 
-@if($settings->tido)
-<script src="//code.tidio.co/{{ $settings->tido }}" async></script>
-@endif
-
 <script>
 function placeTranslateWidget() {
     var el = document.getElementById('google_translate_element');

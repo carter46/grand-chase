@@ -200,9 +200,7 @@ function googleTranslateElementInit() {
 <script src="{{ asset('dash2/konanauth/public/vendor/livewire/livewire.js?id=90730a3b0e7144480175') }}" data-turbo-eval="false" data-turbolinks-eval="false" ></script>
 
 
-  @if($settings->tido)
-    <script src="//code.tidio.co/{{$settings->tido}}" async></script>
-    @endif
+  @include('includes.live-chat-widget')
 <script>
   (function() {
     window.onload = function() {

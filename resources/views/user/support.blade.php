@@ -198,9 +198,6 @@
 
 </div>
 
-<!-- Live Chat Widget -->
-@include('includes.live-chat-widget')
-
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {

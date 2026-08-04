@@ -80,6 +80,11 @@ class AppSettingsController extends Controller
             $pathfav = $settings->favicon;
         }
         
+        $provider = strtolower(trim((string) $request->input('livechat_provider', 'none')));
+        if (!in_array($provider, ['none', 'tidio', 'smartsupp', 'chatway'], true)) {
+            $provider = 'none';
+        }
+
         Settings::where('id', '1')
             ->update([
                 'newupdate' => $request['update'],
@@ -97,6 +102,9 @@ class AppSettingsController extends Controller
                 'welcome_message' => $request->welcome_message,
                 'whatsapp'=> $request->whatsapp,
                 'tido'=> $request->tido,
+                'livechat_provider' => $provider,
+                'smartsupp_key' => trim((string) $request->input('smartsupp_key', '')),
+                'chatway_widget_id' => trim((string) $request->input('chatway_widget_id', '')),
                 'address'=> $request->address,
                 'sms'=> $request->sms,
                 

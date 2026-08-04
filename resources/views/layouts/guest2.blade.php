@@ -40,9 +40,7 @@
 <body class="bg-surface font-body-md text-on-surface min-h-screen">
     @yield('content')
 
-    @if($settings->tido)
-    <script src="//code.tidio.co/{{ $settings->tido }}" async></script>
-    @endif
+    @include('includes.live-chat-widget')
 
     <script>
     function googleTranslateElementInit() {
