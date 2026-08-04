@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="Secure online banking with {{ $settings->site_name }}.">
-    <link rel="shortcut icon" href="{{ asset('storage/app/public/' . $settings->favicon) }}">
+    <link rel="shortcut icon" href="{{ public_storage_url($settings->favicon) }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

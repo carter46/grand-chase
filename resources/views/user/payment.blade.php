@@ -158,7 +158,7 @@
                                     <div id="paystack" class="bg-gray-50 rounded-lg border border-gray-200 p-5">
                                         <div class="flex flex-col items-center">
                                             <div class="mb-4">
-                                                <img src="{{ asset('img/paystack-logo.png') }}" alt="Paystack" class="h-10">
+                                                <span class="text-2xl font-bold text-gray-800 tracking-wide">Paystack</span>
                                             </div>
                                             <form method="POST" action="{{ route('pay.paystack') }}" accept-charset="UTF-8" class="w-full max-w-md">
                                                             <input type="hidden" name="email" value="{{auth::user()->email}}">
@@ -179,7 +179,7 @@
                                                 @if ($payment_mode->name == "Stripe")
                                     <div class="bg-gray-50 rounded-lg border border-gray-200 p-5">
                                         <div class="flex flex-col items-center mb-4">
-                                            <img src="{{ asset('img/stripe-logo.png') }}" alt="Stripe" class="h-10 mb-4">
+                                            <span class="text-2xl font-bold text-gray-800 tracking-wide mb-4">Stripe</span>
                                             <form id="payment-form" class="w-full max-w-md">
                                                         @csrf
                                                 <div class="sr-combo-inputs-row mb-4">

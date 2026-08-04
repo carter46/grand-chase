@@ -42,8 +42,10 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                     @forelse ($lessons as $less)
                         <div class="col-md-4">
                             <div class="card ">
-                                <img src="{{ str_starts_with($less->thumbnail, 'http') ? $less->thumbnail : asset('storage/' . $less->thumbnail) }}"
-                                    class="card-img-top" alt="course image">
+                                @php $src = public_storage_url($less->thumbnail); @endphp
+                                @if($src)
+                                    <img src="{{ $src }}" class="card-img-top" alt="course image">
+                                @endif
                                 <div class="card-body">
                                     <h4 class="text-{{ $text }} font-weight-bolder">{{ $loop->iteration }}.
                                         {{ $less->title }}

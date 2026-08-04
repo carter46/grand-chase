@@ -20,7 +20,7 @@
         <div class="relative flex flex-col justify-center items-center w-full h-full text-white p-12 z-10">
             <!-- Logo -->
             <a href="/" class="mb-6">
-                <img src="{{ asset('storage/app/public/' . $settings->logo) }}" alt="Logo" class="h-16 filter brightness-0 invert">
+                <img src="{{ public_storage_url($settings->logo) }}" alt="Logo" class="h-16 filter brightness-0 invert">
             </a>
             
             <!-- Title -->
@@ -67,7 +67,7 @@
             <!-- Mobile Logo -->
             <div class="lg:hidden text-center mb-8">
                 <a href="/">
-                    <img src="{{ asset('storage/app/public/' . $settings->logo) }}" alt="Logo" class="h-12 mx-auto">
+                    <img src="{{ public_storage_url($settings->logo) }}" alt="Logo" class="h-12 mx-auto">
                 </a>
             </div>
             

@@ -56,11 +56,7 @@
                                                     <td>{{ $refund->id }}</td>
                                                     <td>
                                                         <div class="d-flex align-items-center">
-                                                            @if ($refund->user && $refund->user->profile_photo_path)
-                                                                <img src="{{ asset('storage/app/public/photos/'.$refund->user->profile_photo_path) }}" alt="profile" class="mr-2 rounded-circle" style="width: 30px; height: 30px;">
-                                                            @else
-                                                                <img src="{{ asset('dash/images/profile/profile.png') }}" alt="profile" class="mr-2 rounded-circle" style="width: 30px; height: 30px;">
-                                                            @endif
+                                                            <img src="{{ profile_photo_url(optional($refund->user)->profile_photo_path, optional($refund->user)->name ?? 'User') }}" alt="profile" class="mr-2 rounded-circle" style="width: 30px; height: 30px;">
                                                             <div>
                                                                 {{ $refund->user ? $refund->user->name : 'N/A' }}
                                                                 <div class="small text-muted">{{ $refund->user ? $refund->user->email : 'N/A' }}</div>

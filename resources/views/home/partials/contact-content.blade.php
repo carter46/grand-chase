@@ -7,7 +7,7 @@
 <!-- Hero Section -->
 <section class="relative min-h-[420px] md:h-[614px] flex items-center overflow-hidden bg-on-surface">
 <div class="absolute inset-0 z-0">
-<div class="bg-cover bg-center w-full h-full opacity-60" data-alt="High-angle cinematic shot of a modern glass skyscraper reflecting a clear blue sky at dawn. The architecture is sharp and geometric, conveying a sense of stability and institutional power. The lighting is cold and professional with hints of warm sunrise oranges hitting the steel frames. 8k resolution, architectural photography style." style="background-image: url('{{ asset('storage/app/public/photos/hero-contact.jpg') }}')"></div>
+<div class="bg-cover bg-center w-full h-full opacity-60" data-alt="High-angle cinematic shot of a modern glass skyscraper reflecting a clear blue sky at dawn. The architecture is sharp and geometric, conveying a sense of stability and institutional power. The lighting is cold and professional with hints of warm sunrise oranges hitting the steel frames. 8k resolution, architectural photography style." style="background-image: url('{{ asset('assets/images/hero-contact.jpg') }}')"></div>
 <div class="absolute inset-0 bg-gradient-to-r from-on-surface via-on-surface/80 to-transparent"></div>
 </div>
 <div class="relative z-10 max-w-[1200px] mx-auto px-4 md:px-gutter w-full pt-10">
@@ -169,7 +169,7 @@
 <!-- New York HQ -->
 <div class="flex flex-col gap-stack-md group">
 <div class="h-64 overflow-hidden relative">
-<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="Black and white street level view of a grand limestone bank building in New York City's Financial District. The architecture features massive columns and heavy bronze doors. Crisp, high-contrast shadows. The atmosphere is professional, timeless, and prestigious." style="background-image: url('{{ asset('storage/app/public/photos/contact-nyc.jpg') }}')"></div>
+<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="Black and white street level view of a grand limestone bank building in New York City's Financial District. The architecture features massive columns and heavy bronze doors. Crisp, high-contrast shadows. The atmosphere is professional, timeless, and prestigious." style="background-image: url('{{ asset('assets/images/contact-nyc.jpg') }}')"></div>
 <div class="absolute top-4 left-4 bg-primary text-white font-label-bold uppercase px-3 py-1 text-[10px] tracking-widest">Headquarters</div>
 </div>
 <div>
@@ -190,7 +190,7 @@
 <!-- London Hub -->
 <div class="flex flex-col gap-stack-md group">
 <div class="h-64 overflow-hidden relative">
-<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="Modern architectural detail of a contemporary steel and glass tower in London's Canary Wharf. Low angle shot looking up at the sky. Sharp reflections, clean lines, corporate luxury aesthetic with a slight blue tint." style="background-image: url('{{ asset('storage/app/public/photos/contact-london.jpg') }}')"></div>
+<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="Modern architectural detail of a contemporary steel and glass tower in London's Canary Wharf. Low angle shot looking up at the sky. Sharp reflections, clean lines, corporate luxury aesthetic with a slight blue tint." style="background-image: url('{{ asset('assets/images/contact-london.jpg') }}')"></div>
 </div>
 <div>
 <h4 class="font-headline-md text-on-surface">London</h4>
@@ -206,7 +206,7 @@
 <!-- Singapore Hub -->
 <div class="flex flex-col gap-stack-md group">
 <div class="h-64 overflow-hidden relative">
-<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="A sophisticated indoor office lobby in Singapore, featuring marble floors, lush interior greenery (biophilic design), and a large digital screen displaying financial charts. Natural sunlight streaming through floor-to-ceiling windows. Ultra-modern corporate elegance." style="background-image: url('{{ asset('storage/app/public/photos/contact-singapore.jpg') }}')"></div>
+<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="A sophisticated indoor office lobby in Singapore, featuring marble floors, lush interior greenery (biophilic design), and a large digital screen displaying financial charts. Natural sunlight streaming through floor-to-ceiling windows. Ultra-modern corporate elegance." style="background-image: url('{{ asset('assets/images/contact-singapore.jpg') }}')"></div>
 </div>
 <div>
 <h4 class="font-headline-md text-on-surface">Singapore</h4>

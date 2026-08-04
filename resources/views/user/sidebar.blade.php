@@ -3,7 +3,12 @@
     <!-- Sidenav header -->
     <div class="sidenav-header d-flex align-items-center">
         <a class="navbar-brand" href="{{ route('dashboard') }}">
-            <img src="{{ asset('storage/app/public/' . $settings->logo) }}" class="navbar-brand-img" alt="logo">
+            @php $navLogo = public_storage_url($settings->logo ?? null); @endphp
+            @if($navLogo)
+                <img src="{{ $navLogo }}" class="navbar-brand-img" alt="logo">
+            @else
+                <span class="text-white font-weight-bold">{{ $settings->site_name }}</span>
+            @endif
         </a>
         <div class="ml-auto">
             <!-- Sidenav toggler -->

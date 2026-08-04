@@ -1,2 +1,12 @@
 *
 !.gitignore
+!app/
+!app/public/
+!app/public/photos/
+!app/public/photos/hero-*.jpg
+!app/public/photos/home-*.jpg
+!app/public/photos/personal-*.jpg
+!app/public/photos/contact-*.jpg
+!app/public/photos/business-*.jpg
+!app/public/photos/loans-*.jpg
+!app/public/photos/investments-*.jpg

@@ -8,7 +8,7 @@
             <!-- Logo and Header -->
             <div class="p-6 bg-primary-600 text-white text-center">
                 <a href="/" class="inline-block mb-4">
-                    <img src="{{ asset('storage/app/public/' . $settings->logo) }}" alt="Logo" class="h-16 mx-auto">
+                    <img src="{{ public_storage_url($settings->logo) }}" alt="Logo" class="h-16 mx-auto">
                 </a>
                 <h1 class="text-2xl font-bold">Administration Portal</h1>
                 <p class="text-sm text-gray-100 mt-1">Secure access to management dashboard</p>

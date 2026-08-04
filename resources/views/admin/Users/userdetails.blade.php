@@ -24,7 +24,7 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                 <div class="row">
                                     <div class="col-md-12 ">
                                         
-                                          <img alt="" src="{{$settings->site_address}}/storage/app/public/photos/{{$user->profile_photo_path}}" width="60" height="60" style='border-radius: 50%;'><h1 class=" pl-2 d-inline text-primary">{{ $user->name }} {{ $user->middlename }} {{ $user->lastname }}</h1><span></span>
+                                          <img alt="" src="{{ profile_photo_url($user->profile_photo_path, $user->name) }}" width="60" height="60" style='border-radius: 50%;'><h1 class=" pl-2 d-inline text-primary">{{ $user->name }} {{ $user->middlename }} {{ $user->lastname }}</h1><span></span>
                                         <div class="d-inline">
                                             <div class="float-right btn-group">
                                                 <a class="btn btn-primary btn-sm" href="{{ route('manageusers') }}"> <i

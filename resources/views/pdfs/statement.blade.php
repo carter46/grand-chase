@@ -715,8 +715,9 @@
         <div class="header">
             <div class="logo-container">
                 <div>
-                    @if(isset($settings->logo))
-                    <img src="{{ asset('storage/app/public/' . $settings->logo) }}" class="logo" alt="Logo">
+                    @php $statementLogo = public_storage_url($settings->logo ?? null); @endphp
+                    @if($statementLogo)
+                    <img src="{{ $statementLogo }}" class="logo" alt="Logo">
                     @else
                     <h2 style="margin: 0;">{{ $settings->site_name }}</h2>
                     @endif

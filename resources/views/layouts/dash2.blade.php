@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $settings->site_name }} | @yield('title')</title>
     <meta name="description" content="Swift and Secure Money Transfer to any UK bank account will become a breeze with {{$settings->site_name}}." />
-    <link rel="shortcut icon" href="{{ asset('storage/app/public/' . $settings->favicon) }}" />
+    <link rel="shortcut icon" href="{{ public_storage_url($settings->favicon) }}" />
     
     
     <!-- Initial theme colors setup (before anything else loads) -->
@@ -321,7 +321,12 @@
                 <!-- Logo -->
                 <div class="flex items-center justify-center flex-shrink-0 px-4 mb-6">
                     <a href="/" class="flex items-center">
-                        <img src="{{ asset('storage/app/public/'.$settings->logo)}}" alt="Logo" class="h-10 w-auto">
+                        @php $dashLogo = public_storage_url($settings->logo ?? null); @endphp
+                        @if($dashLogo)
+                            <img src="{{ $dashLogo }}" alt="Logo" class="h-10 w-auto">
+                        @else
+                            <span class="font-bold text-gray-900">{{ $settings->site_name }}</span>
+                        @endif
                     </a>
                 </div>
                 
@@ -331,7 +336,7 @@
                         <div class="flex items-center mb-3">
     <div class="flex-shrink-0 mr-3">
         @if(!empty(Auth::user()->profile_photo_path))
-            <img src="{{ $settings->site_address }}/storage/app/public/photos/{{ Auth::user()->profile_photo_path }}" 
+            <img src="{{ profile_photo_url(Auth::user()->profile_photo_path, Auth::user()->name) }}" 
                 alt="{{ Auth::user()->name }}" 
                 class="h-10 w-10 rounded-full object-cover border-2 border-primary-100">
         @else
@@ -488,7 +493,12 @@
                             <i data-lucide="menu" class="h-6 w-6"></i>
                         </button>
                         <a href="/" class="ml-4">
-                            <img src="{{ asset('storage/app/public/'.$settings->logo)}}" alt="Logo" class="h-8 w-auto">
+                            @php $dashLogoMobile = public_storage_url($settings->logo ?? null); @endphp
+                            @if($dashLogoMobile)
+                                <img src="{{ $dashLogoMobile }}" alt="Logo" class="h-8 w-auto">
+                            @else
+                                <span class="font-bold text-gray-900 text-sm">{{ $settings->site_name }}</span>
+                            @endif
                         </a>
                     </div>
                     
@@ -601,7 +611,7 @@
     @if(!empty(Auth::user()->profile_photo_path))
         <img 
             class="h-8 w-8 rounded-full object-cover border-2 border-gray-200" 
-            src="{{ $settings->site_address }}/storage/app/public/photos/{{ Auth::user()->profile_photo_path }}" 
+            src="{{ profile_photo_url(Auth::user()->profile_photo_path, Auth::user()->name) }}" 
             alt="{{ Auth::user()->name }}"
         >
     @else
@@ -709,7 +719,7 @@
                         <div class="flex-shrink-0 mr-3">
     @if(!empty(Auth::user()->profile_photo_path))
         <img 
-            src="{{ $settings->site_address }}/storage/app/public/photos/{{ Auth::user()->profile_photo_path }}" 
+            src="{{ profile_photo_url(Auth::user()->profile_photo_path, Auth::user()->name) }}" 
             alt="{{ Auth::user()->name }}" 
             class="h-12 w-12 rounded-full object-cover border-2 border-primary-100">
     @else
@@ -922,7 +932,10 @@
             <footer class="bg-white border-t border-gray-200 hidden md:block">
                 <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 md:flex md:items-center md:justify-between">
                     <div class="flex items-center">
-                        <img src="{{ asset('storage/app/public/'.$settings->logo)}}" alt="Logo" class="h-6 w-auto mr-2">
+                        @php $dashLogoFooter = public_storage_url($settings->logo ?? null); @endphp
+                        @if($dashLogoFooter)
+                            <img src="{{ $dashLogoFooter }}" alt="Logo" class="h-6 w-auto mr-2">
+                        @endif
                         <p class="text-sm text-gray-500">© {{ date('Y') }} {{ $settings->site_name }}. All rights reserved.</p>
                     </div>
                     <div class="flex space-x-6 mt-4 md:mt-0">

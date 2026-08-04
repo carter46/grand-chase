@@ -35,7 +35,20 @@ In hPanel → PHP Configuration, set the site to **PHP 8.1** (matches `composer.
 - **Do not** commit `.env`.
 - Create `.env` on the server (copy from `.env.example`).
 - Set `APP_KEY`, `APP_URL`, DB_*, `APP_ENV=production`, `APP_DEBUG=false`.
-- Point the domain document root at the Laravel **`public/`** folder (or Hostinger equivalent).
+- **Document root must be** `public_html/public` (the Laravel `public/` folder), not `public_html`.
+
+### Storage symlink (required for uploads/logo)
+
+After pull, over SSH from the project root:
+
+```bash
+php artisan storage:link
+php artisan config:clear
+```
+
+This creates `public/storage` → `storage/app/public` so URLs like `/storage/photos/...` work.
+
+Static marketing images live in `public/assets/images/` and are committed with the repo (no symlink needed).
 
 ### After first successful pull
 
@@ -43,13 +56,14 @@ If SSH/terminal is available (and `proc_open` works there — often it does not)
 
 ```bash
 php artisan key:generate   # if APP_KEY empty
+php artisan storage:link
 php artisan migrate --force
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 ```
 
-If there is no SSH: import DB via phpMyAdmin using your dump/baseline process, and create `.env` in File Manager.
+If there is no SSH: import DB via phpMyAdmin using your dump/baseline process, and create `.env` in File Manager. For the storage link without Artisan, create a symlink/junction in File Manager from `public/storage` to `../storage/app/public` if Hostinger allows it.
 
 ## Composer note
 

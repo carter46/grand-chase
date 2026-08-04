@@ -13,8 +13,8 @@
     {{-- Hero --}}
     <section class="relative min-h-[420px] md:min-h-[calc(100vh-131px)] md:min-h-[600px] flex items-center justify-center overflow-hidden">
         <div class="absolute inset-0 z-0">
-            <img alt="Corporate banking" class="w-full h-full object-cover hidden md:block" src="{{ asset('storage/app/public/photos/hero-home-desktop.jpg') }}">
-            <div class="w-full h-full bg-cover bg-center md:hidden" style="background-image: url('{{ asset('storage/app/public/photos/hero-home-mobile.jpg') }}')"></div>
+            <img alt="Corporate banking" class="w-full h-full object-cover hidden md:block" src="{{ asset('assets/images/hero-home-desktop.jpg') }}">
+            <div class="w-full h-full bg-cover bg-center md:hidden" style="background-image: url('{{ asset('assets/images/hero-home-mobile.jpg') }}')"></div>
             <div class="absolute inset-0 bg-black/50"></div>
         </div>
         <div class="relative z-10 max-w-[1200px] mx-auto px-4 md:px-gutter text-center flex flex-col items-center pt-10 pb-12 md:py-12">
@@ -72,7 +72,7 @@
             <div class="relative w-full lg:w-1/2">
                 <div class="absolute -top-6 -left-6 w-32 h-32 border-t-4 border-l-4 border-primary/20 hidden md:block"></div>
                 <div class="relative z-10 aspect-[4/3] md:aspect-[4/5] overflow-hidden shadow-2xl">
-                    <img class="w-full h-full object-cover" alt="Private banker" src="{{ asset('storage/app/public/photos/home-private-banker.jpg') }}">
+                    <img class="w-full h-full object-cover" alt="Private banker" src="{{ asset('assets/images/home-private-banker.jpg') }}">
                 </div>
                 <div class="absolute -bottom-10 -right-10 bg-primary p-8 text-on-primary max-w-xs shadow-xl hidden md:block">
                     <p class="font-headline-md italic mb-2">"Stability is not just a promise; it's our legacy."</p>

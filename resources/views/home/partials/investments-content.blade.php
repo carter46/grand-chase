@@ -4,7 +4,7 @@
 <div class="relative min-h-[420px] md:min-h-[716px] flex items-center justify-center px-margin-mobile md:px-margin-desktop pt-10">
 <!-- Background Image with Scrim -->
 <div class="absolute inset-0 z-0">
-<div class="w-full h-full bg-cover bg-center" data-alt="A sophisticated, high-end wealth management setting. A modern, minimalist office overlook a sprawling global financial district at twilight. Soft amber lighting hits a mahogany desk with a sleek tablet displaying complex global market growth charts. The atmosphere is quiet, professional, and suggests immense stability and prestige, dominated by deep charcoals, rich wood tones, and the bank's signature orange accents in the digital data visualizations." style="background-image: url('{{ asset('storage/app/public/photos/hero-investments.jpg') }}')">
+<div class="w-full h-full bg-cover bg-center" data-alt="A sophisticated, high-end wealth management setting. A modern, minimalist office overlook a sprawling global financial district at twilight. Soft amber lighting hits a mahogany desk with a sleek tablet displaying complex global market growth charts. The atmosphere is quiet, professional, and suggests immense stability and prestige, dominated by deep charcoals, rich wood tones, and the bank's signature orange accents in the digital data visualizations." style="background-image: url('{{ asset('assets/images/hero-investments.jpg') }}')">
 </div>
 <div class="absolute inset-0 bg-bank-charcoal/55 backdrop-brightness-75"></div>
 </div>
@@ -78,7 +78,7 @@
 <div class="w-full lg:w-1/2 relative">
 <div class="absolute -top-6 -left-6 w-24 h-24 bg-bank-orange/10 -z-10"></div>
 <div class="relative aspect-[4/5] w-full overflow-hidden">
-<img class="w-full h-full object-cover" data-alt="A professional male senior financial advisor in a charcoal grey tailored suit, speaking with authority and confidence. He is gesturing towards a transparent glass screen displaying real-time stock market fluctuations and golden growth curves. The lighting is crisp and professional, emphasizing a clean, institutional environment with high-contrast shadows and sharp focus on the advisor's calm, trustworthy expression." src="{{ asset('storage/app/public/photos/investments-advisor.jpg') }}"/>
+<img class="w-full h-full object-cover" data-alt="A professional male senior financial advisor in a charcoal grey tailored suit, speaking with authority and confidence. He is gesturing towards a transparent glass screen displaying real-time stock market fluctuations and golden growth curves. The lighting is crisp and professional, emphasizing a clean, institutional environment with high-contrast shadows and sharp focus on the advisor's calm, trustworthy expression." src="{{ asset('assets/images/investments-advisor.jpg') }}"/>
 </div>
 <!-- Stats Overlay -->
 <div class="absolute bottom-10 -right-6 bg-bank-charcoal p-8 text-white max-w-[240px] shadow-2xl">

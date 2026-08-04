@@ -34,7 +34,7 @@
                     <div class="relative mb-3">
                         <div class="h-24 w-24 rounded-full border-4 border-white/50 overflow-hidden bg-white shadow-md">
                             <img 
-                                src="{{$settings->site_address}}/storage/app/public/photos/{{Auth::user()->profile_photo_path}}" 
+                                src="{{ profile_photo_url(Auth::user()->profile_photo_path, Auth::user()->name) }}" 
                                 class="h-full w-full object-cover"
                                 alt="{{ Auth::user()->name }}"
                                 onerror="this.src='https://ui-avatars.com/api/?name={{ Auth::user()->name }}&background=random'"

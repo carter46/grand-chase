@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $settings->site_name }} | @yield('title')</title>
     @section('styles')
-        <link rel="icon" href="{{ asset('storage/app/public/' . $settings->favicon) }}" type="image/png" />
+        <link rel="icon" href="{{ public_storage_url($settings->favicon) }}" type="image/png" />
         <!-- Font Awesome 5 -->
         <link rel="stylesheet" href="{{ asset('dash2/libs/%40fortawesome/fontawesome-pro/css/all.min.css') }}">
         <!-- Page CSS -->

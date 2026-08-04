@@ -43,4 +43,5 @@ return array(
     'c1372666b213390fda1235956bd46598' => $vendorDir . '/tonysm/turbo-laravel/src/helpers.php',
     'a4fd94621cdce56b3e9690b71f63aa6c' => $vendorDir . '/tonysm/turbo-laravel/src/globals.php',
     'bab4ed692c1fd3872849227e2a85791e' => $vendorDir . '/unicodeveloper/laravel-paystack/src/Support/helpers.php',
+    'e11b3515ffeaff0bdd65dda634cf9294' => $baseDir . '/app/Helpers/storage.php',
 );

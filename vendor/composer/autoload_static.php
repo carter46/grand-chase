@@ -44,6 +44,7 @@ class ComposerStaticInit384dc65a4f46ca44b54e034df1619fdc
         'c1372666b213390fda1235956bd46598' => __DIR__ . '/..' . '/tonysm/turbo-laravel/src/helpers.php',
         'a4fd94621cdce56b3e9690b71f63aa6c' => __DIR__ . '/..' . '/tonysm/turbo-laravel/src/globals.php',
         'bab4ed692c1fd3872849227e2a85791e' => __DIR__ . '/..' . '/unicodeveloper/laravel-paystack/src/Support/helpers.php',
+        'e11b3515ffeaff0bdd65dda634cf9294' => __DIR__ . '/../..' . '/app/Helpers/storage.php',
     );
 
     public static $prefixLengthsPsr4 = array (

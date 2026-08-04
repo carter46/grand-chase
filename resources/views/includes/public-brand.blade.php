@@ -11,7 +11,7 @@
         <img
             alt="{{ $settings->site_name }} Logo"
             class="{{ $brandImgClass }}"
-            src="{{ asset('storage/app/public/'.$settings->logo) }}"
+            src="{{ public_storage_url($settings->logo) }}"
             onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');"
         >
         <span class="{{ $brandTextClass }} hidden">{{ $settings->site_name }}</span>

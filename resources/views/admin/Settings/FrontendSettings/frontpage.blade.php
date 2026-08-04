@@ -286,7 +286,7 @@
                                         @foreach ($images as $faq)
                                             <div class="p-1 col-md-4">
                                                 <div class="card border p-1 ">
-                                                    <img src="{{ asset('storage/app/public/' . $faq->img_path) }}"
+                                                    <img src="{{ public_storage_url($faq->img_path) }}"
                                                         class="card-img-top w-50" alt="Image">
 
                                                     <div class="card-body">

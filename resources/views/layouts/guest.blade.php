@@ -8,7 +8,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>{{$settings->site_name}} | @yield('title')</title>
     
-        <link rel="icon" href="{{ asset('storage/app/public/'.$settings->favicon)}}" type="image/png"/>
+        <link rel="icon" href="{{ public_storage_url($settings->favicon) }}" type="image/png"/>
         @section('styles')
            
             <link href="{{ asset('temp/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css" />

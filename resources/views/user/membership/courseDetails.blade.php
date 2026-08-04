@@ -99,8 +99,10 @@
         </div>
         <div class="col-md-4">
             <div class="card">
-                <img src="{{ str_starts_with($course->course_image, 'http') ? $course->course_image : asset('storage/' . $course->course_image) }}"
-                    class="card-img-top" alt="course image">
+                @php $src = public_storage_url($course->course_image); @endphp
+                @if($src)
+                    <img src="{{ $src }}" class="card-img-top" alt="course image">
+                @endif
                 <div class="card-body">
                     <h2 class="font-weight-bolder text-black">
                         {{ !$course->amount ? 'Free' : $settings->currency . number_format($course->amount) }}

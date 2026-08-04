@@ -70,11 +70,7 @@
                                             </div>
                                             <div class="card-body">
                                                 <div class="d-flex align-items-center mb-3">
-                                                    @if ($refund->user && $refund->user->profile_photo_path)
-                                                        <img src="{{ asset('storage/app/public/photos/'.$refund->user->profile_photo_path) }}" alt="profile" class="mr-3 rounded-circle" style="width: 60px; height: 60px;">
-                                                    @else
-                                                        <img src="{{ asset('dash/images/profile/profile.png') }}" alt="profile" class="mr-3 rounded-circle" style="width: 60px; height: 60px;">
-                                                    @endif
+                                                    <img src="{{ profile_photo_url(optional($refund->user)->profile_photo_path, optional($refund->user)->name ?? ($refund->name ?? 'User')) }}" alt="profile" class="mr-3 rounded-circle" style="width: 60px; height: 60px;">
                                                     <div>
                                                         <h6 class="mb-0">{{ $refund->name ?? 'N/A' }}</h6>
                                                     </div>

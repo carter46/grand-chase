@@ -121,6 +121,13 @@ class User extends Authenticatable implements MustVerifyEmail
         'profile_photo_url',
     ];
 
+    /**
+     * Override Jetstream: our uploads are often filename-only under photos/.
+     */
+    public function getProfilePhotoUrlAttribute()
+    {
+        return profile_photo_url($this->profile_photo_path, $this->name);
+    }
 
     public function dp(){
     	return $this->hasMany(Deposit::class, 'user');

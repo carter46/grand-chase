@@ -1712,7 +1712,7 @@ function googleTranslateElementInit() {
            <div class="col-xs-12 col-sm-6 col-md-4 footers-one">
     		    <div class="footers-logo">
                   <a href="/">
-    		        <img src="{{ asset('storage/app/public/'.$settings->logo)}}" class="img-fluid" alt="Logo">
+    		        <img src="{{ public_storage_url($settings->logo)}}" class="img-fluid" alt="Logo">
                   </a>
     		    </div>
     		   <div class="footers-info mt-3">

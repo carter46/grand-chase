@@ -2,7 +2,7 @@
 <!-- Hero Section -->
 <section class="relative w-full overflow-hidden bg-inverse-surface min-h-[420px] md:min-h-[600px] flex items-center">
 <div class="absolute inset-0 z-0">
-<div class="w-full h-full bg-cover bg-center opacity-55" data-alt="A high-end cinematic photograph of a professional business meeting in a modern, glass-walled boardroom overlooking a city skyline at dusk. Two people are shaking hands across a polished mahogany desk, symbolizing a partnership agreement. The lighting is warm and dramatic, highlighting the high-quality textures of tailored suits and architectural details. The color palette features deep charcoal, warm wood tones, and subtle orange accents in the ambient lighting." style="background-image: url('{{ asset('storage/app/public/photos/hero-loans.jpg') }}')"></div>
+<div class="w-full h-full bg-cover bg-center opacity-55" data-alt="A high-end cinematic photograph of a professional business meeting in a modern, glass-walled boardroom overlooking a city skyline at dusk. Two people are shaking hands across a polished mahogany desk, symbolizing a partnership agreement. The lighting is warm and dramatic, highlighting the high-quality textures of tailored suits and architectural details. The color palette features deep charcoal, warm wood tones, and subtle orange accents in the ambient lighting." style="background-image: url('{{ asset('assets/images/hero-loans.jpg') }}')"></div>
 <div class="absolute inset-0 bg-gradient-to-r from-inverse-surface via-inverse-surface/80 to-transparent"></div>
 </div>
 <div class="relative z-10 max-w-[1200px] mx-auto px-4 md:px-gutter pt-10 pb-stack-lg md:py-stack-lg">
@@ -70,7 +70,7 @@
 <div class="max-w-[1200px] mx-auto px-4 md:px-gutter">
 <div class="flex flex-col lg:flex-row items-stretch gap-0">
 <div class="lg:w-1/2 relative min-h-[400px]">
-<div class="absolute inset-0 bg-cover bg-center" data-alt="An architectural photograph of a minimalist, contemporary high-rise building with sharp geometric lines and vast glass panels. The sun reflects off the glass, creating a high-contrast interplay of light and shadow. The structure represents stability, innovation, and long-term investment. Clear blue sky in the background, professional and clean aesthetic." style="background-image: url('{{ asset('storage/app/public/photos/loans-architecture.jpg') }}')"></div>
+<div class="absolute inset-0 bg-cover bg-center" data-alt="An architectural photograph of a minimalist, contemporary high-rise building with sharp geometric lines and vast glass panels. The sun reflects off the glass, creating a high-contrast interplay of light and shadow. The structure represents stability, innovation, and long-term investment. Clear blue sky in the background, professional and clean aesthetic." style="background-image: url('{{ asset('assets/images/loans-architecture.jpg') }}')"></div>
 </div>
 <div class="lg:w-1/2 bg-inverse-surface p-16 text-on-primary">
 <h2 class="font-headline-lg mb-stack-lg">Why Borrow with {{ $settings->site_name }}?</h2>

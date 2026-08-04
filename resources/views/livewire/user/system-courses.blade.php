@@ -35,8 +35,10 @@
                                 <div class="card">
                                     <a
                                         href="{{ route('user.course.details', ['course' => str_replace(' ', '-', $item->course->course_title), 'id' => $item->course->id]) }}">
-                                        <img src="{{ str_starts_with($item->course->course_image, 'http') ? $item->course->course_image : asset('storage/' . $item->course->course_image) }}"
-                                            class="card-img-top" alt="course image">
+                                        @php $src = public_storage_url(optional($item->course)->course_image); @endphp
+                                        @if($src)
+                                            <img src="{{ $src }}" class="card-img-top" alt="course image">
+                                        @endif
                                     </a>
                                     <div class="card-body">
                                         <a

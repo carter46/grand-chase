@@ -7,7 +7,7 @@
     <meta name="description" content="{{ $settings->site_name }} — institutional banking with secure online services.">
     <meta property="og:site_name" content="{{ $settings->site_name }}">
     <title>@yield('title', 'Home') - {{ $settings->site_name }}</title>
-    <link rel="icon" type="image/png" href="{{ asset('storage/app/public/'.$settings->favicon) }}">
+    <link rel="icon" type="image/png" href="{{ public_storage_url($settings->favicon) }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

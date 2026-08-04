@@ -8,7 +8,12 @@
         <!-- Brand + Toggler (for mobile devices) -->
         <div class="pl-4 d-block d-md-none">
             <a class="navbar-brand" href="{{ route('dashboard') }}">
-                <img src="{{ asset('storage/app/public/' . $settings->logo) }}" class="navbar-brand-img" alt="...">
+                @php $topLogo = public_storage_url($settings->logo ?? null); @endphp
+                @if($topLogo)
+                    <img src="{{ $topLogo }}" class="navbar-brand-img" alt="{{ $settings->site_name }}">
+                @else
+                    <span class="text-white font-weight-bold">{{ $settings->site_name }}</span>
+                @endif
             </a>
         </div>
 

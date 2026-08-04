@@ -13,7 +13,7 @@
             <div class="pb-3 row justify-content-center">
 
                 <div class="col-12 col-md-6 col-lg-6 col-sm-10 col-xl-6">
-                    <a href="/"><img src="{{ asset('storage/app/public/photos/'.$settings->logo)}}" alt="" class="mb-3 img-fluid auth__logo"></a>
+                    <a href="/"><img src="{{ public_storage_url($settings->logo)}}" alt="" class="mb-3 img-fluid auth__logo"></a>
                     
                     <div class="bg-white shadow card login-page roundedd border-1 ">
                         <div class="card-body">

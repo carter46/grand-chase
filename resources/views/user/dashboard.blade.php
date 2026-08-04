@@ -118,7 +118,7 @@
     @if(!empty(Auth::user()->profile_photo_path))
         <img 
             alt="{{ Auth::user()->name }}" 
-            src="{{ $settings->site_address }}/storage/app/public/photos/{{ Auth::user()->profile_photo_path }}" 
+            src="{{ profile_photo_url(Auth::user()->profile_photo_path, Auth::user()->name) }}" 
             class="h-12 w-12 rounded-full object-cover border-2 border-white/20">
     @else
         @php

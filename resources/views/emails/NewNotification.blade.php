@@ -3,7 +3,12 @@
 # {{ $salutaion ? $salutaion : "Hello" }} {{ $recipient}},
 
 @if ($attachment != null)
-    <img src="{{ $message->embed(asset('storage/'. $attachment)) }}">
+    @php $embedPath = public_storage_path($attachment); @endphp
+    @if ($embedPath)
+        <img src="{{ $message->embed($embedPath) }}">
+    @elseif (preg_match('#^https?://#i', (string) $attachment))
+        <img src="{{ $attachment }}">
+    @endif
 @endif
 {!! $body !!}
 

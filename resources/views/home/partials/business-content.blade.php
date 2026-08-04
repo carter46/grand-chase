@@ -7,7 +7,7 @@
 <!-- Hero Section -->
 <section class="relative w-full min-h-[420px] md:h-[600px] flex items-center overflow-hidden">
 <div class="absolute inset-0 z-0">
-<div class="bg-cover bg-center w-full h-full" data-alt="A cinematic, high-angle view of a luxury corporate boardroom at twilight. Through floor-to-ceiling windows, a sprawling metropolis glows with office lights. The interior features polished mahogany walls, a long glass conference table reflecting the city skyline, and ergonomic leather chairs. The atmosphere is quiet, powerful, and professional, utilizing deep blues, warm wood tones, and sharp architectural lines." style="background-image: url('{{ asset('storage/app/public/photos/hero-business.jpg') }}')"></div>
+<div class="bg-cover bg-center w-full h-full" data-alt="A cinematic, high-angle view of a luxury corporate boardroom at twilight. Through floor-to-ceiling windows, a sprawling metropolis glows with office lights. The interior features polished mahogany walls, a long glass conference table reflecting the city skyline, and ergonomic leather chairs. The atmosphere is quiet, powerful, and professional, utilizing deep blues, warm wood tones, and sharp architectural lines." style="background-image: url('{{ asset('assets/images/hero-business.jpg') }}')"></div>
 <div class="absolute inset-0 bg-inverse-surface/60 backdrop-brightness-75"></div>
 </div>
 <div class="relative z-10 max-w-[1200px] mx-auto px-4 md:px-gutter w-full pt-10">
@@ -89,7 +89,7 @@
 <!-- Section 2: Institutional Trust (Split) -->
 <section class="grid grid-cols-1 lg:grid-cols-2 min-h-[600px] bg-surface">
 <div class="relative min-h-[400px] lg:min-h-0">
-<div class="absolute inset-0 bg-cover bg-center" data-alt="A professional relationship manager in a crisp business suit presenting high-level financial data on a tablet to a group of executives. The background is a brightly lit, contemporary office with glass partitions and mid-century modern furniture. Soft natural light, high-end corporate lifestyle photography, clean and professional aesthetic." style="background-image: url('{{ asset('storage/app/public/photos/business-manager.jpg') }}')"></div>
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A professional relationship manager in a crisp business suit presenting high-level financial data on a tablet to a group of executives. The background is a brightly lit, contemporary office with glass partitions and mid-century modern furniture. Soft natural light, high-end corporate lifestyle photography, clean and professional aesthetic." style="background-image: url('{{ asset('assets/images/business-manager.jpg') }}')"></div>
 <!-- Decorative Overlay -->
 <div class="absolute bottom-0 right-0 bg-primary w-24 h-24 hidden lg:block -mr-12 -mb-12 z-20"></div>
 </div>

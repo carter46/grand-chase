@@ -4,7 +4,7 @@
          <!-- Modal content-->
          <div class="modal-content">
              <div class="modal-header ">
-                <img alt="" src="{{$settings->site_address}}/storage/app/public/photos/{{$user->profile_photo_path}}" width="60" height="60" style='border-radius: 50%;'> <h4 class="modal-title pl-1">Fund/Debit Account.</strong></h4>
+                <img alt="" src="{{ profile_photo_url($user->profile_photo_path, $user->name) }}" width="60" height="60" style='border-radius: 50%;'> <h4 class="modal-title pl-1">Fund/Debit Account.</strong></h4>
                  <button type="button" class="close " data-dismiss="modal">&times;</button>
              </div>
              <div class="modal-body ">
@@ -185,7 +185,7 @@
          <!-- Modal content-->
          <div class="modal-content">
              <div class="modal-header ">
-                 <h4 class="modal-title ">  <img alt="" src="{{$settings->site_address}}/storage/app/public/photos/{{$user->profile_photo_path}}" width="60" height="60" style='border-radius: 50%;'><h1 class="d-inline text-primary"> {{ $user->name }} {{ $user->l_name }} </h4>
+                 <h4 class="modal-title ">  <img alt="" src="{{ profile_photo_url($user->profile_photo_path, $user->name) }}" width="60" height="60" style='border-radius: 50%;'><h1 class="d-inline text-primary"> {{ $user->name }} {{ $user->l_name }} </h4>
                  <button type="button" class="close " data-dismiss="modal">&times;</button>
              </div>
              <div class="modal-body ">
@@ -217,7 +217,7 @@
          <!-- Modal content-->
          <div class="modal-content">
              <div class="modal-header ">
-                <img alt="" src="{{$settings->site_address}}/storage/app/public/photos/{{$user->profile_photo_path}}" width="60" height="60" style='border-radius: 50%;'> <h4 class="modal-title pl-1">Edit {{ $user->name }} details.</strong></h4>
+                <img alt="" src="{{ profile_photo_url($user->profile_photo_path, $user->name) }}" width="60" height="60" style='border-radius: 50%;'> <h4 class="modal-title pl-1">Edit {{ $user->name }} details.</strong></h4>
                  <button type="button" class="close " data-dismiss="modal">&times;</button>
              </div>
              <div class="modal-body ">

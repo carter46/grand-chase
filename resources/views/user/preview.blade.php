@@ -49,7 +49,7 @@
                 <div class="relative bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-8 text-white">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
-                            <img class="h-12 w-auto" src="{{ asset('storage/app/public/' . $settings->logo) }}" alt="{{ $settings->site_name }}">
+                            <img class="h-12 w-auto" src="{{ public_storage_url($settings->logo) }}" alt="{{ $settings->site_name }}">
                             <div class="ml-4">
                                 <h1 class="text-xl font-bold">{{ $settings->site_name }}</h1>
                                 <p class="text-sm text-white/80">Transaction Receipt</p>

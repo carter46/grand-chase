@@ -550,7 +550,7 @@ public function saveuser(Request $request){
 
               $cardname = $strtxt . $filename1 . time();
               // save to storage/app/uploads as the new $filename
-              $path = $document1->storeAs('public/photos', $cardname);
+              $path = $document1->storeAs('photos', $cardname, 'public');
           
 
         } else {
@@ -596,7 +596,7 @@ public function saveuser(Request $request){
 
               $cardname = $strtxt . $filename1 . time();
               // save to storage/app/uploads as the new $filename
-              $path = $document1->storeAs('public/photos', $cardname);
+              $path = $document1->storeAs('photos', $cardname, 'public');
           
 
         } else {

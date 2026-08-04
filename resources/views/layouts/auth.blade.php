@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-title" content="{{$settings->site_name}}">
     <meta name="application-name" content="{{$settings->site_name}}">
     <meta name="description" content="Swift and Secure Money Transfer to any UK bank account will become a breeze with {{$settings->site_name}}.">
-    <link rel="shortcut icon" href="{{ asset('storage/app/public/' . $settings->favicon) }}">
+    <link rel="shortcut icon" href="{{ public_storage_url($settings->favicon) }}">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -297,7 +297,7 @@
                 <div class="loader-circle"></div>
                 <div class="loader-circle"></div>
                 <div class="loader-logo">
-                    <img src="{{ asset('storage/app/public/'.$settings->logo) }}" alt="Logo" class="w-3/4 h-auto">
+                    <img src="{{ public_storage_url($settings->logo) }}" alt="Logo" class="w-3/4 h-auto">
                 </div>
             </div>
             <div class="loader-progress">

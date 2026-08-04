@@ -22,8 +22,10 @@
                 @forelse ($courses as $course)
                     <div class="col-md-4">
                         <div class="card rounded-0">
-                            <img src="{{ str_starts_with($course->course->course_image, 'http') ? $course->course->course_image : asset('storage/' . $course->course->course_image) }}"
-                                class="card-img-top" alt="course image">
+                            @php $src = public_storage_url(optional($course->course)->course_image); @endphp
+                            @if($src)
+                                <img src="{{ $src }}" class="card-img-top" alt="course image">
+                            @endif
                             <div class="card-body">
                                 <h5 class="font-weight-bolder">{{ $course->course->course_title }}</h5>
                                 <div class="d-flex justify-content-between align-items-center my-2">

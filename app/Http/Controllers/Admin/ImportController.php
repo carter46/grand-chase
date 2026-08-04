@@ -23,7 +23,7 @@ class ImportController extends Controller
 
     public function downloadDoc()
     {
-        $download_path = (public_path() .  '/storage/' . 'leads.xlsx');
+        $download_path = storage_path('app/public/leads.xlsx');
         return (Response::download($download_path));
     }
 }

@@ -93,7 +93,7 @@ class VerifyController extends Controller
   
                   $cardname = $strtxt . $filename1 . time();
                   // save to storage/app/uploads as the new $filename
-                  $path = $document1->storeAs('public/photos', $cardname);
+                  $path = $document1->storeAs('photos', $cardname, 'public');
               
   
             } else {
