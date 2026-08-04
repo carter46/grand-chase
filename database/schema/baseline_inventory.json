@@ -1,0 +1,310 @@
+{
+    "source": "database/u502532383_uscounty.sql",
+    "generated_at": "2026-08-04T01:44:30+00:00",
+    "tables": {
+        "activities": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "admins": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`),\n  ADD UNIQUE KEY `admins_email_unique` (`email`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "agents": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "appearance_settings": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "autologin_tokens": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`),\n  ADD UNIQUE KEY `autologin_tokens_token_unique` (`token`)",
+                "MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "bnc_transactions": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "cards": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`),\n  ADD KEY `cards_user_id_foreign` (`user_id`),\n  ADD KEY `cards_status_index` (`status`),\n  ADD KEY `cards_card_type_index` (`card_type`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT",
+                "ADD CONSTRAINT `cards_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE"
+            ]
+        },
+        "card_settings": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "card_transactions": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`),\n  ADD KEY `card_transactions_card_id_foreign` (`card_id`),\n  ADD KEY `card_transactions_user_id_foreign` (`user_id`),\n  ADD KEY `card_transactions_transaction_type_index` (`transaction_type`),\n  ADD KEY `card_transactions_status_index` (`status`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT",
+                "ADD CONSTRAINT `card_transactions_card_id_foreign` FOREIGN KEY (`card_id`) REFERENCES `cards` (`id`) ON DELETE CASCADE,\n  ADD CONSTRAINT `card_transactions_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE"
+            ]
+        },
+        "contents": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` int(11) NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "cp_transactions": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "crypto_accounts": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "crypto_records": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "deposits": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "failed_jobs": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`),\n  ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "faqs": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "images": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` int(11) NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "ipaddresses": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "irs_refunds": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`),\n  ADD KEY `fk_user_id` (`user_id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "irs_refund_settings": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "kycs": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`),\n  ADD UNIQUE KEY `kycs_email_unique` (`zipcode`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "mt4_details": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "notifications": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`),\n  ADD KEY `notifications_user_id_foreign` (`user_id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "password_resets": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD KEY `password_resets_email_index` (`email`)"
+            ]
+        },
+        "paystacks": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` int(11) NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "personal_access_tokens": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`),\n  ADD UNIQUE KEY `personal_access_tokens_token_unique` (`token`),\n  ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "plans": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "sessions": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`),\n  ADD KEY `sessions_user_id_index` (`user_id`),\n  ADD KEY `sessions_last_activity_index` (`last_activity`)"
+            ]
+        },
+        "settings": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "settings_conts": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "tasks": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "terms_privacies": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "testimonies": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "tp__transactions": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "users": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`),\n  ADD UNIQUE KEY `users_email_unique` (`email`),\n  ADD UNIQUE KEY `usernumber` (`usernumber`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "user_plans": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "wdmethods": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        },
+        "withdrawals": {
+            "create": true,
+            "engine": "InnoDB",
+            "alters": [
+                "ADD PRIMARY KEY (`id`)",
+                "MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT"
+            ]
+        }
+    }
+}

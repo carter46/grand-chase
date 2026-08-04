@@ -1,0 +1,33 @@
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+
+# Local secrets — never commit
+.env
+.env.*
+!.env.example
+.env.backup
+
+.phpunit.result.cache
+docker-compose.override.yml
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/.idea
+/.vscode
+
+# Runtime / generated
+/storage/logs/*.log
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/bootstrap/cache/*.php
+!/bootstrap/cache/.gitignore
+
+# Production SQL dumps contain PII and secrets — keep local/private; rotate credentials after any share
+/database/u502532383_uscounty.sql
+/database/*.dump.sql
+/database/*_live.sql
