@@ -1,7 +1,7 @@
 <div class="flex flex-col w-full">
 <!-- Hero Section -->
 <section class="relative w-full overflow-hidden">
-<div class="relative min-h-[420px] md:min-h-[716px] flex items-center justify-center px-margin-mobile md:px-margin-desktop pt-10">
+<div class="relative min-h-[calc(100vh-104px)] md:min-h-[calc(100vh-131px)] flex items-center justify-center px-margin-mobile md:px-margin-desktop pt-10">
 <!-- Background Image with Scrim -->
 <div class="absolute inset-0 z-0">
 <div class="w-full h-full bg-cover bg-center" data-alt="A sophisticated, high-end wealth management setting. A modern, minimalist office overlook a sprawling global financial district at twilight. Soft amber lighting hits a mahogany desk with a sleek tablet displaying complex global market growth charts. The atmosphere is quiet, professional, and suggests immense stability and prestige, dominated by deep charcoals, rich wood tones, and the bank's signature orange accents in the digital data visualizations." style="background-image: url('{{ asset('assets/images/hero-investments.jpg') }}')">

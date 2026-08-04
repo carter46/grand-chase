@@ -5,7 +5,7 @@
 @endphp
 <div class="flex flex-col w-full">
 <!-- Hero Section -->
-<section class="relative min-h-[420px] md:h-[614px] flex items-center overflow-hidden bg-on-surface">
+<section class="relative min-h-[calc(100vh-104px)] md:min-h-[calc(100vh-131px)] flex items-center overflow-hidden bg-on-surface">
 <div class="absolute inset-0 z-0">
 <div class="bg-cover bg-center w-full h-full opacity-60" data-alt="High-angle cinematic shot of a modern glass skyscraper reflecting a clear blue sky at dawn. The architecture is sharp and geometric, conveying a sense of stability and institutional power. The lighting is cold and professional with hints of warm sunrise oranges hitting the steel frames. 8k resolution, architectural photography style." style="background-image: url('{{ asset('assets/images/hero-contact.jpg') }}')"></div>
 <div class="absolute inset-0 bg-gradient-to-r from-on-surface via-on-surface/80 to-transparent"></div>

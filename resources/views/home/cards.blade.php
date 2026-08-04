@@ -9,8 +9,8 @@
 @section('title', 'Credit Cards')
 
 @section('content')
-<section class="relative bg-inverse-surface py-16 md:py-24">
-    <div class="max-w-[1200px] mx-auto px-4 md:px-gutter">
+<section class="relative bg-inverse-surface min-h-[calc(100vh-104px)] md:min-h-[calc(100vh-131px)] flex items-center">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-gutter w-full py-12 md:py-16">
         <span class="font-label-bold text-primary uppercase tracking-widest">Cards</span>
         <h1 class="text-hero-small text-on-primary mt-4 uppercase">Credit Cards</h1>
         <p class="font-body-lg text-on-primary/70 mt-4 max-w-2xl">See if you're pre-approved for a credit card from {{ $settings->site_name }}.</p>

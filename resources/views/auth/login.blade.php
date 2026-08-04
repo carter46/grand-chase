@@ -6,7 +6,7 @@
 
 <main class="w-full min-h-[calc(100vh-3.5rem)] bg-surface">
 <div class="flex flex-col lg:flex-row min-h-[calc(100vh-3.5rem)] w-full">
-    <div class="relative flex-1 bg-inverse-surface flex items-center justify-center overflow-hidden p-6 md:p-margin-desktop min-h-[280px] lg:min-h-0">
+    <div class="hidden lg:flex relative flex-1 bg-inverse-surface items-center justify-center overflow-hidden p-6 md:p-margin-desktop">
         <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 32px 32px;"></div>
         <div class="relative z-10 max-w-lg flex flex-col gap-stack-lg">
             <div class="flex flex-col gap-stack-sm">
@@ -25,7 +25,7 @@
         </div>
     </div>
 
-    <div class="flex-1 flex items-center justify-center bg-surface p-6 md:p-margin-desktop">
+    <div class="w-full lg:flex-1 flex items-center justify-center bg-surface p-4 sm:p-6 md:p-margin-desktop">
         <div class="w-full max-w-[440px] flex flex-col gap-stack-lg">
             <div class="flex flex-col items-center lg:items-start text-center lg:text-left gap-stack-sm">
                 <h2 class="text-headline-lg text-on-surface">Access Your Account</h2>

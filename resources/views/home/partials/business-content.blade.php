@@ -5,7 +5,7 @@
 @endphp
 <div class="flex flex-col w-full">
 <!-- Hero Section -->
-<section class="relative w-full min-h-[420px] md:h-[600px] flex items-center overflow-hidden">
+<section class="relative w-full min-h-[calc(100vh-104px)] md:min-h-[calc(100vh-131px)] flex items-center overflow-hidden">
 <div class="absolute inset-0 z-0">
 <div class="bg-cover bg-center w-full h-full" data-alt="A cinematic, high-angle view of a luxury corporate boardroom at twilight. Through floor-to-ceiling windows, a sprawling metropolis glows with office lights. The interior features polished mahogany walls, a long glass conference table reflecting the city skyline, and ergonomic leather chairs. The atmosphere is quiet, powerful, and professional, utilizing deep blues, warm wood tones, and sharp architectural lines." style="background-image: url('{{ asset('assets/images/hero-business.jpg') }}')"></div>
 <div class="absolute inset-0 bg-inverse-surface/60 backdrop-brightness-75"></div>

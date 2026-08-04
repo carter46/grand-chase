@@ -24,9 +24,6 @@
             @include('includes.public-brand')
             <div class="flex items-center gap-stack-md overflow-visible">
                 <div id="google_translate_slot_desktop" class="hidden md:block min-w-[140px] max-w-[220px] overflow-visible"></div>
-                <button type="button" class="md:hidden p-2 text-on-surface" @click="drawerOpen = true" aria-label="Open menu">
-                    <span class="material-symbols-outlined">menu</span>
-                </button>
             </div>
         </div>
     </div>
@@ -50,6 +47,9 @@
 
     {{-- Mobile nav bar --}}
     <div class="md:hidden flex h-12 bg-bank-charcoal items-stretch">
+        <button type="button" class="flex items-center justify-center px-4 text-on-primary shrink-0" @click="drawerOpen = true" aria-label="Open menu">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
         <div class="flex-1"></div>
         <a href="{{ url('login') }}" class="flex items-center justify-center px-6 bg-bank-orange text-white font-label-bold uppercase h-full text-sm tracking-wider">
             Online Banking

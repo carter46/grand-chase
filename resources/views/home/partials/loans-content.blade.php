@@ -1,6 +1,6 @@
 <div class="flex flex-col w-full">
 <!-- Hero Section -->
-<section class="relative w-full overflow-hidden bg-inverse-surface min-h-[420px] md:min-h-[600px] flex items-center">
+<section class="relative w-full overflow-hidden bg-inverse-surface min-h-[calc(100vh-104px)] md:min-h-[calc(100vh-131px)] flex items-center">
 <div class="absolute inset-0 z-0">
 <div class="w-full h-full bg-cover bg-center opacity-55" data-alt="A high-end cinematic photograph of a professional business meeting in a modern, glass-walled boardroom overlooking a city skyline at dusk. Two people are shaking hands across a polished mahogany desk, symbolizing a partnership agreement. The lighting is warm and dramatic, highlighting the high-quality textures of tailored suits and architectural details. The color palette features deep charcoal, warm wood tones, and subtle orange accents in the ambient lighting." style="background-image: url('{{ asset('assets/images/hero-loans.jpg') }}')"></div>
 <div class="absolute inset-0 bg-gradient-to-r from-inverse-surface via-inverse-surface/80 to-transparent"></div>

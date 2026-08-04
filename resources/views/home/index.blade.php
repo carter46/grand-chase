@@ -11,7 +11,7 @@
 @section('content')
 <div class="flex flex-col w-full">
     {{-- Hero --}}
-    <section class="relative min-h-[420px] md:min-h-[calc(100vh-131px)] md:min-h-[600px] flex items-center justify-center overflow-hidden">
+    <section class="relative min-h-[calc(100vh-104px)] md:min-h-[calc(100vh-131px)] flex items-center justify-center overflow-hidden">
         <div class="absolute inset-0 z-0">
             <img alt="Corporate banking" class="w-full h-full object-cover hidden md:block" src="{{ asset('assets/images/hero-home-desktop.jpg') }}">
             <div class="w-full h-full bg-cover bg-center md:hidden" style="background-image: url('{{ asset('assets/images/hero-home-mobile.jpg') }}')"></div>

@@ -2,7 +2,7 @@
 <!-- Hero Section: Immersive with Scrim -->
 <section class="relative w-full overflow-hidden">
 <div class="absolute inset-0 bg-on-background/40 z-10"></div>
-<div class="relative min-h-[420px] md:h-[640px] w-full flex items-center justify-center bg-cover bg-center" data-alt="A warm, brightly lit modern living room where a multi-generational family—a couple and their two young children—are sitting on a plush gray sofa laughing together. The scene exudes financial security and domestic bliss. Large glass windows in the background reveal a manicured garden. The lighting is soft and high-end, evoking professional architectural photography with a focus on trust and comfort." style="background-image: url('{{ asset('assets/images/hero-personal.jpg') }}')">
+<div class="relative min-h-[calc(100vh-104px)] md:min-h-[calc(100vh-131px)] w-full flex items-center justify-center bg-cover bg-center" data-alt="A warm, brightly lit modern living room where a multi-generational family—a couple and their two young children—are sitting on a plush gray sofa laughing together. The scene exudes financial security and domestic bliss. Large glass windows in the background reveal a manicured garden. The lighting is soft and high-end, evoking professional architectural photography with a focus on trust and comfort." style="background-image: url('{{ asset('assets/images/hero-personal.jpg') }}')">
 <div class="relative z-20 max-w-[1200px] mx-auto px-4 md:px-gutter w-full flex flex-col items-start">
 <div class="max-w-2xl pt-10 md:pt-0">
 <span class="inline-block py-1 px-3 bg-primary text-on-primary font-label-bold uppercase tracking-widest text-[10px] mb-stack-md animate-fade-in">
