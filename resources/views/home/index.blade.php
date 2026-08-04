@@ -56,13 +56,14 @@
     {{-- Hero slider --}}
     <section
         id="home-hero-slider"
-        class="hero-slider relative h-[calc(100vh-104px)] md:h-[calc(100vh-131px)] min-h-[520px] overflow-hidden select-none bg-inverse-surface cursor-grab active:cursor-grabbing"
+        class="hero-slider relative h-[calc(100vh-104px)] md:h-[calc(100vh-131px)] min-h-[520px] overflow-hidden select-none bg-inverse-surface"
+        style="touch-action: pan-y;"
         x-data="homeHeroSlider({{ count($heroSlides) }})"
         @keydown.left.window="prev()"
         @keydown.right.window="next()"
     >
         <div
-            class="flex h-full will-change-transform"
+            class="relative z-0 flex h-full w-full will-change-transform cursor-grab active:cursor-grabbing"
             :class="(dragging || jumping) ? '' : 'transition-transform duration-500 ease-out'"
             :style="'transform: translate3d(' + (-(track * 100) + dragPct) + '%,0,0)'"
             @pointerdown="onPointerDown($event)"
@@ -73,25 +74,25 @@
         >
             @foreach ($heroTrack as $i => $slide)
             <article class="relative h-full w-full min-w-full flex-shrink-0 flex items-center justify-center overflow-hidden">
-                <div class="absolute inset-0 z-0">
+                <div class="absolute inset-0 z-0 pointer-events-none">
                     <img
                         src="{{ $slide['image'] }}"
                         alt="{{ $slide['eyebrow'] }}"
-                        class="no-reveal w-full h-full object-cover pointer-events-none {{ !empty($slide['image_mobile']) ? 'hidden md:block' : '' }}"
+                        class="no-reveal w-full h-full object-cover {{ !empty($slide['image_mobile']) ? 'hidden md:block' : '' }}"
                         draggable="false"
                     >
                     @if (!empty($slide['image_mobile']))
                     <img
                         src="{{ $slide['image_mobile'] }}"
                         alt="{{ $slide['eyebrow'] }}"
-                        class="no-reveal w-full h-full object-cover pointer-events-none md:hidden"
+                        class="no-reveal w-full h-full object-cover md:hidden"
                         draggable="false"
                     >
                     @endif
                     <div class="absolute inset-0 bg-black/55"></div>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20"></div>
                 </div>
-                <div class="relative z-10 max-w-[1200px] mx-auto px-4 md:px-gutter w-full text-center flex flex-col items-center py-12">
+                <div class="relative z-10 max-w-[1200px] mx-auto px-4 md:px-gutter w-full text-center flex flex-col items-center py-12 pointer-events-none">
                     <span class="font-label-bold text-primary uppercase tracking-[0.2em] mb-stack-md">{{ $slide['eyebrow'] }}</span>
                     <h1 class="text-hero-large text-on-primary mb-stack-lg uppercase tracking-tighter max-w-4xl">
                         {!! $slide['title_html'] !!}
@@ -99,7 +100,7 @@
                     <p class="font-body-md md:font-body-lg text-on-primary/90 max-w-[650px] mb-stack-lg leading-relaxed px-2">
                         {{ $slide['body'] }}
                     </p>
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-stack-md w-auto px-4 sm:px-0">
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-stack-md w-auto px-4 sm:px-0 pointer-events-auto">
                         <a href="{{ $slide['cta_primary']['url'] }}" class="inline-flex justify-center bg-primary hover:bg-primary-container text-on-primary px-8 sm:px-10 py-3.5 sm:py-4 font-label-bold text-sm tracking-widest transition-all shadow-xl hover:-translate-y-1 text-center min-w-[140px] max-w-[220px]">
                             {{ $slide['cta_primary']['label'] }}
                         </a>
@@ -113,27 +114,27 @@
         </div>
 
         {{-- Controls --}}
-        <div class="absolute inset-x-0 bottom-6 md:bottom-8 z-20 flex items-center justify-center gap-4 pointer-events-none">
-            <button type="button" @click="prev()" class="pointer-events-auto hidden sm:inline-flex h-11 w-11 items-center justify-center border border-on-primary/40 text-on-primary hover:bg-on-primary hover:text-inverse-surface transition-colors" aria-label="Previous slide">
+        <div data-slider-ctrl class="absolute inset-x-0 bottom-6 md:bottom-8 z-30 flex items-center justify-center gap-4">
+            <button type="button" @click.stop="prev()" class="hidden sm:inline-flex h-11 w-11 items-center justify-center border border-on-primary/40 text-on-primary hover:bg-on-primary hover:text-inverse-surface transition-colors" aria-label="Previous slide">
                 <span class="material-symbols-outlined">chevron_left</span>
             </button>
-            <div class="pointer-events-auto flex items-center gap-2">
+            <div class="flex items-center gap-2">
                 @foreach ($heroSlides as $i => $slide)
                 <button
                     type="button"
-                    @click="go({{ $i }})"
+                    @click.stop="go({{ $i }})"
                     class="h-2.5 rounded-full transition-all duration-300"
                     :class="index === {{ $i }} ? 'w-8 bg-primary' : 'w-2.5 bg-on-primary/40 hover:bg-on-primary/70'"
                     aria-label="Go to slide {{ $i + 1 }}"
                 ></button>
                 @endforeach
             </div>
-            <button type="button" @click="next()" class="pointer-events-auto hidden sm:inline-flex h-11 w-11 items-center justify-center border border-on-primary/40 text-on-primary hover:bg-on-primary hover:text-inverse-surface transition-colors" aria-label="Next slide">
+            <button type="button" @click.stop="next()" class="hidden sm:inline-flex h-11 w-11 items-center justify-center border border-on-primary/40 text-on-primary hover:bg-on-primary hover:text-inverse-surface transition-colors" aria-label="Next slide">
                 <span class="material-symbols-outlined">chevron_right</span>
             </button>
         </div>
 
-        <p class="absolute left-4 bottom-6 z-20 hidden lg:block font-caption uppercase tracking-widest text-on-primary/50 pointer-events-none">
+        <p class="absolute left-4 bottom-6 z-30 hidden lg:block font-caption uppercase tracking-widest text-on-primary/50 pointer-events-none">
             Swipe or drag
         </p>
     </section>
@@ -301,25 +302,31 @@
 <script>
 function homeHeroSlider(total) {
     return {
-        // logical slide 0..total-1 (for dots)
         index: 0,
-        // track position includes leading clone (+1)
         track: 1,
         total: total,
         dragging: false,
+        armed: false,
         jumping: false,
         dragPct: 0,
         startX: 0,
+        startY: 0,
         width: 1,
+        pointerId: null,
         autoTimer: null,
+        jumpTimer: null,
         init() {
             this.restartAuto();
         },
         restartAuto() {
             clearInterval(this.autoTimer);
             this.autoTimer = setInterval(() => {
-                if (!this.dragging && !this.jumping) this.next();
+                if (!this.dragging && !this.jumping && !this.armed) this.next();
             }, 7000);
+        },
+        clearJumpLock() {
+            clearTimeout(this.jumpTimer);
+            this.jumping = false;
         },
         syncIndexFromTrack() {
             if (this.track === 0) this.index = this.total - 1;
@@ -327,7 +334,7 @@ function homeHeroSlider(total) {
             else this.index = this.track - 1;
         },
         go(logical) {
-            this.jumping = false;
+            this.clearJumpLock();
             this.track = logical + 1;
             this.index = logical;
             this.dragPct = 0;
@@ -349,45 +356,68 @@ function homeHeroSlider(total) {
         },
         onTransitionEnd(e) {
             if (e && e.target !== e.currentTarget) return;
-            // Seamless loop: snap from clones to real slides without animation
             if (this.track === this.total + 1) {
                 this.jumping = true;
                 this.track = 1;
                 this.index = 0;
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => { this.jumping = false; });
-                });
+                clearTimeout(this.jumpTimer);
+                this.jumpTimer = setTimeout(() => { this.jumping = false; }, 60);
             } else if (this.track === 0) {
                 this.jumping = true;
                 this.track = this.total;
                 this.index = this.total - 1;
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => { this.jumping = false; });
-                });
+                clearTimeout(this.jumpTimer);
+                this.jumpTimer = setTimeout(() => { this.jumping = false; }, 60);
             }
         },
         onPointerDown(e) {
             if (e.pointerType === 'mouse' && e.button !== 0) return;
-            if (e.target.closest('a, button')) return;
-            this.dragging = true;
+            if (e.target.closest('a, button, [data-slider-ctrl]')) return;
+            this.armed = true;
+            this.dragging = false;
+            this.pointerId = e.pointerId;
             this.startX = e.clientX;
+            this.startY = e.clientY;
             this.width = this.$el.offsetWidth || 1;
             this.dragPct = 0;
-            e.currentTarget.setPointerCapture(e.pointerId);
             clearInterval(this.autoTimer);
         },
         onPointerMove(e) {
-            if (!this.dragging) return;
+            if (!this.armed && !this.dragging) return;
+            if (this.pointerId !== null && e.pointerId !== this.pointerId) return;
             var dx = e.clientX - this.startX;
+            var dy = e.clientY - this.startY;
+
+            // Let vertical page scroll win until a clear horizontal swipe
+            if (!this.dragging) {
+                if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 8) {
+                    this.armed = false;
+                    this.dragPct = 0;
+                    this.restartAuto();
+                    return;
+                }
+                if (Math.abs(dx) < 10) return;
+                this.dragging = true;
+                this.armed = false;
+                try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
+            }
+
             this.dragPct = (dx / this.width) * 100;
         },
         onPointerUp(e) {
-            if (!this.dragging) return;
+            if (!this.dragging && !this.armed) return;
+            if (this.pointerId !== null && e.pointerId !== this.pointerId) return;
+            var wasDragging = this.dragging;
             this.dragging = false;
+            this.armed = false;
+            this.pointerId = null;
             try { e.currentTarget.releasePointerCapture(e.pointerId); } catch (err) {}
-            var threshold = 12;
-            if (this.dragPct <= -threshold) this.next();
-            else if (this.dragPct >= threshold) this.prev();
+
+            if (wasDragging) {
+                var threshold = 10;
+                if (this.dragPct <= -threshold) this.next();
+                else if (this.dragPct >= threshold) this.prev();
+            }
             this.dragPct = 0;
             this.restartAuto();
         }
