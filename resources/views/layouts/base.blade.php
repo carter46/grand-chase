@@ -32,6 +32,73 @@
         .animate-fade-in-down { animation: fade-in-down 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .pt-safe { padding-top: env(safe-area-inset-top); }
         .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+
+        /* Semantic hero typography */
+        .text-hero-large {
+            font-family: Inter, sans-serif;
+            font-size: 28px;
+            line-height: 1.2;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        .text-hero-medium {
+            font-family: Inter, sans-serif;
+            font-size: 28px;
+            line-height: 1.15;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        .text-hero-small {
+            font-family: Inter, sans-serif;
+            font-size: 24px;
+            line-height: 1.2;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        @media (min-width: 640px) {
+            .text-hero-large { font-size: 40px; }
+            .text-hero-medium { font-size: 36px; }
+            .text-hero-small { font-size: 28px; }
+        }
+        @media (min-width: 768px) {
+            .text-hero-large { font-size: 64px; line-height: 1.1; }
+            .text-hero-medium { font-size: 56px; line-height: 1.1; }
+            .text-hero-small { font-size: 40px; line-height: 1.15; }
+        }
+
+        /* Google Translate — prevent header clipping */
+        #google_translate_element,
+        #google_translate_slot_desktop,
+        #google_translate_slot_mobile {
+            overflow: visible !important;
+        }
+        #google_translate_element.sr-only:not(:empty) {
+            position: static;
+            width: auto;
+            height: auto;
+            padding: 0;
+            margin: 0;
+            overflow: visible;
+            clip: auto;
+            white-space: normal;
+        }
+        .goog-te-gadget {
+            font-size: 12px !important;
+            color: #1a1c1c !important;
+        }
+        .goog-te-gadget .goog-te-combo {
+            max-width: 100%;
+            min-width: 120px;
+            padding: 4px 8px;
+            border: 1px solid #e6bdb2;
+            background: #fff;
+            color: #1a1c1c;
+        }
+        .goog-te-banner-frame.skiptranslate { display: none !important; }
+        body { top: 0 !important; }
+        .goog-logo-link, .goog-te-gadget span { display: none !important; }
+        .goog-te-gadget { color: transparent !important; }
+        .goog-te-gadget .goog-te-combo { color: #1a1c1c !important; }
     </style>
 
     @yield('styles')
@@ -52,9 +119,25 @@
 @endif
 
 <script>
-function googleTranslateElementInit() {
-    new google.translate.TranslateElement({ pageLanguage: 'en' }, 'google_translate_element');
+function placeTranslateWidget() {
+    var el = document.getElementById('google_translate_element');
+    var desk = document.getElementById('google_translate_slot_desktop');
+    var mob = document.getElementById('google_translate_slot_mobile');
+    if (!el || !desk || !mob) return;
+    el.classList.remove('sr-only');
+    el.removeAttribute('aria-hidden');
+    if (window.matchMedia('(min-width: 768px)').matches) {
+        desk.appendChild(el);
+    } else {
+        mob.appendChild(el);
+    }
 }
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement({ pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL }, 'google_translate_element');
+    placeTranslateWidget();
+}
+window.addEventListener('resize', placeTranslateWidget);
+document.addEventListener('DOMContentLoaded', placeTranslateWidget);
 </script>
 <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 

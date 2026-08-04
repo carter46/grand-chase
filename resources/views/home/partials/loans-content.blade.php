@@ -1,14 +1,14 @@
 <div class="flex flex-col w-full">
 <!-- Hero Section -->
-<section class="relative w-full overflow-hidden bg-inverse-surface min-h-[600px] flex items-center">
+<section class="relative w-full overflow-hidden bg-inverse-surface min-h-[420px] md:min-h-[600px] flex items-center">
 <div class="absolute inset-0 z-0">
-<div class="w-full h-full bg-cover bg-center opacity-40 mix-blend-luminosity" data-alt="A high-end cinematic photograph of a professional business meeting in a modern, glass-walled boardroom overlooking a city skyline at dusk. Two people are shaking hands across a polished mahogany desk, symbolizing a partnership agreement. The lighting is warm and dramatic, highlighting the high-quality textures of tailored suits and architectural details. The color palette features deep charcoal, warm wood tones, and subtle orange accents in the ambient lighting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA6ywnmh3PSNfYP2oIASwYQLjaNe-amebja2und-nM0cEKdZSMYRSAgtPiMl62QLs-QLi5-7jK1teKbmJBPIeLzTEHk4aq-Sn9lxYOi1e3zAqvv56njZzX3f4nPdTir-KynKuHH_TLvlLOgR1LCuI106bz5g-ngFjiDoLUCG7Oe6MjZXSmOX-UZMq-PnsfRbY95T2eIm_eN3GDEGiJ8lC4dhqbNDkkGjILtYqj_TK_s4KXlxTeTQXc3')"></div>
+<div class="w-full h-full bg-cover bg-center opacity-55" data-alt="A high-end cinematic photograph of a professional business meeting in a modern, glass-walled boardroom overlooking a city skyline at dusk. Two people are shaking hands across a polished mahogany desk, symbolizing a partnership agreement. The lighting is warm and dramatic, highlighting the high-quality textures of tailored suits and architectural details. The color palette features deep charcoal, warm wood tones, and subtle orange accents in the ambient lighting." style="background-image: url('{{ asset('storage/app/public/photos/hero-loans.jpg') }}')"></div>
 <div class="absolute inset-0 bg-gradient-to-r from-inverse-surface via-inverse-surface/80 to-transparent"></div>
 </div>
-<div class="relative z-10 max-w-[1200px] mx-auto px-gutter py-stack-lg">
+<div class="relative z-10 max-w-[1200px] mx-auto px-4 md:px-gutter pt-10 pb-stack-lg md:py-stack-lg">
 <div class="max-w-2xl">
 <span class="inline-block font-label-bold text-primary uppercase tracking-[0.2em] mb-stack-md">Financial Empowerment</span>
-<h1 class="font-headline-xl text-on-primary mb-stack-md leading-tight">Flexible Lending Solutions for Your Future</h1>
+<h1 class="text-hero-medium text-on-primary mb-stack-md">Flexible Lending Solutions for Your Future</h1>
 <p class="font-body-lg text-on-primary/80 mb-10 leading-relaxed">
                     Tailored financing options designed to help you achieve your personal and professional goals with confidence. We provide the capital; you provide the vision.
                 </p>
@@ -20,8 +20,8 @@
 </div>
 </section>
 <!-- Loan Categories Section -->
-<section class="py-24 bg-surface">
-<div class="max-w-[1200px] mx-auto px-gutter">
+<section class="py-12 md:py-24 bg-surface">
+<div class="max-w-[1200px] mx-auto px-4 md:px-gutter">
 <div class="grid grid-cols-1 md:grid-cols-3 gap-0 border border-outline-variant/30">
 <!-- Personal Loans -->
 <div class="bg-surface-container-lowest p-10 flex flex-col border-r border-outline-variant/30 group hover:bg-surface-container-low transition-colors">
@@ -66,11 +66,11 @@
 </div>
 </section>
 <!-- Lending Excellence Section -->
-<section class="py-24 bg-surface-container-lowest overflow-hidden">
-<div class="max-w-[1200px] mx-auto px-gutter">
+<section class="py-12 md:py-24 bg-surface-container-lowest overflow-hidden">
+<div class="max-w-[1200px] mx-auto px-4 md:px-gutter">
 <div class="flex flex-col lg:flex-row items-stretch gap-0">
 <div class="lg:w-1/2 relative min-h-[400px]">
-<div class="absolute inset-0 bg-cover bg-center" data-alt="An architectural photograph of a minimalist, contemporary high-rise building with sharp geometric lines and vast glass panels. The sun reflects off the glass, creating a high-contrast interplay of light and shadow. The structure represents stability, innovation, and long-term investment. Clear blue sky in the background, professional and clean aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAcWqD5yMmExfK35GK4dRYyGvuIS8XhkZAtxwV3QAfT-jMOEb63mSn8J_kmv58XA5kNE7X104XwOTk7XV67BGb9DGZzJnzdVqlZRtierl1S4YEwH36Sx5ygU3hJ7Uae0eirt4_RKOeKYDP9eUqLDQUbLOd-c3Tlv7Ag4uLGi-ojGCRTKioiTbIlDAS88-aZki_xVf_qFwjRow1xKT2yf0myn1jvn6tXLfUwj1zaVla9LDq_th92RJW7')"></div>
+<div class="absolute inset-0 bg-cover bg-center" data-alt="An architectural photograph of a minimalist, contemporary high-rise building with sharp geometric lines and vast glass panels. The sun reflects off the glass, creating a high-contrast interplay of light and shadow. The structure represents stability, innovation, and long-term investment. Clear blue sky in the background, professional and clean aesthetic." style="background-image: url('{{ asset('storage/app/public/photos/loans-architecture.jpg') }}')"></div>
 </div>
 <div class="lg:w-1/2 bg-inverse-surface p-16 text-on-primary">
 <h2 class="font-headline-lg mb-stack-lg">Why Borrow with {{ $settings->site_name }}?</h2>
@@ -109,8 +109,8 @@
 </div>
 </section>
 <!-- Lending Calculator Widget -->
-<section class="py-24 bg-surface">
-<div class="max-w-[1200px] mx-auto px-gutter">
+<section class="py-12 md:py-24 bg-surface">
+<div class="max-w-[1200px] mx-auto px-4 md:px-gutter">
 <div class="bg-surface-container-lowest border border-outline-variant/30 p-12">
 <div class="text-center mb-12">
 <h2 class="font-headline-lg text-on-surface mb-stack-sm">Loan Repayment Estimator</h2>
@@ -171,8 +171,8 @@
 </div>
 </section>
 <!-- CTA Section -->
-<section class="py-24 bg-inverse-surface border-t border-outline-variant/10">
-<div class="max-w-[1200px] mx-auto px-gutter text-center">
+<section class="py-12 md:py-24 bg-inverse-surface border-t border-outline-variant/10">
+<div class="max-w-[1200px] mx-auto px-4 md:px-gutter text-center">
 <h2 class="font-headline-xl text-on-primary mb-stack-md">Ready to Take the Next Step?</h2>
 <p class="font-body-lg text-on-primary/60 mb-12 max-w-2xl mx-auto">Our specialists are standing by to help you structure the ideal lending solution for your personal or business needs.</p>
 <div class="flex flex-wrap justify-center gap-stack-lg">

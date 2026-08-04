@@ -1,10 +1,10 @@
 <div class="flex flex-col w-full">
 <!-- Hero Section -->
 <section class="relative w-full overflow-hidden">
-<div class="relative min-h-[716px] flex items-center justify-center px-margin-mobile md:px-margin-desktop">
+<div class="relative min-h-[420px] md:min-h-[716px] flex items-center justify-center px-margin-mobile md:px-margin-desktop pt-10">
 <!-- Background Image with Scrim -->
 <div class="absolute inset-0 z-0">
-<div class="w-full h-full bg-cover bg-center" data-alt="A sophisticated, high-end wealth management setting. A modern, minimalist office overlook a sprawling global financial district at twilight. Soft amber lighting hits a mahogany desk with a sleek tablet displaying complex global market growth charts. The atmosphere is quiet, professional, and suggests immense stability and prestige, dominated by deep charcoals, rich wood tones, and the bank's signature orange accents in the digital data visualizations." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDqvWjJrefTdJu0hSC_IX16ZwDjQNMWdFdg7NmolybV513FIYYRdw3_TVjjbE7eFQv2ecFNbaoTSwAVk6aKd63RkiccxS9eGxaPrbz44ULCzYXhUKOL8GKOmIa3GGk-Go2XapDjIcNl3rym3xKAJSwR1Y3QJCT3UAhoJIfcCLnnmZyYCOMQnMfibcwmVRib9LCKVdCK17FTm4HixXjMWZpEDzvdFdwRCZfuWx2qMnOtfd1sKTRFL08U')">
+<div class="w-full h-full bg-cover bg-center" data-alt="A sophisticated, high-end wealth management setting. A modern, minimalist office overlook a sprawling global financial district at twilight. Soft amber lighting hits a mahogany desk with a sleek tablet displaying complex global market growth charts. The atmosphere is quiet, professional, and suggests immense stability and prestige, dominated by deep charcoals, rich wood tones, and the bank's signature orange accents in the digital data visualizations." style="background-image: url('{{ asset('storage/app/public/photos/hero-investments.jpg') }}')">
 </div>
 <div class="absolute inset-0 bg-bank-charcoal/55 backdrop-brightness-75"></div>
 </div>
@@ -12,7 +12,7 @@
 <div class="relative z-10 max-w-4xl text-center flex flex-col items-center gap-stack-lg">
 <div class="flex flex-col gap-4">
 <span class="font-label-bold text-label-bold tracking-[0.3em] text-bank-orange uppercase animate-fade-in-up">Wealth Management</span>
-<h1 class="font-headline-xl text-headline-xl md:text-[64px] md:leading-[72px] text-white uppercase tracking-tight">
+<h1 class="text-hero-medium text-white uppercase tracking-tight">
                         Secure Your Legacy
                     </h1>
 </div>
@@ -31,7 +31,7 @@
 </div>
 </section>
 <!-- Section 2: Investment Strategies -->
-<section class="bg-white py-24 px-margin-mobile">
+<section class="bg-white py-12 md:py-24 px-margin-mobile">
 <div class="max-w-container-max mx-auto">
 <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
 <!-- Card 1 -->
@@ -71,14 +71,14 @@
 </div>
 </section>
 <!-- Section 3: The {{ $settings->site_name }} Advantage -->
-<section class="bg-surface-container-low py-24">
+<section class="bg-surface-container-low py-12 md:py-24">
 <div class="max-w-container-max mx-auto px-margin-mobile">
 <div class="flex flex-col lg:flex-row gap-20 items-center">
 <!-- Image Side -->
 <div class="w-full lg:w-1/2 relative">
 <div class="absolute -top-6 -left-6 w-24 h-24 bg-bank-orange/10 -z-10"></div>
 <div class="relative aspect-[4/5] w-full overflow-hidden">
-<img class="w-full h-full object-cover" data-alt="A professional male senior financial advisor in a charcoal grey tailored suit, speaking with authority and confidence. He is gesturing towards a transparent glass screen displaying real-time stock market fluctuations and golden growth curves. The lighting is crisp and professional, emphasizing a clean, institutional environment with high-contrast shadows and sharp focus on the advisor's calm, trustworthy expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqaz4DzKU2g90qNJIRS-kh3Xj6X0pRUCQG2CZfrAKUXksS2br_5WFubmpsSKGPu7aDZOn-B6DEorDufQ3ncrP45G4RZSE73snADCiZyw4vyqXEhEETnJcSPW4MF_zCsCo3gi1qsHaBIN0ZsCQ0RYKw4KQT4tCu2zpaqppqR-LzGQXogUoTS7bXb_oq0u_poUCZiT8uPAR17VAsHpiZCp19b98O6MfguFDpg5V78CZp4mHhE3JMj7YO"/>
+<img class="w-full h-full object-cover" data-alt="A professional male senior financial advisor in a charcoal grey tailored suit, speaking with authority and confidence. He is gesturing towards a transparent glass screen displaying real-time stock market fluctuations and golden growth curves. The lighting is crisp and professional, emphasizing a clean, institutional environment with high-contrast shadows and sharp focus on the advisor's calm, trustworthy expression." src="{{ asset('storage/app/public/photos/investments-advisor.jpg') }}"/>
 </div>
 <!-- Stats Overlay -->
 <div class="absolute bottom-10 -right-6 bg-bank-charcoal p-8 text-white max-w-[240px] shadow-2xl">
@@ -131,7 +131,7 @@
 </div>
 </section>
 <!-- Section 4: Final CTA -->
-<section class="bg-bank-charcoal py-24">
+<section class="bg-bank-charcoal py-12 md:py-24">
 <div class="max-w-container-max mx-auto px-margin-mobile text-center flex flex-col items-center">
 <h2 class="font-headline-xl text-headline-xl text-white uppercase tracking-tight mb-6">Ready to Plan Your Financial Future?</h2>
 <p class="font-body-lg text-body-lg text-white/70 max-w-2xl mb-12">

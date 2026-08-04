@@ -93,6 +93,7 @@ tailwind.config = {
                 caption: ['12px', { lineHeight: '16px', fontWeight: '400' }],
                 'label-md': ['14px', { lineHeight: '16px', fontWeight: '500' }],
                 'headline-md': ['24px', { lineHeight: '32px', fontWeight: '600' }],
+                /* Semantic heroes: use CSS classes .text-hero-large|medium|small in layouts/base.blade.php */
             },
         },
     },

@@ -20,6 +20,19 @@
     <style>
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         [x-cloak] { display: none !important; }
+        .goog-te-gadget { font-size: 12px !important; }
+        .goog-te-gadget .goog-te-combo {
+            max-width: 140px;
+            padding: 4px 8px;
+            border: 1px solid #e6bdb2;
+            background: #fff;
+            color: #1a1c1c;
+        }
+        .goog-te-banner-frame.skiptranslate { display: none !important; }
+        body { top: 0 !important; }
+        .goog-logo-link, .goog-te-gadget span { display: none !important; }
+        .goog-te-gadget { color: transparent !important; }
+        .goog-te-gadget .goog-te-combo { color: #1a1c1c !important; }
     </style>
 
     @yield('styles')
@@ -30,6 +43,13 @@
     @if($settings->tido)
     <script src="//code.tidio.co/{{ $settings->tido }}" async></script>
     @endif
+
+    <script>
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({ pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL }, 'google_translate_element');
+    }
+    </script>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     @yield('scripts')
 </body>

@@ -1,7 +1,11 @@
-<footer class="bg-inverse-surface py-stack-lg border-t border-outline-variant/10 text-on-primary">
-    <div class="max-w-[1200px] mx-auto px-4 md:px-gutter grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-stack-lg mb-stack-lg">
+<footer class="bg-inverse-surface py-12 md:py-stack-lg border-t border-outline-variant/10 text-on-primary">
+    <div class="max-w-[1200px] mx-auto px-4 md:px-gutter grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-stack-lg mb-8 md:mb-stack-lg">
         <div>
-            <img alt="{{ $settings->site_name }} Logo" class="h-8 w-auto object-contain brightness-0 invert mb-stack-md" src="{{ asset('storage/app/public/'.$settings->logo) }}">
+            @include('includes.public-brand', [
+                'brandClass' => 'inline-flex items-center mb-stack-md',
+                'brandImgClass' => 'h-8 w-auto object-contain brightness-0 invert',
+                'brandTextClass' => 'font-label-bold text-on-primary uppercase tracking-wider',
+            ])
             <p class="text-body-sm opacity-70 leading-relaxed">
                 {{ $settings->site_name }} provides institutional reliability and secure global financial services.
             </p>

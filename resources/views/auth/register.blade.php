@@ -3,17 +3,14 @@
 @section('title', 'Member Registration')
 @section('content')
 
-@include('includes.public-auth-header')
+@include('includes.public-auth-chrome')
 
-<main class="w-full pt-16 min-h-screen bg-surface">
-<div class="flex flex-col lg:flex-row min-h-[calc(100vh-4rem)]">
+<main class="w-full min-h-[calc(100vh-3.5rem)] bg-surface">
+<div class="flex flex-col lg:flex-row min-h-[calc(100vh-3.5rem)]">
     <div class="hidden lg:flex lg:w-2/5 bg-inverse-surface relative overflow-hidden">
         <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px); background-size: 20px 20px;"></div>
-        <div class="relative flex flex-col justify-center w-full text-on-primary p-12 z-10">
-            <a href="/" class="mb-6">
-                <img src="{{ asset('storage/app/public/' . $settings->logo) }}" alt="Logo" class="h-12 filter brightness-0 invert">
-            </a>
-            <h1 class="font-headline-lg mb-6">Start Banking with Us</h1>
+        <div class="relative flex flex-col justify-center w-full text-on-primary p-8 md:p-12 z-10">
+            <h1 class="text-headline-lg mb-6">Start Banking with Us</h1>
             <p class="font-body-lg text-on-primary/70 mb-8 max-w-md">Create your {{ $settings->site_name }} account in just a few steps.</p>
             @foreach (['Secure Banking Platform', 'Fast Transfers', '24/7 Account Access'] as $benefit)
             <div class="flex items-start gap-3 mb-4">
@@ -24,15 +21,8 @@
         </div>
     </div>
 
-    <div class="w-full lg:w-3/5 flex flex-col justify-center items-center p-6 lg:p-12">
+    <div class="w-full lg:w-3/5 flex flex-col justify-center items-center p-4 sm:p-6 lg:p-12">
         <div class="w-full max-w-2xl">
-            <!-- Mobile Logo -->
-            <div class="lg:hidden text-center mb-8">
-                <a href="/">
-                    <img src="{{ asset('storage/app/public/' . $settings->logo) }}" alt="Logo" class="h-12 mx-auto">
-                </a>
-            </div>
-            
             <!-- Alerts -->
             @if (Session::has('status'))
                 <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded" role="alert">
@@ -633,8 +623,6 @@
     </div>
 </div>
 </main>
-
-@include('includes.public-auth-footer')
 
 @endsection
 

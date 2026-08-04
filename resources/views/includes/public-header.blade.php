@@ -1,6 +1,7 @@
 @php
     $activeNav = $activeNav ?? null;
     $navItems = [
+        'home' => ['label' => 'Home', 'url' => url('/')],
         'personal' => ['label' => 'Personal Banking', 'url' => url('personal')],
         'business' => ['label' => 'Business Banking', 'url' => url('business')],
         'loans' => ['label' => 'Loans', 'url' => url('loans')],
@@ -16,20 +17,13 @@
     };
 @endphp
 
-<header class="fixed top-0 w-full z-50" x-data="{ drawerOpen: false }" @keydown.escape.window="drawerOpen = false">
+<header class="fixed top-0 w-full z-50 overflow-visible" x-data="{ drawerOpen: false }" @keydown.escape.window="drawerOpen = false">
     {{-- Top bar --}}
-    <div class="bg-surface-container-lowest h-14 border-b border-outline-variant/30 flex items-center shadow-sm">
-        <div class="max-w-[1200px] mx-auto w-full px-4 md:px-gutter flex justify-between items-center">
-            <a href="{{ url('/') }}" class="flex items-center gap-stack-sm">
-                <img alt="{{ $settings->site_name }} Logo" class="h-8 w-auto object-contain" src="{{ asset('storage/app/public/'.$settings->logo) }}">
-                <span class="font-label-bold text-on-surface uppercase tracking-wider hidden sm:inline">{{ $settings->site_name }}</span>
-            </a>
-            <div class="flex items-center gap-stack-md">
-                <div id="google_translate_element" class="hidden md:block"></div>
-                <div class="hidden md:flex items-center text-on-surface-variant gap-1">
-                    <span class="material-symbols-outlined text-sm">language</span>
-                    <span class="font-label-md">English</span>
-                </div>
+    <div class="bg-surface-container-lowest h-14 border-b border-outline-variant/30 flex items-center shadow-sm overflow-visible">
+        <div class="max-w-[1200px] mx-auto w-full px-4 md:px-gutter flex justify-between items-center overflow-visible">
+            @include('includes.public-brand')
+            <div class="flex items-center gap-stack-md overflow-visible">
+                <div id="google_translate_slot_desktop" class="hidden md:block min-w-[140px] max-w-[220px] overflow-visible"></div>
                 <button type="button" class="md:hidden p-2 text-on-surface" @click="drawerOpen = true" aria-label="Open menu">
                     <span class="material-symbols-outlined">menu</span>
                 </button>
@@ -40,15 +34,15 @@
     {{-- Desktop nav --}}
     <div class="hidden md:block bg-inverse-surface h-[75px] shadow-lg">
         <div class="max-w-[1200px] mx-auto w-full px-gutter h-full flex justify-between items-center">
-            <nav class="flex h-full items-center gap-stack-lg">
+            <nav class="flex h-full items-center gap-4 lg:gap-stack-lg overflow-x-auto">
                 @foreach ($navItems as $key => $item)
                     <a href="{{ $item['url'] }}"
-                       class="font-label-bold uppercase tracking-widest transition-colors h-full flex items-center pt-1 text-sm {{ $navClass($key) }}">
+                       class="font-label-bold uppercase tracking-widest transition-colors h-full flex items-center pt-1 text-xs lg:text-sm whitespace-nowrap {{ $navClass($key) }}">
                         {{ $item['label'] }}
                     </a>
                 @endforeach
             </nav>
-            <a href="{{ url('login') }}" class="bg-primary hover:bg-primary-container text-on-primary px-8 py-3 font-label-bold text-sm tracking-widest transition-all rounded-[0px]">
+            <a href="{{ url('login') }}" class="shrink-0 bg-primary hover:bg-primary-container text-on-primary px-6 lg:px-8 py-3 font-label-bold text-sm tracking-widest transition-all rounded-[0px]">
                 ONLINE BANKING
             </a>
         </div>
@@ -79,6 +73,10 @@
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
+            <div class="px-4 py-3 border-b border-outline-variant/30">
+                <p class="font-label-md text-on-surface-variant uppercase tracking-wider text-xs mb-2">Language</p>
+                <div id="google_translate_slot_mobile" class="w-full overflow-visible"></div>
+            </div>
             <nav class="flex flex-col p-4 gap-1 flex-1 overflow-y-auto">
                 @foreach ($navItems as $key => $item)
                     <a href="{{ $item['url'] }}"
@@ -97,3 +95,6 @@
         </div>
     </div>
 </header>
+
+{{-- Single translate mount; JS relocates between desktop slot and mobile drawer --}}
+<div id="google_translate_element" class="sr-only" aria-hidden="true"></div>

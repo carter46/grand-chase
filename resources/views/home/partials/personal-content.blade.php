@@ -2,13 +2,13 @@
 <!-- Hero Section: Immersive with Scrim -->
 <section class="relative w-full overflow-hidden">
 <div class="absolute inset-0 bg-on-background/40 z-10"></div>
-<div class="relative h-[640px] w-full flex items-center justify-center bg-cover bg-center" data-alt="A warm, brightly lit modern living room where a multi-generational family—a couple and their two young children—are sitting on a plush gray sofa laughing together. The scene exudes financial security and domestic bliss. Large glass windows in the background reveal a manicured garden. The lighting is soft and high-end, evoking professional architectural photography with a focus on trust and comfort." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAtjJjq8ANZ9679epk182FHQGxsT8nghWwZdzqzx-9aeasQWZrHXko4QPUxY6mJr1iiePJf_nbTUVpJ1_czeQDxp8IqjfbiFl9DXxNxAEMmYI5xSygP26vKUWmwuV1yyaTihFg_99lKoMUMJRS5OpjHUMDJF1of9my7h_f_sKDCydiE48RB2NzBnD7dUvikNOhJ7syZVHjWsqD8zyfxmWGXRFt5U0g44K2XUA_SQuACXxzflM1k1uE-')">
-<div class="relative z-20 max-w-[1200px] mx-auto px-margin-desktop w-full flex flex-col items-start">
-<div class="max-w-2xl">
+<div class="relative min-h-[420px] md:h-[640px] w-full flex items-center justify-center bg-cover bg-center" data-alt="A warm, brightly lit modern living room where a multi-generational family—a couple and their two young children—are sitting on a plush gray sofa laughing together. The scene exudes financial security and domestic bliss. Large glass windows in the background reveal a manicured garden. The lighting is soft and high-end, evoking professional architectural photography with a focus on trust and comfort." style="background-image: url('{{ asset('storage/app/public/photos/hero-personal.jpg') }}')">
+<div class="relative z-20 max-w-[1200px] mx-auto px-4 md:px-gutter w-full flex flex-col items-start">
+<div class="max-w-2xl pt-10 md:pt-0">
 <span class="inline-block py-1 px-3 bg-primary text-on-primary font-label-bold uppercase tracking-widest text-[10px] mb-stack-md animate-fade-in">
                         Institutional Reliability Since 1924
                     </span>
-<h1 class="font-headline-xl text-white text-[56px] leading-[1.1] mb-stack-md drop-shadow-lg">
+<h1 class="text-hero-medium text-white mb-stack-md drop-shadow-lg">
                         Secure Your Family's <br/>Financial Future
                     </h1>
 <p class="font-body-lg text-white/90 mb-stack-lg max-w-lg">
@@ -29,8 +29,8 @@
 <div class="absolute bottom-0 right-0 w-1/3 h-24 bg-surface z-20 [clip-path:polygon(20%_0%,100%_0%,100%_100%,0%_100%)] hidden lg:block"></div>
 </section>
 <!-- Accounts & Savings Grid -->
-<section class="bg-surface py-24">
-<div class="max-w-[1200px] mx-auto px-margin-desktop">
+<section class="bg-surface py-12 md:py-24">
+<div class="max-w-[1200px] mx-auto px-4 md:px-gutter">
 <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-stack-lg">
 <div class="max-w-xl">
 <h2 class="font-headline-lg text-on-surface uppercase tracking-tight mb-4">Our Personal Banking Solutions</h2>
@@ -84,12 +84,12 @@
 </div>
 </section>
 <!-- Features & Benefits Section -->
-<section class="w-full bg-white py-24">
-<div class="max-w-[1200px] mx-auto px-margin-desktop grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+<section class="w-full bg-white py-12 md:py-24">
+<div class="max-w-[1200px] mx-auto px-4 md:px-gutter grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
 <div class="relative">
 <div class="absolute -top-8 -left-8 w-48 h-48 bg-primary/5 rounded-full blur-3xl"></div>
 <div class="relative bg-surface p-8 -rotate-2 hover:rotate-0 transition-transform duration-700 shadow-xl">
-<img class="w-full aspect-[4/5] object-cover grayscale-[20%]" data-alt="A high-resolution close-up of a sleek, dark-themed mobile banking app interface being held by a businessman in a tailored charcoal suit. The screen displays a clean dashboard with a balance chart, recent transactions, and a 'transfer' button in vibrant {{ $settings->site_name }} orange. The background is a soft-focus corporate lobby with warm wood tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9nIkQlezfYf3QabSMTuo9rygdqUyeRKVgQl4RFJDWy4bfLcRippAmluIQ0xOi6al5DO8VS4eCNeALCD0WGvOQi4iPnqePz40WryiMOjUsB-chOEIBJbRz85OFT3by8u32IruzE3NJA6YOZ3uJpA6Y5BnXVOlA4iSXhjvE87G2R3pMtNmCW1jS2TEyzjxWF9i_s4Jn1872kc9aiqsriT4_DZBdadFUQZbmJkcBBiPBrnEb_LL-SuD0"/>
+<img class="w-full aspect-[4/5] object-cover grayscale-[20%]" data-alt="A high-resolution close-up of a sleek, dark-themed mobile banking app interface being held by a businessman in a tailored charcoal suit. The screen displays a clean dashboard with a balance chart, recent transactions, and a 'transfer' button in vibrant {{ $settings->site_name }} orange. The background is a soft-focus corporate lobby with warm wood tones." src="{{ asset('storage/app/public/photos/personal-mobile-app.jpg') }}"/>
 </div>
 <!-- Float Data Overlay -->
 <div class="absolute -bottom-10 -right-10 bg-on-background p-6 shadow-2xl hidden md:block">
@@ -161,7 +161,7 @@
 <rect fill="url(#grid)" height="100%" width="100%"></rect>
 </svg>
 </div>
-<div class="max-w-[1200px] mx-auto px-margin-desktop relative z-10 text-center">
+<div class="max-w-[1200px] mx-auto px-4 md:px-gutter relative z-10 text-center">
 <h2 class="font-headline-lg text-white mb-stack-md uppercase tracking-wide">Ready to start your journey with us?</h2>
 <p class="font-body-md text-white/60 mb-12 max-w-xl mx-auto">
                 Join the thousands of families who trust {{ $settings->site_name }} for their generational wealth management and daily banking needs.

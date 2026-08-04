@@ -11,7 +11,7 @@
 <section class="relative bg-inverse-surface py-16 md:py-24">
     <div class="max-w-[1200px] mx-auto px-4 md:px-gutter">
         <span class="font-label-bold text-primary uppercase tracking-widest">{{ $settings->site_name }}</span>
-        <h1 class="font-headline-lg-mobile md:font-headline-xl text-on-primary mt-4 uppercase">Privacy Policy</h1>
+        <h1 class="text-hero-small text-on-primary mt-4 uppercase">Privacy Policy</h1>
         <p class="font-body-lg text-on-primary/70 mt-4 max-w-2xl">How we collect, use, and safeguard your personal information.</p>
     </div>
 </section>

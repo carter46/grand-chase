@@ -5,15 +5,15 @@
 @endphp
 <div class="flex flex-col w-full">
 <!-- Hero Section -->
-<section class="relative h-[614px] min-h-[500px] flex items-center overflow-hidden bg-on-surface">
+<section class="relative min-h-[420px] md:h-[614px] flex items-center overflow-hidden bg-on-surface">
 <div class="absolute inset-0 z-0">
-<div class="bg-cover bg-center w-full h-full opacity-40" data-alt="High-angle cinematic shot of a modern glass skyscraper reflecting a clear blue sky at dawn. The architecture is sharp and geometric, conveying a sense of stability and institutional power. The lighting is cold and professional with hints of warm sunrise oranges hitting the steel frames. 8k resolution, architectural photography style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAb_zi1OYn0n__Mr0Arc-5IgOE4U1h-tITheSVF7oIdjca1MGT9PVLFQHB7cWrDh1P8buCLgu616DVb96CrDC7A1Um-wE1p5CSJ1U40JT6xtwjlIQcco4O--DagrvdjHG77v8PaqmRE65VrycMAV5kwohN16u6TiNZ71nTZk6UD2qzaKnhzr8h6gJy082Goes7c_BYNhZFO9YE39hy-bAn2Ycm3xw-x2d4ddFsXpeI7JvSXpFwgtLZS')"></div>
+<div class="bg-cover bg-center w-full h-full opacity-60" data-alt="High-angle cinematic shot of a modern glass skyscraper reflecting a clear blue sky at dawn. The architecture is sharp and geometric, conveying a sense of stability and institutional power. The lighting is cold and professional with hints of warm sunrise oranges hitting the steel frames. 8k resolution, architectural photography style." style="background-image: url('{{ asset('storage/app/public/photos/hero-contact.jpg') }}')"></div>
 <div class="absolute inset-0 bg-gradient-to-r from-on-surface via-on-surface/80 to-transparent"></div>
 </div>
-<div class="relative z-10 max-w-[1200px] mx-auto px-margin-desktop w-full">
+<div class="relative z-10 max-w-[1200px] mx-auto px-4 md:px-gutter w-full pt-10">
 <div class="max-w-2xl">
 <span class="font-label-bold text-primary-fixed-dim tracking-[0.2em] uppercase mb-stack-md block">Institutional Reliability</span>
-<h1 class="font-headline-xl text-white mb-stack-md text-[56px] leading-[1.1]">Global Support &amp; Client Relations</h1>
+<h1 class="text-hero-medium text-white mb-stack-md">Global Support &amp; Client Relations</h1>
 <p class="font-body-lg text-surface-variant max-w-xl">
           {{ $settings->site_name }} provides dedicated advisory and technical support for our global partners. Experience the precision of institutional management paired with the nuance of personal service.
         </p>
@@ -21,7 +21,7 @@
 </div>
 </section>
 <!-- Department Grid & Form Section -->
-<section class="max-w-[1200px] mx-auto px-margin-desktop -mt-24 relative z-20 pb-stack-lg">
+<section class="max-w-[1200px] mx-auto px-4 md:px-gutter -mt-12 md:-mt-24 relative z-20 pb-12 md:pb-stack-lg">
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
 <!-- Contact Cards Column -->
 <div class="lg:col-span-7 flex flex-col gap-gutter">
@@ -151,7 +151,7 @@
 </section>
 <!-- Global Offices Section -->
 <section class="bg-surface-container-low py-stack-lg overflow-hidden">
-<div class="max-w-[1200px] mx-auto px-margin-desktop">
+<div class="max-w-[1200px] mx-auto px-4 md:px-gutter">
 <div class="flex items-end justify-between mb-16">
 <div class="flex flex-col">
 <h2 class="font-headline-xl text-on-surface">Global Footprint</h2>
@@ -169,7 +169,7 @@
 <!-- New York HQ -->
 <div class="flex flex-col gap-stack-md group">
 <div class="h-64 overflow-hidden relative">
-<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="Black and white street level view of a grand limestone bank building in New York City's Financial District. The architecture features massive columns and heavy bronze doors. Crisp, high-contrast shadows. The atmosphere is professional, timeless, and prestigious." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAXtT9RyCcOXj_I2UmvHJ_q4uIuWszV6Ha8z72GqQI60VINxH-24pajv5l5Nuv3HHo7iujt3MOnx_78jRvCcSncdE00hy6oQNtmFzvmwBikVkNuU3leZTSfaQV_TfpvuGS1Ba6DzZ9idXEk2D8k0s_17zF4VOAJ2k5dI8_ilKwX4fL7GFhoGiCQ3PIGuYh6vJH1bnmsIMuZ2VsfTf7rvSwILeZ1IrVHekDRokJGViYDWDQdSj1SQ-8G')"></div>
+<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="Black and white street level view of a grand limestone bank building in New York City's Financial District. The architecture features massive columns and heavy bronze doors. Crisp, high-contrast shadows. The atmosphere is professional, timeless, and prestigious." style="background-image: url('{{ asset('storage/app/public/photos/contact-nyc.jpg') }}')"></div>
 <div class="absolute top-4 left-4 bg-primary text-white font-label-bold uppercase px-3 py-1 text-[10px] tracking-widest">Headquarters</div>
 </div>
 <div>
@@ -190,7 +190,7 @@
 <!-- London Hub -->
 <div class="flex flex-col gap-stack-md group">
 <div class="h-64 overflow-hidden relative">
-<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="Modern architectural detail of a contemporary steel and glass tower in London's Canary Wharf. Low angle shot looking up at the sky. Sharp reflections, clean lines, corporate luxury aesthetic with a slight blue tint." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBbXax9R_HXzFMFW5CS77RZUpoPSQQcBpSAAHd3WDA4oaHTP5nXJCyp9HMLeYGpK_-XNAtso4zkd5k8ehdr6aJxguo_Kv_Yz2BLIwPWCzFvCb06Ys5ItYBYAeD1ChQPW9xNlwimNcncq7huxpU4ndbijj2WdPMlln6E3dxoezguDEHBpgDzhDYU4rjsLBiXakBcfGwzW6OOJbrDpUxCgYt_8mYs0OzQt9CQSPZ7dEzPgoOz7q1_Gz0D')"></div>
+<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="Modern architectural detail of a contemporary steel and glass tower in London's Canary Wharf. Low angle shot looking up at the sky. Sharp reflections, clean lines, corporate luxury aesthetic with a slight blue tint." style="background-image: url('{{ asset('storage/app/public/photos/contact-london.jpg') }}')"></div>
 </div>
 <div>
 <h4 class="font-headline-md text-on-surface">London</h4>
@@ -206,7 +206,7 @@
 <!-- Singapore Hub -->
 <div class="flex flex-col gap-stack-md group">
 <div class="h-64 overflow-hidden relative">
-<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="A sophisticated indoor office lobby in Singapore, featuring marble floors, lush interior greenery (biophilic design), and a large digital screen displaying financial charts. Natural sunlight streaming through floor-to-ceiling windows. Ultra-modern corporate elegance." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA32Yc_B2KZ-mbWsA0XUZLXdpy_2XCSW7oG3zVbA0y9ncmAjGLH_lCHpwNgIbAsD0YjoTF_ai6V2LrlyrlJf4Kc2CyR7nmS1tUb_bGn_9fH6B3iICjy_1ZKKDmMBtXEzW5_aJNVjYYLR7yg6YwfcBfkVepHHoMZdgqZcWrpxw9DuaoMcbxSEnBddJLL2JbhiR66ILV3p-se82cAa-qmUkKMAzmHO7Cr_bNZVZyDKAaugCKxdVDunf9Z')"></div>
+<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" data-alt="A sophisticated indoor office lobby in Singapore, featuring marble floors, lush interior greenery (biophilic design), and a large digital screen displaying financial charts. Natural sunlight streaming through floor-to-ceiling windows. Ultra-modern corporate elegance." style="background-image: url('{{ asset('storage/app/public/photos/contact-singapore.jpg') }}')"></div>
 </div>
 <div>
 <h4 class="font-headline-md text-on-surface">Singapore</h4>
@@ -224,7 +224,7 @@
 </div>
 </section>
 <!-- Find a Branch CTA -->
-<section class="max-w-[1200px] mx-auto px-margin-desktop py-stack-lg">
+<section class="max-w-[1200px] mx-auto px-4 md:px-gutter py-stack-lg">
 <div class="bg-on-surface p-12 flex flex-col md:flex-row items-center justify-between gap-stack-lg overflow-hidden relative">
 <!-- Decorative element -->
 <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>

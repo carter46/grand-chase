@@ -5,15 +5,15 @@
 @endphp
 <div class="flex flex-col w-full">
 <!-- Hero Section -->
-<section class="relative w-full h-[600px] flex items-center overflow-hidden">
+<section class="relative w-full min-h-[420px] md:h-[600px] flex items-center overflow-hidden">
 <div class="absolute inset-0 z-0">
-<div class="bg-cover bg-center w-full h-full transform scale-105" data-alt="A cinematic, high-angle view of a luxury corporate boardroom at twilight. Through floor-to-ceiling windows, a sprawling metropolis glows with office lights. The interior features polished mahogany walls, a long glass conference table reflecting the city skyline, and ergonomic leather chairs. The atmosphere is quiet, powerful, and professional, utilizing deep blues, warm wood tones, and sharp architectural lines." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDBU1uaJPRNBAZ413okURPE0oCXbds2BEbu5cePY6pjbSLJgn_QjHyvtMWxRn5y-yIrgur8tJzKMZH8N_9_XifvQUmXjIXfiXtikSDLAQjz829Ctmzn_tmLFtLYTNPE5Rjc72muGhwr-sNHRqk0t-Gp2qoIMweI_ORXfGnZ6KADYF2M95IVLL9lni3OvJm4dvGl4D3mWGw9Ww39gwmKG0xl92pgvf5veRMCoNJQpLMq_I8Tqt14J5jb')"></div>
+<div class="bg-cover bg-center w-full h-full" data-alt="A cinematic, high-angle view of a luxury corporate boardroom at twilight. Through floor-to-ceiling windows, a sprawling metropolis glows with office lights. The interior features polished mahogany walls, a long glass conference table reflecting the city skyline, and ergonomic leather chairs. The atmosphere is quiet, powerful, and professional, utilizing deep blues, warm wood tones, and sharp architectural lines." style="background-image: url('{{ asset('storage/app/public/photos/hero-business.jpg') }}')"></div>
 <div class="absolute inset-0 bg-inverse-surface/60 backdrop-brightness-75"></div>
 </div>
-<div class="relative z-10 max-w-[1200px] mx-auto px-gutter w-full">
+<div class="relative z-10 max-w-[1200px] mx-auto px-4 md:px-gutter w-full pt-10">
 <div class="max-w-2xl">
 <span class="inline-block bg-primary text-on-primary px-3 py-1 font-label-bold text-xs uppercase tracking-widest mb-stack-md">Corporate & Institutional</span>
-<h1 class="font-headline-xl text-on-primary mb-stack-md leading-tight">
+<h1 class="text-hero-medium text-on-primary mb-stack-md">
           Empowering Your Enterprise with Institutional Strength
         </h1>
 <p class="font-body-lg text-on-primary opacity-90 mb-stack-lg leading-relaxed">
@@ -32,7 +32,7 @@
 </section>
 <!-- Section 1: Core Business Solutions -->
 <section class="py-[100px] bg-surface-container-lowest">
-<div class="max-w-[1200px] mx-auto px-gutter">
+<div class="max-w-[1200px] mx-auto px-4 md:px-gutter">
 <div class="flex items-end justify-between mb-[64px]">
 <div class="max-w-xl">
 <p class="text-primary font-label-bold uppercase tracking-widest mb-stack-sm text-sm">Strategic Services</p>
@@ -89,11 +89,11 @@
 <!-- Section 2: Institutional Trust (Split) -->
 <section class="grid grid-cols-1 lg:grid-cols-2 min-h-[600px] bg-surface">
 <div class="relative min-h-[400px] lg:min-h-0">
-<div class="absolute inset-0 bg-cover bg-center" data-alt="A professional relationship manager in a crisp business suit presenting high-level financial data on a tablet to a group of executives. The background is a brightly lit, contemporary office with glass partitions and mid-century modern furniture. Soft natural light, high-end corporate lifestyle photography, clean and professional aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBJKlo8M1MiMMFcidR1ZKi7BjnIkhyndZ_TVB6mXWqnIyXPd4AM4Vq8tIVp4gOIT9A5y3ERMMy6RL5iE6o-3Ciuzwc_tYOsSqXQCBj-5rm5-1zXTIvNFO40vL1eh14CiLCMUbs8ulVqEmg1qhZoGdHLjDB9oPhHI3BJLMVMgY7LIzBgyDn0w0MVMCTACummjtseOxDhbLfexPjWosoT7uTUjZo8D-KnbGCqtuUVTwl1HoBBAxbYthat')"></div>
+<div class="absolute inset-0 bg-cover bg-center" data-alt="A professional relationship manager in a crisp business suit presenting high-level financial data on a tablet to a group of executives. The background is a brightly lit, contemporary office with glass partitions and mid-century modern furniture. Soft natural light, high-end corporate lifestyle photography, clean and professional aesthetic." style="background-image: url('{{ asset('storage/app/public/photos/business-manager.jpg') }}')"></div>
 <!-- Decorative Overlay -->
 <div class="absolute bottom-0 right-0 bg-primary w-24 h-24 hidden lg:block -mr-12 -mb-12 z-20"></div>
 </div>
-<div class="flex items-center justify-center py-24 px-gutter lg:px-24">
+<div class="flex items-center justify-center py-12 md:py-24 px-4 md:px-gutter lg:px-24">
 <div class="max-w-lg">
 <h2 class="font-headline-lg text-on-surface mb-stack-md">Strategic Partnership, Proven Reliability</h2>
 <p class="font-body-lg text-on-surface-variant mb-stack-lg">
@@ -137,7 +137,7 @@
 <!-- Abstract Background Element -->
 <div class="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[120px] -mr-48 -mt-48"></div>
 <div class="absolute bottom-0 left-0 w-[300px] h-[300px] bg-surface-variant/5 rounded-full blur-[100px] -ml-32 -mb-32"></div>
-<div class="max-w-[1200px] mx-auto px-gutter relative z-10 text-center">
+<div class="max-w-[1200px] mx-auto px-4 md:px-gutter relative z-10 text-center">
 <div class="max-w-3xl mx-auto">
 <h2 class="font-headline-xl text-on-primary mb-stack-md">Ready to Scale Your Business?</h2>
 <p class="font-body-lg text-on-primary opacity-80 mb-[48px]">
@@ -160,7 +160,7 @@
 </section>
 <!-- Trust Bar (Data Visualization Element) -->
 <section class="py-stack-lg border-t border-outline-variant/10 bg-surface-container-low">
-<div class="max-w-[1200px] mx-auto px-gutter flex flex-wrap justify-center md:justify-between items-center gap-stack-lg opacity-60 grayscale hover:grayscale-0 transition-all duration-700">
+<div class="max-w-[1200px] mx-auto px-4 md:px-gutter flex flex-wrap justify-center md:justify-between items-center gap-stack-lg opacity-60 grayscale hover:grayscale-0 transition-all duration-700">
 <div class="flex flex-col items-center">
 <span class="font-headline-md text-on-surface mb-0">94%</span>
 <span class="font-caption uppercase tracking-widest text-on-surface-variant">Retention Rate</span>

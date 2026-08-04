@@ -6,7 +6,7 @@
             <span class="mx-2">/</span>
             <span class="text-on-primary">{{ $title ?? 'Page' }}</span>
         </nav>
-        <h1 class="font-headline-lg md:font-headline-xl text-on-primary uppercase tracking-tight">{{ $title ?? 'Page' }}</h1>
+        <h1 class="text-hero-small text-on-primary uppercase tracking-tight">{{ $title ?? 'Page' }}</h1>
     </div>
 </section>
 <section class="bg-surface py-12 md:py-16">
