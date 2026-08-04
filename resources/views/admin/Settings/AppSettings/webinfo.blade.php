@@ -116,12 +116,24 @@
                 <div class="form-group col-md-6">
                     <h5 class="text-{{ $text }}">Logo (Recommended size; max width, 200px and max height
                         100px.)</h5>
-                    <input name="logo" class="form-control " type="file">
+                    @if (!empty($settings->logo))
+                        <div class="mb-2 p-3 bg-light border rounded d-inline-block">
+                            <img src="{{ public_storage_url($settings->logo) }}" alt="Current logo" style="max-height: 64px; max-width: 200px; object-fit: contain;">
+                        </div>
+                        <p class="small text-muted mb-2">Current: {{ $settings->logo }}</p>
+                    @endif
+                    <input name="logo" class="form-control " type="file" accept=".jpg,.jpeg,.png,image/png,image/jpeg">
                 </div>
                 <div class="form-group col-md-6">
                     <h5 class="text-{{ $text }}">Favicon (Recommended type: png, size: max width, 32px and max
                         height 32px.)</h5>
-                    <input name="favicon" class="form-control " type="file">
+                    @if (!empty($settings->favicon))
+                        <div class="mb-2 p-3 bg-light border rounded d-inline-block">
+                            <img src="{{ public_storage_url($settings->favicon) }}" alt="Current favicon" style="max-height: 32px; max-width: 32px; object-fit: contain;">
+                        </div>
+                        <p class="small text-muted mb-2">Current: {{ $settings->favicon }}</p>
+                    @endif
+                    <input name="favicon" class="form-control " type="file" accept=".jpg,.jpeg,.png,.ico,image/png,image/jpeg,image/x-icon">
                 </div>
             </div>
             <div class="mt-3 form-row">

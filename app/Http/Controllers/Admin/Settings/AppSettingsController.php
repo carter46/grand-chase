@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Settings;
 use App\Models\SettingsCont;
-use Illuminate\Support\Facades\Storage;
 
 class AppSettingsController extends Controller
 {
@@ -61,24 +60,22 @@ class AppSettingsController extends Controller
     public function updatewebinfo(Request $request)
     {
         $this->validate($request, [
-            'logo' => 'mimes:jpg,jpeg,png|max:500|image',
-            'favicon' => 'mimes:jpg,jpeg,png,ico|max:500',
+            'logo' => 'nullable|mimes:jpg,jpeg,png|max:2048|image',
+            'favicon' => 'nullable|mimes:jpg,jpeg,png,ico|max:1024',
         ]);
 
         $settings = Settings::where('id', '=', '1')->first();
 
         if ($request->hasfile('logo')) {
-            $file = $request->file('logo');
-            Storage::disk('public')->delete($settings->logo);
-            $path = $file->store('photos', 'public');
+            delete_public_upload($settings->logo);
+            $path = store_public_upload($request->file('logo'), 'branding', 'logo');
         } else {
-            $path  = $settings->logo;
+            $path = $settings->logo;
         }
 
         if ($request->hasfile('favicon')) {
-            $favfile = $request->file('favicon');
-            Storage::disk('public')->delete($settings->favicon);
-            $pathfav = $favfile->store('photos', 'public');
+            delete_public_upload($settings->favicon);
+            $pathfav = store_public_upload($request->file('favicon'), 'branding', 'favicon');
         } else {
             $pathfav = $settings->favicon;
         }
