@@ -32,3 +32,6 @@ yarn-error.log
 /database/u502532383_uscounty.sql
 /database/*.dump.sql
 /database/*_live.sql
+
+# Static design reference HTML (not needed on Hostinger)
+/new_fsm_trust_banking_website_frontpage/

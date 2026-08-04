@@ -2,19 +2,29 @@
 
 This project follows the same shared-hosting pattern as other Hostinger Laravel apps (e.g. 7th-trade-hub): **build/install locally, commit artifacts, pull on the server**. The server should not need to resolve Composer packages.
 
-## Why Hostinger Git deploy failed before
+## Why Hostinger Git deploy “fails”
 
-Hostinger clones the repo, then runs Composer against the **server PHP** (often 8.2–8.4). This app is **Laravel 8** and its lockfile targets **PHP 8.1**. Composer then fails with “requirements could not be resolved” even though the PHP files were already cloned into File Manager.
+After every pull, Hostinger auto-runs **Composer** when it sees `composer.lock`. On shared hosting that often fails for two reasons:
+
+1. **PHP version mismatch** — Laravel 8 lockfile expects ~PHP 8.1; Hostinger may use 8.2–8.4 → “requirements could not be resolved”.
+2. **`proc_open` disabled** — Composer needs `proc_open`; Hostinger PHP often blocks it →  
+   `The Process class relies on proc_open, which is not available on your PHP installation.`
+
+**Important:** The Git pull of your code usually still succeeds. The red “Deployment failed” is often only the Composer step. If `vendor/` is **committed in Git**, the app can still run after pull even when Hostinger’s Composer step errors.
 
 ## Deployment workflow
 
 1. **Local:** Edit code.
 2. **Local (when PHP deps change):**  
-   `composer install --no-dev --optimize-autoloader`  
-   then commit `vendor/` + `composer.lock` + `composer.json`.
-3. **Local:** Commit and push to GitHub.
+   `composer install --no-dev --optimize-autoloader --ignore-platform-reqs`  
+   then commit `vendor/` + `composer.lock` + `composer.json` yourself (e.g. GitHub Desktop).
+3. **Local:** Push to GitHub.
 4. **Server:** Hostinger Git → **Deploy / Pull**.
-5. **Server:** Confirm `vendor/autoload.php` exists after pull.
+5. **Server:** Confirm `vendor/autoload.php` exists in File Manager (ignore Composer failure if vendor is present).
+
+### Optional: stop Hostinger from running Composer
+
+In hPanel Git / deployment settings, clear any post-deploy Composer / build command if the UI allows it. Otherwise keep committing `vendor/` and treat the Composer error as noise.
 
 ### PHP version on Hostinger
 
@@ -29,7 +39,7 @@ In hPanel → PHP Configuration, set the site to **PHP 8.1** (matches `composer.
 
 ### After first successful pull
 
-If SSH/terminal is available:
+If SSH/terminal is available (and `proc_open` works there — often it does not):
 
 ```bash
 php artisan key:generate   # if APP_KEY empty
@@ -43,12 +53,10 @@ If there is no SSH: import DB via phpMyAdmin using your dump/baseline process, a
 
 ## Composer note
 
-`vendor/` **is tracked** in Git for Hostinger. After changing dependencies locally, always re-run:
+`vendor/` **is tracked** in Git for Hostinger (same as 7th-trade-hub). After changing dependencies locally, always re-run:
 
 ```bash
-composer install --no-dev --optimize-autoloader
+composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 ```
 
-Then commit the updated `vendor/` with the lockfile.
-
-If Hostinger’s auto-Composer step still prints an error after this change, the pull itself usually still has a working `vendor/` from Git — verify `vendor/autoload.php` and set PHP 8.1.
+Then commit the updated `vendor/` with the lockfile yourself.
