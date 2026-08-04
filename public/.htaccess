@@ -1,18 +1,9 @@
 # Security Headers
 <IfModule mod_headers.c>
-    # Prevent clickjacking attacks
     Header always set X-Frame-Options "SAMEORIGIN"
-    
-    # Prevent MIME type sniffing
     Header always set X-Content-Type-Options "nosniff"
-    
-    # Enable XSS protection
     Header always set X-XSS-Protection "1; mode=block"
-    
-    # Referrer policy
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
-    
-    # Remove X-Powered-By header
     Header unset X-Powered-By
 </IfModule>
 
@@ -23,7 +14,7 @@
 
     RewriteEngine On
 
-    # Force HTTPS (SSL) - Redirect HTTP to HTTPS
+    # Force HTTPS
     RewriteCond %{HTTPS} off
     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
@@ -40,6 +31,9 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+</IfModule>
+
+DirectoryIndex index.php
 
 # php -- BEGIN cPanel-generated handler, do not edit
 # Set the “ea-php81” package as the default “PHP” programming language.

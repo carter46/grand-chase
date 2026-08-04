@@ -1,0 +1,23 @@
+# Hostinger: document root is often public_html (repo root), not public/.
+# Forward all web traffic into Laravel's public/ folder.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block direct access to sensitive paths
+    RewriteRule ^(app|bootstrap|config|database|docs|resources|routes|storage|tests|vendor)/ - [F,L]
+    RewriteRule ^(\.env|\.git|composer\.(json|lock)|artisan|phpunit\.xml) - [F,L]
+
+    # Already inside /public — do nothing (if docroot is public/)
+    RewriteRule ^public/ - [L]
+
+    # Serve existing files/dirs from public/
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f [OR]
+    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -d
+    RewriteRule ^(.*)$ /public/$1 [L]
+
+    # Everything else → Laravel front controller
+    RewriteRule ^(.*)$ /public/index.php [L]
+</IfModule>
+
+DirectoryIndex public/index.php index.php

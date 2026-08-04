@@ -35,14 +35,16 @@ In hPanel → PHP Configuration, set the site to **PHP 8.1** (matches `composer.
 - **Do not** commit `.env`.
 - Create `.env` on the server (copy from `.env.example`).
 - Set `APP_KEY`, `APP_URL`, DB_*, `APP_ENV=production`, `APP_DEBUG=false`.
-- **Document root must be** `public_html/public` (the Laravel `public/` folder), not `public_html`.
+- **Document root:** Prefer `public_html` (repo root) with the committed root `.htaccess`, which rewrites into `public/`. That avoids Hostinger 403 when `index.php` only exists under `public/`.
+- Alternative: set document root to `public_html/public` if hPanel allows it and the site loads cleanly. If you get **403 Forbidden** after changing docroot, switch back to `public_html` and keep the root `.htaccess`.
 
 ### Storage symlink (required for uploads/logo)
 
 After pull, over SSH from the project root:
 
 ```bash
-php artisan storage:link
+# Prefer a manual link if artisan fails (symlink() often disabled on Hostinger):
+ln -sfn ../storage/app/public public/storage
 php artisan config:clear
 ```
 
