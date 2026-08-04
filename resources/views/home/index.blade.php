@@ -9,31 +9,122 @@
 @section('title', 'Home')
 
 @section('content')
+@php
+    $heroSlides = [
+        [
+            'eyebrow' => 'Personal Banking',
+            'title' => 'Banking Built Around Your Life',
+            'accent' => 'Your Life',
+            'body' => 'Everyday checking, high-yield savings, and tools that keep your household finances clear—online and on mobile.',
+            'image' => asset('assets/images/hero-personal.jpg'),
+            'cta_primary' => ['label' => 'Open Account', 'url' => url('register')],
+            'cta_secondary' => ['label' => 'Personal Banking', 'url' => url('personal')],
+        ],
+        [
+            'eyebrow' => 'Lending',
+                            'title' => 'Flexible Loans for What\'s Next',
+                            'accent' => 'What\'s Next',
+            'body' => 'Personal, auto, and business lending with transparent terms—so you can fund goals without the guesswork.',
+            'image' => asset('assets/images/hero-loans.jpg'),
+            'cta_primary' => ['label' => 'Apply Now', 'url' => url('register')],
+            'cta_secondary' => ['label' => 'Explore Loans', 'url' => url('loans')],
+        ],
+        [
+            'eyebrow' => 'Credit Cards',
+            'title' => 'Cards That Work Harder',
+            'accent' => 'Harder',
+            'body' => 'From everyday spending to travel rewards—see card options designed for how you spend and pay.',
+            'image' => asset('assets/images/hero-investments.jpg'),
+            'cta_primary' => ['label' => 'View Cards', 'url' => url('cards')],
+            'cta_secondary' => ['label' => 'Get Started', 'url' => url('register')],
+        ],
+    ];
+@endphp
 <div class="flex flex-col w-full">
-    {{-- Hero --}}
-    <section class="relative min-h-[calc(100vh-104px)] md:min-h-[calc(100vh-131px)] flex items-center justify-center overflow-hidden">
-        <div class="absolute inset-0 z-0">
-            <img alt="Corporate banking" class="w-full h-full object-cover hidden md:block" src="{{ asset('assets/images/hero-home-desktop.jpg') }}">
-            <div class="w-full h-full bg-cover bg-center md:hidden" style="background-image: url('{{ asset('assets/images/hero-home-mobile.jpg') }}')"></div>
-            <div class="absolute inset-0 bg-black/50"></div>
+    {{-- Hero slider --}}
+    <section
+        id="home-hero-slider"
+        class="hero-slider relative h-[calc(100vh-104px)] md:h-[calc(100vh-131px)] min-h-[520px] overflow-hidden select-none bg-inverse-surface cursor-grab active:cursor-grabbing"
+        x-data="homeHeroSlider({{ count($heroSlides) }})"
+        @keydown.left.window="prev()"
+        @keydown.right.window="next()"
+    >
+        <div
+            class="flex h-full will-change-transform touch-pan-y"
+            :class="dragging ? '' : 'transition-transform duration-500 ease-out'"
+            :style="'transform: translate3d(' + (-(index * 100) + dragPct) + '%,0,0)'"
+            @pointerdown="onPointerDown($event)"
+            @pointermove="onPointerMove($event)"
+            @pointerup="onPointerUp($event)"
+            @pointercancel="onPointerUp($event)"
+            @wheel.prevent="onWheel($event)"
+        >
+            @foreach ($heroSlides as $i => $slide)
+            <article class="relative h-full w-full min-w-full flex-shrink-0 flex items-center justify-center overflow-hidden" aria-hidden="{{ $i === 0 ? 'false' : 'true' }}" :aria-hidden="index === {{ $i }} ? 'false' : 'true'">
+                <div class="absolute inset-0 z-0">
+                    <img
+                        src="{{ $slide['image'] }}"
+                        alt="{{ $slide['eyebrow'] }}"
+                        class="no-reveal w-full h-full object-cover pointer-events-none"
+                        draggable="false"
+                    >
+                    <div class="absolute inset-0 bg-black/55"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20"></div>
+                </div>
+                <div class="relative z-10 max-w-[1200px] mx-auto px-4 md:px-gutter w-full text-center flex flex-col items-center py-12">
+                    <span class="font-label-bold text-primary uppercase tracking-[0.2em] mb-stack-md">{{ $slide['eyebrow'] }}</span>
+                    <h1 class="text-hero-large text-on-primary mb-stack-lg uppercase tracking-tighter max-w-4xl">
+                        @php
+                            $title = $slide['title'];
+                            $accent = $slide['accent'];
+                            if ($accent && str_contains($title, $accent)) {
+                                echo e(str_replace($accent, '', $title));
+                                echo '<span class="text-primary italic">' . e($accent) . '</span>';
+                            } else {
+                                echo e($title);
+                            }
+                        @endphp
+                    </h1>
+                    <p class="font-body-md md:font-body-lg text-on-primary/90 max-w-[650px] mb-stack-lg leading-relaxed px-2">
+                        {{ $slide['body'] }}
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-stack-md w-auto px-4 sm:px-0">
+                        <a href="{{ $slide['cta_primary']['url'] }}" class="inline-flex justify-center bg-primary hover:bg-primary-container text-on-primary px-8 sm:px-10 py-3.5 sm:py-4 font-label-bold text-sm tracking-widest transition-all shadow-xl hover:-translate-y-1 text-center min-w-[140px] max-w-[220px]">
+                            {{ $slide['cta_primary']['label'] }}
+                        </a>
+                        <a href="{{ $slide['cta_secondary']['url'] }}" class="inline-flex justify-center bg-bank-charcoal/90 hover:bg-on-background text-on-primary px-8 sm:px-10 py-3.5 sm:py-4 font-label-bold text-sm tracking-widest transition-all shadow-xl hover:-translate-y-1 text-center min-w-[140px] max-w-[220px] border border-on-primary/20">
+                            {{ $slide['cta_secondary']['label'] }}
+                        </a>
+                    </div>
+                </div>
+            </article>
+            @endforeach
         </div>
-        <div class="relative z-10 max-w-[1200px] mx-auto px-4 md:px-gutter text-center flex flex-col items-center pt-10 pb-12 md:py-12">
-            <span class="font-label-bold text-on-primary uppercase tracking-[0.2em] mb-stack-md animate-fade-in-down">Welcome to {{ $settings->site_name }}</span>
-            <h1 class="text-hero-large text-on-primary mb-stack-lg uppercase tracking-tighter">
-                YOUR <span class="text-primary italic">BANK</span> YOUR WAY
-            </h1>
-            <p class="font-body-md md:font-body-lg text-on-primary opacity-90 max-w-[650px] mb-stack-lg leading-relaxed px-2">
-                A bank account that gives you more. Rewards checking from {{ $settings->site_name }} offers the flexibility and convenience you deserve in a global marketplace.
-            </p>
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-stack-md w-auto px-4 sm:px-0">
-                <a href="{{ url('login') }}" class="inline-flex justify-center bg-primary hover:bg-primary-container text-on-primary px-8 sm:px-10 py-3.5 sm:py-4 font-label-bold text-sm tracking-widest transition-all shadow-xl hover:-translate-y-1 text-center min-w-[140px] max-w-[200px] w-auto">LOGIN</a>
-                <a href="{{ url('register') }}" class="inline-flex justify-center bg-bank-charcoal hover:bg-on-background text-on-primary px-8 sm:px-10 py-3.5 sm:py-4 font-label-bold text-sm tracking-widest transition-all shadow-xl hover:-translate-y-1 text-center min-w-[140px] max-w-[200px] w-auto">SIGN UP</a>
+
+        {{-- Controls --}}
+        <div class="absolute inset-x-0 bottom-6 md:bottom-8 z-20 flex items-center justify-center gap-4 pointer-events-none">
+            <button type="button" @click="prev()" class="pointer-events-auto hidden sm:inline-flex h-11 w-11 items-center justify-center border border-on-primary/40 text-on-primary hover:bg-on-primary hover:text-inverse-surface transition-colors" aria-label="Previous slide">
+                <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <div class="pointer-events-auto flex items-center gap-2">
+                @foreach ($heroSlides as $i => $slide)
+                <button
+                    type="button"
+                    @click="go({{ $i }})"
+                    class="h-2.5 rounded-full transition-all duration-300"
+                    :class="index === {{ $i }} ? 'w-8 bg-primary' : 'w-2.5 bg-on-primary/40 hover:bg-on-primary/70'"
+                    aria-label="Go to slide {{ $i + 1 }}"
+                ></button>
+                @endforeach
             </div>
+            <button type="button" @click="next()" class="pointer-events-auto hidden sm:inline-flex h-11 w-11 items-center justify-center border border-on-primary/40 text-on-primary hover:bg-on-primary hover:text-inverse-surface transition-colors" aria-label="Next slide">
+                <span class="material-symbols-outlined">chevron_right</span>
+            </button>
         </div>
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 opacity-50 text-on-primary">
-            <span class="font-caption uppercase tracking-widest">Explore</span>
-            <div class="w-[1px] h-12 bg-gradient-to-b from-on-primary to-transparent"></div>
-        </div>
+
+        <p class="absolute left-4 bottom-6 z-20 hidden lg:block font-caption uppercase tracking-widest text-on-primary/50 pointer-events-none">
+            Swipe · drag · scroll
+        </p>
     </section>
 
     {{-- Banking Solutions --}}
@@ -193,4 +284,71 @@
         </div>
     </section>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+function homeHeroSlider(total) {
+    return {
+        index: 0,
+        total: total,
+        dragging: false,
+        dragPct: 0,
+        startX: 0,
+        width: 1,
+        wheelLock: false,
+        autoTimer: null,
+        init() {
+            this.restartAuto();
+            this.$watch('index', () => this.restartAuto());
+        },
+        restartAuto() {
+            clearInterval(this.autoTimer);
+            this.autoTimer = setInterval(() => {
+                if (!this.dragging) this.next();
+            }, 7000);
+        },
+        go(i) {
+            this.index = (i + this.total) % this.total;
+            this.dragPct = 0;
+        },
+        next() { this.go(this.index + 1); },
+        prev() { this.go(this.index - 1); },
+        onWheel(e) {
+            if (this.wheelLock) return;
+            var delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+            if (Math.abs(delta) < 12) return;
+            this.wheelLock = true;
+            if (delta > 0) this.next();
+            else this.prev();
+            setTimeout(() => { this.wheelLock = false; }, 550);
+        },
+        onPointerDown(e) {
+            if (e.pointerType === 'mouse' && e.button !== 0) return;
+            if (e.target.closest('a, button')) return;
+            this.dragging = true;
+            this.startX = e.clientX;
+            this.width = this.$el.offsetWidth || 1;
+            this.dragPct = 0;
+            e.currentTarget.setPointerCapture(e.pointerId);
+            clearInterval(this.autoTimer);
+        },
+        onPointerMove(e) {
+            if (!this.dragging) return;
+            var dx = e.clientX - this.startX;
+            this.dragPct = (dx / this.width) * 100;
+        },
+        onPointerUp(e) {
+            if (!this.dragging) return;
+            this.dragging = false;
+            try { e.currentTarget.releasePointerCapture(e.pointerId); } catch (err) {}
+            var threshold = 12;
+            if (this.dragPct <= -threshold) this.next();
+            else if (this.dragPct >= threshold) this.prev();
+            this.dragPct = 0;
+            this.restartAuto();
+        }
+    };
+}
+</script>
 @endsection

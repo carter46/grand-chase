@@ -22,7 +22,10 @@
     <div class="bg-surface-container-lowest h-14 border-b border-outline-variant/30 flex items-center shadow-sm overflow-visible">
         <div class="max-w-[1200px] mx-auto w-full px-4 md:px-gutter flex justify-between items-center overflow-visible">
             @include('includes.public-brand')
-            <div class="flex items-center gap-stack-md overflow-visible">
+            <div class="flex items-center gap-3 md:gap-stack-md overflow-visible">
+                <a href="{{ url('contact') }}" class="md:hidden font-label-bold text-[11px] uppercase tracking-wider text-on-surface hover:text-primary whitespace-nowrap">
+                    Help Center
+                </a>
                 <div id="google_translate_slot_desktop" class="hidden md:block min-w-[140px] max-w-[220px] overflow-visible"></div>
             </div>
         </div>

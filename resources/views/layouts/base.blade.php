@@ -33,6 +33,29 @@
         .pt-safe { padding-top: env(safe-area-inset-top); }
         .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
 
+        /* Viewport reveal — images & media */
+        .reveal-up,
+        .reveal-left {
+            opacity: 0;
+            will-change: opacity, transform;
+            transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-up { transform: translateY(36px); }
+        .reveal-left { transform: translateX(-40px); }
+        .reveal-up.is-inview,
+        .reveal-left.is-inview {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .reveal-up,
+            .reveal-left {
+                opacity: 1 !important;
+                transform: none !important;
+                transition: none !important;
+            }
+        }
+
         /* Semantic hero typography */
         .text-hero-large {
             font-family: Inter, sans-serif;
@@ -138,6 +161,58 @@ function googleTranslateElementInit() {
 }
 window.addEventListener('resize', placeTranslateWidget);
 document.addEventListener('DOMContentLoaded', placeTranslateWidget);
+
+(function initViewportReveals() {
+    function boot() {
+        var main = document.querySelector('main');
+        if (!main) return;
+
+        var nodes = [];
+        main.querySelectorAll('img').forEach(function (img, i) {
+            if (img.closest('header') || img.closest('.hero-slider') || img.classList.contains('no-reveal')) return;
+            img.classList.add(i % 2 === 0 ? 'reveal-up' : 'reveal-left');
+            nodes.push(img);
+        });
+        main.querySelectorAll('[data-reveal]').forEach(function (el) {
+            var type = el.getAttribute('data-reveal') || 'up';
+            el.classList.add(type === 'left' ? 'reveal-left' : 'reveal-up');
+            nodes.push(el);
+        });
+        // Background image panels (hero/media blocks)
+        main.querySelectorAll('.bg-cover, [style*="background-image"]').forEach(function (el, i) {
+            if (el.tagName === 'IMG' || el.closest('header') || el.closest('.hero-slider')) return;
+            if (el.classList.contains('reveal-up') || el.classList.contains('reveal-left')) return;
+            // Only animate dedicated media shells, not tiny decorative bits
+            if (el.offsetHeight < 120 && !el.classList.contains('bg-cover')) return;
+            el.classList.add(i % 2 === 0 ? 'reveal-up' : 'reveal-left');
+            nodes.push(el);
+        });
+
+        if (!('IntersectionObserver' in window)) {
+            nodes.forEach(function (el) { el.classList.add('is-inview'); });
+            return;
+        }
+
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('is-inview');
+                io.unobserve(entry.target);
+            });
+        }, {
+            threshold: 0.18,
+            rootMargin: '0px 0px -12% 0px'
+        });
+
+        nodes.forEach(function (el) { io.observe(el); });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
+})();
 </script>
 <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 

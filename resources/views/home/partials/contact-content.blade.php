@@ -220,7 +220,6 @@
 </div>
 </div>
 </div>
-<div class="mt-16 w-full h-[350px] grayscale opacity-80 hover:grayscale-0 transition-all duration-500 shadow-xl" data-location="Manhattan Financial District, New York" style=""></div>
 </div>
 </section>
 <!-- Find a Branch CTA -->

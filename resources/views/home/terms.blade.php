@@ -8,8 +8,12 @@
 @section('title', 'Terms of Service')
 
 @section('content')
-<section class="relative bg-inverse-surface min-h-[calc(100vh-104px)] md:min-h-[calc(100vh-131px)] flex items-center">
-    <div class="max-w-[1200px] mx-auto px-4 md:px-gutter w-full py-12 md:py-16">
+<section class="relative min-h-[calc(100vh-104px)] md:min-h-[calc(100vh-131px)] flex items-center overflow-hidden">
+    <div class="absolute inset-0 z-0">
+        <div class="w-full h-full bg-cover bg-center" style="background-image: url('{{ asset('assets/images/loans-architecture.jpg') }}')"></div>
+        <div class="absolute inset-0 bg-inverse-surface/75"></div>
+    </div>
+    <div class="relative z-10 max-w-[1200px] mx-auto px-4 md:px-gutter w-full py-12 md:py-16">
         <span class="font-label-bold text-primary uppercase tracking-widest">{{ $settings->site_name }} Policy</span>
         <h1 class="text-hero-small text-on-primary mt-4 uppercase">Terms of Service</h1>
         <p class="font-body-lg text-on-primary/70 mt-4 max-w-2xl">Learn more about how {{ $settings->site_name }} protects and uses your personal information.</p>

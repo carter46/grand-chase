@@ -2,8 +2,8 @@
 @php
     $brandHref = $brandHref ?? url('/');
     $brandClass = $brandClass ?? 'flex items-center gap-stack-sm';
-    $brandImgClass = $brandImgClass ?? 'h-8 w-auto object-contain';
-    $brandTextClass = $brandTextClass ?? 'font-label-bold text-on-surface uppercase tracking-wider';
+    $brandImgClass = $brandImgClass ?? 'h-10 md:h-12 w-auto object-contain';
+    $brandTextClass = $brandTextClass ?? 'font-label-bold text-on-surface uppercase tracking-wider text-base md:text-lg';
     $logoUrl = !empty($settings->logo) ? public_storage_url($settings->logo) : '';
     $hasLogo = $logoUrl !== '';
 @endphp
