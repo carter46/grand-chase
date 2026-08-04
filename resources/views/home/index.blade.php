@@ -104,6 +104,79 @@
         </div>
     </section>
 
+    {{-- Global transfers --}}
+    <section class="py-12 md:py-24 bg-surface px-4 md:px-0">
+        <div class="max-w-[1200px] mx-auto md:px-gutter flex flex-col lg:flex-row items-center gap-10 md:gap-16">
+            <div class="w-full lg:w-1/2 order-2 lg:order-1">
+                <span class="font-label-bold text-primary uppercase tracking-widest block mb-4">Worldwide reach</span>
+                <h2 class="text-headline-lg-mobile md:text-headline-lg text-on-surface mb-6 uppercase tracking-tight leading-tight">Send Money Across Borders with Confidence</h2>
+                <p class="font-body-md text-on-surface-variant mb-8 leading-relaxed">
+                    Move funds to family, partners, and suppliers in major markets. Competitive FX pricing, transparent fees, and real-time status so you always know where your transfer stands.
+                </p>
+                <ul class="space-y-4 mb-10">
+                    @foreach ([
+                        'Same-day processing on qualifying corridors',
+                        'Multi-currency accounts for frequent travelers and businesses',
+                        'Encrypted rails with continuous fraud monitoring',
+                    ] as $point)
+                    <li class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl shrink-0">check_circle</span>
+                        <span class="font-body-sm text-on-surface">{{ $point }}</span>
+                    </li>
+                    @endforeach
+                </ul>
+                <a href="{{ url('personal') }}" class="inline-flex items-center gap-2 bg-primary hover:bg-primary-container text-on-primary px-8 py-4 font-label-bold text-sm tracking-widest transition-all">
+                    Explore Transfers
+                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </a>
+            </div>
+            <div class="w-full lg:w-1/2 order-1 lg:order-2">
+                <div class="relative aspect-[4/3] overflow-hidden shadow-2xl">
+                    <img class="w-full h-full object-cover" alt="Global financial district" src="{{ asset('assets/images/contact-nyc.jpg') }}">
+                    <div class="absolute inset-0 bg-gradient-to-t from-bank-charcoal/50 to-transparent"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- Mobile banking --}}
+    <section class="py-12 md:py-24 bg-surface-container-lowest overflow-hidden px-4 md:px-0">
+        <div class="max-w-[1200px] mx-auto md:px-gutter flex flex-col lg:flex-row items-center gap-10 md:gap-16">
+            <div class="w-full lg:w-1/2">
+                <div class="relative aspect-[4/5] max-w-md mx-auto lg:mx-0 overflow-hidden shadow-2xl">
+                    <img class="w-full h-full object-cover" alt="Mobile banking app" src="{{ asset('assets/images/personal-mobile-app.jpg') }}">
+                </div>
+            </div>
+            <div class="w-full lg:w-1/2">
+                <span class="font-label-bold text-primary uppercase tracking-widest block mb-4">Banking on the go</span>
+                <h2 class="text-headline-lg-mobile md:text-headline-lg text-on-surface mb-6 uppercase tracking-tight leading-tight">Your Full Branch, In Your Pocket</h2>
+                <p class="font-body-md text-on-surface-variant mb-8 leading-relaxed">
+                    Check balances, pay bills, deposit checks, and authorize wires from a secure mobile experience built for clarity—not clutter. Biometric unlock and instant alerts keep you in control.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+                    @foreach ([
+                        ['icon' => 'fingerprint', 'title' => 'Biometric Login', 'desc' => 'Face ID and fingerprint for faster, safer access.'],
+                        ['icon' => 'notifications_active', 'title' => 'Live Alerts', 'desc' => 'Know about every debit, deposit, and login.'],
+                        ['icon' => 'account_balance_wallet', 'title' => 'Instant Pay', 'desc' => 'Send to contacts and pay merchants in seconds.'],
+                        ['icon' => 'photo_camera', 'title' => 'Mobile Deposit', 'desc' => 'Capture checks and credit funds without a trip.'],
+                    ] as $item)
+                    <div class="flex gap-3">
+                        <span class="material-symbols-outlined text-primary text-2xl shrink-0">{{ $item['icon'] }}</span>
+                        <div>
+                            <h3 class="font-label-bold text-on-surface uppercase text-sm mb-1">{{ $item['title'] }}</h3>
+                            <p class="font-body-sm text-on-surface-variant">{{ $item['desc'] }}</p>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                <a href="{{ url('apps') }}" class="inline-flex items-center gap-2 border-2 border-on-surface text-on-surface hover:bg-on-surface hover:text-on-primary px-8 py-4 font-label-bold text-sm tracking-widest transition-all">
+                    Get the App
+                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
     {{-- CTA --}}
     <section class="relative py-12 md:py-24 bg-bank-charcoal overflow-hidden px-4 md:px-0">
         <div class="max-w-[1200px] mx-auto md:px-gutter relative z-10">

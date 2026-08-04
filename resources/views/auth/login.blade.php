@@ -2,31 +2,44 @@
 @section('title', 'Login')
 
 @section('content')
-@include('includes.public-auth-chrome')
-
-<main class="w-full min-h-[calc(100vh-3.5rem)] bg-surface">
-<div class="flex flex-col lg:flex-row min-h-[calc(100vh-3.5rem)] w-full">
-    <div class="hidden lg:flex relative flex-1 bg-inverse-surface items-center justify-center overflow-hidden p-6 md:p-margin-desktop">
+<main class="w-full min-h-screen bg-surface">
+<div class="flex flex-col lg:flex-row min-h-screen w-full">
+    <div class="hidden lg:flex relative flex-1 bg-inverse-surface flex-col overflow-hidden">
         <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 32px 32px;"></div>
-        <div class="relative z-10 max-w-lg flex flex-col gap-stack-lg">
-            <div class="flex flex-col gap-stack-sm">
-                <span class="font-label-bold text-primary tracking-[0.2em] uppercase">Institutional Excellence</span>
-                <h1 class="font-headline-xl text-on-primary text-3xl md:text-[48px] leading-tight">Secure Financial Hub</h1>
-                <p class="font-body-lg text-on-primary/70">Experience modern banking with {{ $settings->site_name }}. Seamless transactions and comprehensive financial management.</p>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
-                @foreach ([['icon' => 'shield_person', 'title' => 'Secure Transfers'], ['icon' => 'bolt', 'title' => 'Lightning Fast'], ['icon' => 'public', 'title' => 'Global Access'], ['icon' => 'smartphone', 'title' => 'Mobile Ready']] as $f)
-                <div class="flex items-start gap-4 p-4 rounded bg-white/5">
-                    <span class="material-symbols-outlined text-primary text-[32px]">{{ $f['icon'] }}</span>
-                    <span class="font-label-bold text-on-primary uppercase text-[12px] tracking-wider">{{ $f['title'] }}</span>
+        <div class="relative z-10 p-8 md:p-10">
+            @include('includes.public-brand', [
+                'brandTextClass' => 'font-label-bold text-on-primary uppercase tracking-wider',
+                'brandImgClass' => 'h-9 w-auto object-contain',
+            ])
+        </div>
+        <div class="relative z-10 flex-1 flex items-center justify-center p-6 md:p-margin-desktop">
+            <div class="max-w-lg flex flex-col gap-stack-lg">
+                <div class="flex flex-col gap-stack-sm">
+                    <span class="font-label-bold text-primary tracking-[0.2em] uppercase">Institutional Excellence</span>
+                    <h1 class="font-headline-xl text-on-primary text-3xl md:text-[48px] leading-tight">Secure Financial Hub</h1>
+                    <p class="font-body-lg text-on-primary/70">Experience modern banking with {{ $settings->site_name }}. Seamless transactions and comprehensive financial management.</p>
                 </div>
-                @endforeach
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
+                    @foreach ([['icon' => 'shield_person', 'title' => 'Secure Transfers'], ['icon' => 'bolt', 'title' => 'Lightning Fast'], ['icon' => 'public', 'title' => 'Global Access'], ['icon' => 'smartphone', 'title' => 'Mobile Ready']] as $f)
+                    <div class="flex items-start gap-4 p-4 rounded bg-white/5">
+                        <span class="material-symbols-outlined text-primary text-[32px]">{{ $f['icon'] }}</span>
+                        <span class="font-label-bold text-on-primary uppercase text-[12px] tracking-wider">{{ $f['title'] }}</span>
+                    </div>
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>
 
     <div class="w-full lg:flex-1 flex items-center justify-center bg-surface p-4 sm:p-6 md:p-margin-desktop">
         <div class="w-full max-w-[440px] flex flex-col gap-stack-lg">
+            <div class="lg:hidden flex justify-center">
+                @include('includes.public-brand', [
+                    'brandImgClass' => 'h-9 w-auto object-contain',
+                    'brandTextClass' => 'font-label-bold text-on-surface uppercase tracking-wider text-lg',
+                ])
+            </div>
+
             <div class="flex flex-col items-center lg:items-start text-center lg:text-left gap-stack-sm">
                 <h2 class="text-headline-lg text-on-surface">Access Your Account</h2>
                 <p class="font-body-md text-on-surface-variant">Sign in to your secure banking portal.</p>
