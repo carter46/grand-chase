@@ -2,7 +2,8 @@
 /public/hot
 /public/storage
 /storage/*.key
-/vendor
+# /vendor is NOT ignored: committed for Hostinger/shared hosting (Composer often fails on server PHP mismatch).
+# After dependency changes locally: composer install --no-dev --optimize-autoloader, then commit vendor/ + composer.lock
 
 # Local secrets — never commit
 .env
