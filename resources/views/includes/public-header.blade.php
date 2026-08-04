@@ -45,13 +45,15 @@
         </div>
     </div>
 
-    {{-- Mobile nav bar --}}
-    <div class="md:hidden flex h-12 bg-bank-charcoal items-stretch">
-        <button type="button" class="flex items-center justify-center px-4 text-on-primary shrink-0" @click="drawerOpen = true" aria-label="Open menu">
+    {{-- Mobile nav bar — slanted dark/orange split --}}
+    <div class="md:hidden flex h-12 bg-bank-charcoal items-stretch overflow-hidden">
+        <button type="button" class="relative z-10 flex items-center justify-center px-4 text-on-primary shrink-0" @click="drawerOpen = true" aria-label="Open menu">
             <span class="material-symbols-outlined">menu</span>
         </button>
         <div class="flex-1"></div>
-        <a href="{{ url('login') }}" class="flex items-center justify-center px-6 bg-bank-orange text-white font-label-bold uppercase h-full text-sm tracking-wider">
+        <a href="{{ url('login') }}"
+           class="relative flex items-center justify-center pl-8 pr-5 bg-bank-orange text-bank-charcoal font-label-bold uppercase h-full text-sm tracking-wider"
+           style="clip-path: polygon(18px 0, 100% 0, 100% 100%, 0 100%);">
             Online Banking
         </a>
     </div>

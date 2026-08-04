@@ -25,9 +25,9 @@
             <p class="font-body-md md:font-body-lg text-on-primary opacity-90 max-w-[650px] mb-stack-lg leading-relaxed px-2">
                 A bank account that gives you more. Rewards checking from {{ $settings->site_name }} offers the flexibility and convenience you deserve in a global marketplace.
             </p>
-            <div class="flex flex-col sm:flex-row gap-3 md:gap-stack-md w-full sm:w-auto px-4 sm:px-0">
-                <a href="{{ url('login') }}" class="bg-primary hover:bg-primary-container text-on-primary px-10 py-4 font-label-bold text-sm tracking-widest transition-all shadow-xl hover:-translate-y-1 text-center">LOGIN</a>
-                <a href="{{ url('register') }}" class="bg-bank-charcoal hover:bg-on-background text-on-primary px-10 py-4 font-label-bold text-sm tracking-widest transition-all shadow-xl hover:-translate-y-1 text-center">SIGN UP</a>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-stack-md w-auto px-4 sm:px-0">
+                <a href="{{ url('login') }}" class="inline-flex justify-center bg-primary hover:bg-primary-container text-on-primary px-8 sm:px-10 py-3.5 sm:py-4 font-label-bold text-sm tracking-widest transition-all shadow-xl hover:-translate-y-1 text-center min-w-[140px] max-w-[200px] w-auto">LOGIN</a>
+                <a href="{{ url('register') }}" class="inline-flex justify-center bg-bank-charcoal hover:bg-on-background text-on-primary px-8 sm:px-10 py-3.5 sm:py-4 font-label-bold text-sm tracking-widest transition-all shadow-xl hover:-translate-y-1 text-center min-w-[140px] max-w-[200px] w-auto">SIGN UP</a>
             </div>
         </div>
         <div class="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 opacity-50 text-on-primary">
