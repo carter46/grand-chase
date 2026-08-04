@@ -1,11 +1,11 @@
 <div class="flex flex-col w-full">
 <!-- Hero Section: Immersive with Scrim -->
-<section class="relative w-full overflow-hidden">
-<div class="absolute inset-0 bg-on-background/40 z-10"></div>
-<div class="relative min-h-[calc(100vh-104px)] md:min-h-[calc(100vh-131px)] w-full flex items-center justify-center bg-cover bg-center" data-alt="A warm, brightly lit modern living room where a multi-generational family—a couple and their two young children—are sitting on a plush gray sofa laughing together. The scene exudes financial security and domestic bliss. Large glass windows in the background reveal a manicured garden. The lighting is soft and high-end, evoking professional architectural photography with a focus on trust and comfort." style="background-image: url('{{ asset('assets/images/hero-personal.jpg') }}')">
-<div class="relative z-20 max-w-[1200px] mx-auto px-4 md:px-gutter w-full flex flex-col items-start">
+<section class="relative w-full overflow-hidden min-h-[calc(100vh-104px)] md:min-h-[calc(100vh-131px)] flex items-center">
+<div class="absolute inset-0 z-0 bg-cover bg-center" data-alt="A warm, brightly lit modern living room where a multi-generational family—a couple and their two young children—are sitting on a plush gray sofa laughing together. The scene exudes financial security and domestic bliss. Large glass windows in the background reveal a manicured garden. The lighting is soft and high-end, evoking professional architectural photography with a focus on trust and comfort." style="background-image: url('{{ asset('assets/images/hero-personal.jpg') }}')"></div>
+<div class="absolute inset-0 z-0 bg-on-background/40 pointer-events-none" aria-hidden="true"></div>
+<div class="relative z-10 max-w-[1200px] mx-auto px-4 md:px-gutter w-full flex flex-col items-start py-12 md:py-0">
 <div class="max-w-2xl pt-10 md:pt-0">
-<span class="inline-block py-1 px-3 bg-primary text-on-primary font-label-bold uppercase tracking-widest text-[10px] mb-stack-md animate-fade-in">
+<span class="inline-block py-1 px-3 bg-primary text-on-primary font-label-bold uppercase tracking-widest text-[10px] mb-stack-md">
                         Institutional Reliability Since 1924
                     </span>
 <h1 class="text-hero-medium text-white mb-stack-md drop-shadow-lg">
@@ -24,9 +24,8 @@
 </div>
 </div>
 </div>
-</div>
 <!-- Decorative Geometric Accent -->
-<div class="absolute bottom-0 right-0 w-1/3 h-24 bg-surface z-20 [clip-path:polygon(20%_0%,100%_0%,100%_100%,0%_100%)] hidden lg:block"></div>
+<div class="absolute bottom-0 right-0 w-1/3 h-24 bg-surface z-10 [clip-path:polygon(20%_0%,100%_0%,100%_100%,0%_100%)] hidden lg:block pointer-events-none"></div>
 </section>
 <!-- Accounts & Savings Grid -->
 <section class="bg-surface py-12 md:py-24">

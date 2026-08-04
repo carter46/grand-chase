@@ -13,7 +13,7 @@
 <div class="relative z-10 max-w-[1200px] mx-auto px-4 md:px-gutter w-full pt-10">
 <div class="max-w-2xl">
 <span class="inline-block bg-primary text-on-primary px-3 py-1 font-label-bold text-xs uppercase tracking-widest mb-stack-md">Corporate & Institutional</span>
-<h1 class="text-hero-medium text-on-primary mb-stack-md">
+<h1 class="text-hero-small text-on-primary mb-stack-md">
           Empowering Your Enterprise with Institutional Strength
         </h1>
 <p class="font-body-lg text-on-primary opacity-90 mb-stack-lg leading-relaxed">
