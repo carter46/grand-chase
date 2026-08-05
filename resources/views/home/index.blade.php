@@ -63,39 +63,35 @@
         @keydown.right.window="next()"
     >
         <div
-            class="relative z-0 flex h-full w-full will-change-transform cursor-grab active:cursor-grabbing"
+            class="relative z-0 flex h-full w-full cursor-grab active:cursor-grabbing"
             :class="(dragging || jumping) ? '' : 'transition-transform duration-500 ease-out'"
-            :style="'transform: translate3d(' + (-(track * 100) + dragPct) + '%,0,0); backface-visibility: hidden;'"
+            :style="'transform: translate3d(' + (-(track * 100) + dragPct) + '%,0,0)'"
             @pointerdown="onPointerDown($event)"
             @pointermove="onPointerMove($event)"
             @pointerup="onPointerUp($event)"
             @pointercancel="onPointerUp($event)"
             @transitionend="onTransitionEnd($event)"
+            x-ref="track"
         >
             @foreach ($heroTrack as $i => $slide)
-            <article class="relative h-full w-full min-w-full flex-shrink-0 flex items-center justify-center overflow-hidden bg-black" style="backface-visibility: hidden;">
+            <article class="relative h-full w-full min-w-full flex-shrink-0 flex items-center justify-center overflow-hidden bg-black">
                 <div
                     class="absolute inset-0 z-0 pointer-events-none bg-cover bg-center"
                     style="background-image: url('{{ $slide['image'] }}')"
                 >
-                    <img
-                        src="{{ $slide['image'] }}"
-                        alt="{{ $slide['eyebrow'] }}"
-                        class="no-reveal w-full h-full object-cover {{ !empty($slide['image_mobile']) ? 'hidden md:block' : '' }}"
-                        draggable="false"
-                        loading="{{ $i <= 2 ? 'eager' : 'lazy' }}"
-                        decoding="async"
-                    >
-                    @if (!empty($slide['image_mobile']))
-                    <img
-                        src="{{ $slide['image_mobile'] }}"
-                        alt="{{ $slide['eyebrow'] }}"
-                        class="no-reveal w-full h-full object-cover md:hidden"
-                        draggable="false"
-                        loading="{{ $i <= 2 ? 'eager' : 'lazy' }}"
-                        decoding="async"
-                    >
-                    @endif
+                    <picture class="absolute inset-0 block w-full h-full">
+                        @if (!empty($slide['image_mobile']))
+                        <source media="(max-width: 767px)" srcset="{{ $slide['image_mobile'] }}">
+                        @endif
+                        <img
+                            src="{{ $slide['image'] }}"
+                            alt="{{ $slide['eyebrow'] }}"
+                            class="no-reveal w-full h-full object-cover"
+                            draggable="false"
+                            loading="eager"
+                            decoding="async"
+                        >
+                    </picture>
                     <div class="absolute inset-0 bg-black/55"></div>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20"></div>
                 </div>
@@ -140,10 +136,6 @@
                 <span class="material-symbols-outlined">chevron_right</span>
             </button>
         </div>
-
-        <p class="absolute left-4 bottom-6 z-30 hidden lg:block font-caption uppercase tracking-widest text-on-primary/50 pointer-events-none">
-            Swipe or drag
-        </p>
     </section>
 
     {{-- Banking Solutions --}}
@@ -322,18 +314,75 @@ function homeHeroSlider(total) {
         pointerId: null,
         autoTimer: null,
         jumpTimer: null,
+        loopGuard: null,
+        onVis: null,
         init() {
             this.restartAuto();
+            this.onVis = () => this.onVisibilityChange();
+            document.addEventListener('visibilitychange', this.onVis);
+            window.addEventListener('pageshow', this.onVis);
+            window.addEventListener('focus', this.onVis);
+        },
+        destroy() {
+            clearInterval(this.autoTimer);
+            clearTimeout(this.jumpTimer);
+            clearTimeout(this.loopGuard);
+            if (this.onVis) {
+                document.removeEventListener('visibilitychange', this.onVis);
+                window.removeEventListener('pageshow', this.onVis);
+                window.removeEventListener('focus', this.onVis);
+            }
         },
         restartAuto() {
             clearInterval(this.autoTimer);
             this.autoTimer = setInterval(() => {
+                if (document.hidden) return;
                 if (!this.dragging && !this.jumping && !this.armed) this.next();
             }, 7000);
         },
         clearJumpLock() {
             clearTimeout(this.jumpTimer);
+            clearTimeout(this.loopGuard);
             this.jumping = false;
+        },
+        /** Snap off clone slides if transitionend was missed (common after tab sleep). */
+        normalizeTrack() {
+            if (this.track === this.total + 1) {
+                this.jumping = true;
+                this.track = 1;
+                this.index = 0;
+            } else if (this.track === 0) {
+                this.jumping = true;
+                this.track = this.total;
+                this.index = this.total - 1;
+            } else {
+                this.syncIndexFromTrack();
+            }
+            this.dragPct = 0;
+            this.dragging = false;
+            this.armed = false;
+            clearTimeout(this.jumpTimer);
+            this.jumpTimer = setTimeout(() => { this.jumping = false; }, 50);
+        },
+        /** Chrome/Safari often discard GPU layers on backgrounded transformed carousels → black until repaint. */
+        forceRepaint() {
+            var el = this.$refs.track;
+            if (!el) return;
+            var x = (-(this.track * 100) + this.dragPct);
+            el.style.transform = 'translate3d(' + x + '%,0,0) scale(1)';
+            void el.offsetHeight;
+            el.style.transform = 'translate3d(' + x + '%,0,0)';
+        },
+        onVisibilityChange() {
+            if (document.hidden) {
+                clearInterval(this.autoTimer);
+                return;
+            }
+            this.normalizeTrack();
+            this.$nextTick(() => {
+                this.forceRepaint();
+                this.restartAuto();
+            });
         },
         syncIndexFromTrack() {
             if (this.track === 0) this.index = this.total - 1;
@@ -348,18 +397,29 @@ function homeHeroSlider(total) {
             this.restartAuto();
         },
         next() {
-            if (this.jumping) return;
+            if (this.jumping || document.hidden) return;
             this.track = this.track + 1;
             this.syncIndexFromTrack();
             this.dragPct = 0;
+            this.armLoopGuard();
             this.restartAuto();
         },
         prev() {
-            if (this.jumping) return;
+            if (this.jumping || document.hidden) return;
             this.track = this.track - 1;
             this.syncIndexFromTrack();
             this.dragPct = 0;
+            this.armLoopGuard();
             this.restartAuto();
+        },
+        armLoopGuard() {
+            clearTimeout(this.loopGuard);
+            // If transitionend never fires (tab sleep / reduced motion), still snap off clones
+            this.loopGuard = setTimeout(() => {
+                if (this.track === 0 || this.track === this.total + 1) {
+                    this.onTransitionEnd({ target: this.$refs.track, currentTarget: this.$refs.track });
+                }
+            }, 700);
         },
         onTransitionEnd(e) {
             if (e && e.target !== e.currentTarget) return;
@@ -372,7 +432,7 @@ function homeHeroSlider(total) {
                 this.index = this.total - 1;
             }
             if (jumpTo === null) return;
-            // Disable transition, snap to real slide on next frames (avoids dark flash)
+            clearTimeout(this.loopGuard);
             this.jumping = true;
             this.track = jumpTo;
             clearTimeout(this.jumpTimer);
@@ -401,7 +461,6 @@ function homeHeroSlider(total) {
             var dx = e.clientX - this.startX;
             var dy = e.clientY - this.startY;
 
-            // Let vertical page scroll win until a clear horizontal swipe
             if (!this.dragging) {
                 if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 8) {
                     this.armed = false;
