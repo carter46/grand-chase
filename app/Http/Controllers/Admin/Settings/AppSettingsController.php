@@ -85,30 +85,38 @@ class AppSettingsController extends Controller
             $provider = 'none';
         }
 
-        Settings::where('id', '1')
-            ->update([
-                'newupdate' => $request['update'],
-                'site_name' => $request['site_name'],
-                'description' => $request['description'],
-                'keywords' => $request['keywords'],
-                'timezone' => $request['timezone'],
-                'site_title' => $request['site_title'],
-                'install_type' => $request['install_type'],
-                'logo' => $path,
-                'merchant_key' => $request->merchant_key,
-                'favicon' => $pathfav,
-                'tawk_to' => strip_tags($request['tawk_to']),
-                'site_address' => $request['site_address'],
-                'welcome_message' => $request->welcome_message,
-                'whatsapp'=> $request->whatsapp,
-                'tido'=> $request->tido,
-                'livechat_provider' => $provider,
-                'smartsupp_key' => trim((string) $request->input('smartsupp_key', '')),
-                'chatway_widget_id' => trim((string) $request->input('chatway_widget_id', '')),
-                'address'=> $request->address,
-                'sms'=> $request->sms,
-                
-            ]);
+        $payload = [
+            'newupdate' => $request['update'],
+            'site_name' => $request['site_name'],
+            'description' => $request['description'],
+            'keywords' => $request['keywords'],
+            'timezone' => $request['timezone'],
+            'site_title' => $request['site_title'],
+            'install_type' => $request['install_type'],
+            'logo' => $path,
+            'merchant_key' => $request->merchant_key,
+            'favicon' => $pathfav,
+            'tawk_to' => strip_tags($request['tawk_to']),
+            'site_address' => $request['site_address'],
+            'welcome_message' => $request->welcome_message,
+            'whatsapp'=> $request->whatsapp,
+            'tido'=> $request->tido,
+            'address'=> $request->address,
+            'sms'=> $request->sms,
+        ];
+
+        // Live-chat columns (added by migration / add_livechat_settings.php)
+        if (\Illuminate\Support\Facades\Schema::hasColumn('settings', 'livechat_provider')) {
+            $payload['livechat_provider'] = $provider;
+        }
+        if (\Illuminate\Support\Facades\Schema::hasColumn('settings', 'smartsupp_key')) {
+            $payload['smartsupp_key'] = trim((string) $request->input('smartsupp_key', ''));
+        }
+        if (\Illuminate\Support\Facades\Schema::hasColumn('settings', 'chatway_widget_id')) {
+            $payload['chatway_widget_id'] = trim((string) $request->input('chatway_widget_id', ''));
+        }
+
+        Settings::where('id', '1')->update($payload);
 
         $moreset = SettingsCont::find(1);
         $moreset->purchase_code = $request->purchase_code;
