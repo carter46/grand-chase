@@ -138,6 +138,7 @@ Route::middleware(['isadmin', '2fa'])->prefix('admin')->group(function () {
 	Route::put('dashboard/updatewebinfo', [AppSettingsController::class, 'updatewebinfo'])->name('updatewebinfo');
 	Route::put('dashboard/updatepreference', [AppSettingsController::class, 'updatepreference'])->name('updatepreference');
 	Route::put('dashboard/updateemail', [AppSettingsController::class, 'updateemail'])->name('updateemailpreference');
+	Route::post('dashboard/send-test-email', [AppSettingsController::class, 'sendTestEmail'])->name('sendtestemail');
 
 	// Update referral settings info
 	Route::put('dashboard/update-bonus', [ReferralSettings::class, 'updaterefbonus'])->name('updaterefbonus');

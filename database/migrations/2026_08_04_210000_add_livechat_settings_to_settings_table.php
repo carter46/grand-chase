@@ -13,6 +13,7 @@ class AddLivechatSettingsToSettingsTable extends Migration
             return;
         }
 
+        // Use short string / TEXT to avoid MySQL "Row size too large" on wide settings tables
         if (!Schema::hasColumn('settings', 'livechat_provider')) {
             Schema::table('settings', function (Blueprint $table) {
                 $table->string('livechat_provider', 32)->nullable()->default('none');
@@ -20,12 +21,12 @@ class AddLivechatSettingsToSettingsTable extends Migration
         }
         if (!Schema::hasColumn('settings', 'smartsupp_key')) {
             Schema::table('settings', function (Blueprint $table) {
-                $table->string('smartsupp_key', 191)->nullable();
+                $table->text('smartsupp_key')->nullable();
             });
         }
         if (!Schema::hasColumn('settings', 'chatway_widget_id')) {
             Schema::table('settings', function (Blueprint $table) {
-                $table->string('chatway_widget_id', 191)->nullable();
+                $table->text('chatway_widget_id')->nullable();
             });
         }
 

@@ -180,4 +180,82 @@ class AppSettingsController extends Controller
         return response()->json(['status' => 200, 'success' => 'Settings Saved successfully']);
         //return redirect()->back()->with('message', 'Action Sucessful');
     }
+
+    /**
+     * Send a one-off test email using form values (or saved settings).
+     * Always returns JSON — never throws a 500 for SMTP auth failures.
+     */
+    public function sendTestEmail(Request $request)
+    {
+        $to = trim((string) $request->input('test_to', ''));
+        if ($to === '' || !filter_var($to, FILTER_VALIDATE_EMAIL)) {
+            return response()->json([
+                'status' => 422,
+                'message' => 'Enter a valid recipient email address.',
+            ], 422);
+        }
+
+        $settings = Settings::where('id', 1)->first();
+        $mailer = $request->input('server', $settings->mail_server ?: 'smtp');
+        $fromAddress = $request->input('emailfrom', $settings->emailfrom);
+        $fromName = $request->input('emailfromname', $settings->emailfromname);
+
+        config([
+            'mail.default' => $mailer,
+            'mail.from.address' => $fromAddress,
+            'mail.from.name' => $fromName,
+            'mail.mailers.smtp.host' => $request->input('smtp_host', $settings->smtp_host),
+            'mail.mailers.smtp.port' => $request->input('smtp_port', $settings->smtp_port),
+            'mail.mailers.smtp.encryption' => $request->input('smtp_encrypt', $settings->smtp_encrypt),
+            'mail.mailers.smtp.username' => $request->input('smtp_user', $settings->smtp_user),
+            'mail.mailers.smtp.password' => $request->input('smtp_password', $settings->smtp_password),
+        ]);
+
+        // Force mailer to rebuild with new runtime config
+        try {
+            if (app()->bound('mail.manager')) {
+                $manager = app('mail.manager');
+                if (method_exists($manager, 'purge')) {
+                    $manager->purge($mailer);
+                }
+            }
+            app()->forgetInstance('swift.mailer');
+            app()->forgetInstance('mailer');
+        } catch (\Throwable $e) {
+            // ignore — Mail::raw will still use config() values when possible
+        }
+
+        $site = $settings->site_name ?: config('app.name');
+        $subject = 'SMTP Test Email from ' . $site;
+        $body = "This is a test email from {$site}.\n\n"
+            . "If you received this, your mail configuration is working.\n\n"
+            . 'Sent at: ' . now()->toDateTimeString() . "\n"
+            . 'Mailer: ' . $mailer . "\n"
+            . 'SMTP host: ' . (string) config('mail.mailers.smtp.host') . "\n";
+
+        try {
+            \Illuminate\Support\Facades\Mail::mailer($mailer)->raw($body, function ($message) use ($to, $subject, $fromAddress, $fromName) {
+                $message->to($to)->subject($subject);
+                if ($fromAddress) {
+                    $message->from($fromAddress, $fromName ?: $fromAddress);
+                }
+            });
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Test email sent successfully to ' . $to . '. Check the inbox (and spam).',
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+            $hint = $e->getMessage();
+            if (stripos($hint, '535') !== false || stripos($hint, 'authenticat') !== false) {
+                $hint = 'SMTP authentication failed. Check SMTP username and mailbox password (Hostinger email password, not hPanel login), host, port, and encryption.';
+            }
+
+            return response()->json([
+                'status' => 500,
+                'message' => $hint,
+            ]);
+        }
+    }
 }

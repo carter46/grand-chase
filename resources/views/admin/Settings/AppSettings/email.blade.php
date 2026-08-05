@@ -61,6 +61,28 @@
                         value="{{ $settings->smtp_password }}">
                 </div>
             </div>
+
+            <div class="form-row border-top pt-4 mt-2">
+                <div class="form-group col-12">
+                    <h4 class="mb-1">Send Test Email</h4>
+                    <p class="small text-muted mb-3">Save your SMTP settings first, then send a test to confirm delivery. Failures show here — they will not crash the page.</p>
+                </div>
+                <div class="form-group col-md-6">
+                    <h5 class="">Recipient</h5>
+                    <input type="email" id="test_email_to" class="form-control"
+                        value="{{ auth('admin')->user()->email ?? $settings->contact_email ?? '' }}"
+                        placeholder="you@example.com">
+                </div>
+                <div class="form-group col-md-6 d-flex align-items-end">
+                    <button type="button" id="send_test_email_btn" class="btn btn-outline-primary btn-lg px-4">
+                        <i class="fa fa-paper-plane"></i> Send Test Email
+                    </button>
+                </div>
+                <div class="form-group col-12">
+                    <div id="test_email_result" class="alert d-none mb-0" role="alert"></div>
+                </div>
+            </div>
+
             <hr>
             <div class="form-row">
                 <div class="col-md-12">
@@ -125,3 +147,60 @@
         document.getElementById("smtpserver").checked = true;
     </script>
 @endif
+
+<script>
+(function () {
+    var btn = document.getElementById('send_test_email_btn');
+    var result = document.getElementById('test_email_result');
+    if (!btn || !result) return;
+
+    btn.addEventListener('click', function () {
+        var to = (document.getElementById('test_email_to').value || '').trim();
+        if (!to) {
+            result.className = 'alert alert-danger mb-0';
+            result.textContent = 'Enter a recipient email address.';
+            result.classList.remove('d-none');
+            return;
+        }
+
+        btn.disabled = true;
+        var original = btn.innerHTML;
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Sending...';
+        result.classList.add('d-none');
+
+        // Include current form SMTP fields so you can test before/after Save
+        var payload = $('#emailform').serializeArray();
+        payload.push({ name: 'test_to', value: to });
+
+        $.ajax({
+            url: "{{ route('sendtestemail') }}",
+            type: 'POST',
+            data: $.param(payload),
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') || $('input[name="_token"]').val() },
+            success: function (response) {
+                if (response.status === 200) {
+                    result.className = 'alert alert-success mb-0';
+                    result.textContent = response.message || ('Test email sent to ' + to);
+                } else {
+                    result.className = 'alert alert-danger mb-0';
+                    result.textContent = response.message || 'Failed to send test email.';
+                }
+                result.classList.remove('d-none');
+            },
+            error: function (xhr) {
+                var msg = 'Failed to send test email. Check SMTP settings.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    msg = xhr.responseJSON.message;
+                }
+                result.className = 'alert alert-danger mb-0';
+                result.textContent = msg;
+                result.classList.remove('d-none');
+            },
+            complete: function () {
+                btn.disabled = false;
+                btn.innerHTML = original;
+            }
+        });
+    });
+})();
+</script>

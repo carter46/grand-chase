@@ -424,7 +424,12 @@ class ManageUsersController extends Controller
     {
 
         $mailduser = User::where('id', $request->user_id)->first();
-        Mail::to($mailduser->email)->send(new NewNotification($request->message, $request->subject, $mailduser->name));
+        try {
+            Mail::to($mailduser->email)->send(new NewNotification($request->message, $request->subject, $mailduser->name));
+        } catch (\Throwable $e) {
+            report($e);
+            return redirect()->back()->with('message', 'Email could not be sent: SMTP authentication failed. Check Admin → Email Settings (SMTP username/password) for the new mailbox, then try again.');
+        }
         return redirect()->back()->with('success', 'Your message was sent successfully!');
     }
 
@@ -446,7 +451,12 @@ class ManageUsersController extends Controller
                 ->get();
         }
         if (count($users) > 0) {
-            Mail::to($users)->send(new NewNotification($request->message, $request->subject, $request->title, null, null, $request->greet));
+            try {
+                Mail::to($users)->send(new NewNotification($request->message, $request->subject, $request->title, null, null, $request->greet));
+            } catch (\Throwable $e) {
+                report($e);
+                return redirect()->back()->with('message', 'Email could not be sent: SMTP authentication failed. Check Admin → Email Settings (SMTP username/password) for the new mailbox, then try again.');
+            }
             return redirect()->back()->with('success', 'Your message was sent successfully!');
         } else {
             return redirect()->back()->with("success", "No user under selected category to send mail to");
