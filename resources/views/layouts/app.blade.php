@@ -26,7 +26,6 @@
         <link rel="stylesheet" href="{{ asset('dash/css/' . $theme) }}">
         <link rel="stylesheet" href="{{ asset('dash/css/customs.css') }}">
         <link rel="stylesheet" href="{{ asset('dash/css/style.css') }}">
-        <link rel="stylesheet" href="{{ asset('dash/css/admin-mobile.css') }}">
         {{-- <link rel="stylesheet" href="{{ asset('dash/css/atlantis.min.css') }}"> --}}
         <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css">
         <link rel="stylesheet" type="text/css"
@@ -53,6 +52,7 @@
         <script src="https://www.paypal.com/sdk/js?client-id={{ $settings->pp_ci }}"></script> --}}
     @show
     @livewireStyles
+    <link rel="stylesheet" href="{{ asset('dash/css/admin-mobile.css') }}?v={{ @filemtime(public_path('dash/css/admin-mobile.css')) ?: time() }}">
 </head>
 
 <body data-background-color="light">
@@ -112,7 +112,7 @@
             }
         </script>
         <script src="{{ asset('dash/js/customs.js') }}"></script>
-        <script src="{{ asset('dash/js/admin-mobile.js') }}"></script>
+        <script src="{{ asset('dash/js/admin-mobile.js') }}?v={{ @filemtime(public_path('dash/js/admin-mobile.js')) ?: time() }}"></script>
     @show
 
 </body>

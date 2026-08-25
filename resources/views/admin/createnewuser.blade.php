@@ -21,7 +21,7 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                 <x-success-alert />
 
                 <div class="mb-5 row d-flex justify-content-center">
-                    <div class="col-md-7">
+                    <div class="col-12 col-md-7">
                         <div class="card p-2 shadow ">
                             <div class="card-body">
                                 <div>

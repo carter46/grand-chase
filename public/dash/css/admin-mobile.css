@@ -13,20 +13,39 @@
 @media screen and (max-width: 991px) {
     html,
     body {
-        overflow-x: hidden;
+        width: 100%;
         max-width: 100%;
+        height: auto !important;
+        min-height: 100%;
+        overflow-x: hidden;
+        overflow-x: clip;
+        overflow-y: auto;
     }
 
     body {
         min-width: 0;
     }
 
-    .wrapper {
-        overflow-x: hidden;
-        overflow-y: visible !important;
+    #app,
+    #app > div {
+        width: 100%;
         max-width: 100%;
+        overflow: visible;
+    }
+
+    .wrapper {
+        overflow: visible !important;
+        max-width: 100%;
+        width: 100% !important;
         height: auto !important;
         min-height: 100%;
+        float: none !important;
+    }
+
+    .wrapper::after {
+        content: "";
+        display: table;
+        clear: both;
     }
 
     .main-header {
@@ -140,6 +159,7 @@
         transform: translate3d(0, 0, 0) !important;
     }
 
+    html body .wrapper .main-panel,
     .main-panel {
         width: 100% !important;
         max-width: 100% !important;
@@ -150,9 +170,12 @@
         min-height: 0 !important;
         overflow: visible !important;
         margin-left: 0 !important;
-        padding-bottom: 28px;
+        margin-right: 0 !important;
+        padding-bottom: 32px;
+        box-sizing: border-box;
     }
 
+    html body .wrapper .main-panel > .content,
     .main-panel > .content,
     .main-panel > .content-full {
         overflow: visible !important;
@@ -160,8 +183,10 @@
         min-width: 0;
         width: 100% !important;
         max-width: 100% !important;
+        height: auto !important;
         min-height: 0 !important;
-        padding-bottom: 24px;
+        padding-bottom: 32px;
+        box-sizing: border-box;
     }
 
     #admin-nav-overlay {
@@ -180,20 +205,27 @@
     }
 
     .page-inner {
-        padding: 16px 16px 40px !important;
+        padding: 16px 16px 48px !important;
         margin: 0 !important;
         width: 100% !important;
         max-width: 100% !important;
         min-width: 0;
+        box-sizing: border-box;
     }
 
+    html body .wrapper .footer,
     .footer {
         position: relative !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: auto !important;
         width: 100% !important;
+        max-width: 100% !important;
         float: none !important;
         clear: both;
-        padding: 16px 16px 28px !important;
-        margin-top: 8px;
+        padding: 20px 16px 32px !important;
+        margin-top: 16px;
+        box-sizing: border-box;
     }
 
     .footer .container,
@@ -211,27 +243,28 @@
         word-wrap: break-word;
         overflow-wrap: break-word;
         overflow: visible !important;
+        max-height: none !important;
+        box-sizing: border-box;
     }
 
     .page-inner > .row,
     .page-inner .mb-5.row,
     .page-inner .mt-2.mb-5.row,
-    .page-inner .row.d-flex {
-        width: 100%;
+    .page-inner .row.d-flex,
+    .page-inner .row.justify-content-center {
+        width: 100% !important;
+        max-width: 100% !important;
         margin-left: 0 !important;
         margin-right: 0 !important;
     }
 
+    .page-inner [class*="col-md"],
+    .page-inner [class*="col-lg"],
     .page-inner > .row > [class*="col-"],
     .page-inner .mb-5.row > [class*="col-"],
     .page-inner .mt-2.mb-5.row > [class*="col-"],
     .page-inner .row.d-flex > [class*="col-"],
-    .page-inner .col-md-5,
-    .page-inner .col-md-7,
-    .page-inner .col-md-8,
-    .page-inner .col-md-12,
-    .page-inner .col-lg-8,
-    .page-inner .col-lg-12,
+    .page-inner .row.justify-content-center > [class*="col-"],
     .page-inner .col-12 {
         flex: 0 0 100% !important;
         max-width: 100% !important;
@@ -241,9 +274,12 @@
         margin-left: 0 !important;
     }
 
+    html body .wrapper .page-inner .card,
     .page-inner .card {
         width: 100% !important;
         max-width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
     }
 
     .card.p-4,
@@ -394,45 +430,86 @@
     /* Dashboard stats: no inner scrollbars, sit in place, more gap */
     .row-card-no-pd {
         overflow: visible !important;
+        height: auto !important;
+        max-height: none !important;
         padding: 8px 4px 4px !important;
+        background: transparent !important;
+        box-shadow: none !important;
     }
 
     .row-card-no-pd > [class*="col-"]:not(.col-12) {
         flex: 0 0 100% !important;
         max-width: 100% !important;
         width: 100% !important;
-        margin-bottom: 12px;
-        padding-left: 8px !important;
-        padding-right: 8px !important;
+        height: auto !important;
+        overflow: visible !important;
+        margin-bottom: 14px;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
     }
 
     .row-card-no-pd .card,
     .row-card-no-pd .card.full-height,
     .card.full-height,
     .card-stats,
-    .card-stats .card-body {
+    .card-stats .card-body,
+    .card-stats .row,
+    .card-stats .numbers {
         height: auto !important;
         min-height: 0 !important;
         max-height: none !important;
         overflow: visible !important;
     }
 
-    .row-card-no-pd [class*="col"] .card:before {
-        display: none !important;
+    .row-card-no-pd .card,
+    .row-card-no-pd .card.full-height,
+    .card-stats.card-round {
+        box-shadow: 0 1px 8px rgba(69, 65, 78, 0.12) !important;
+        border: 0;
+        margin-bottom: 0;
+        background: #fff;
+        position: relative !important;
     }
 
-    .card-stats .scroll-wrapper,
-    .row-card-no-pd .scroll-wrapper,
-    .card-stats .scroll-element {
+    .row-card-no-pd [class*="col"] .card:before,
+    .row-card-no-pd [class*="col-"] .card:before {
         display: none !important;
+        content: none !important;
     }
 
-    .card-stats .scroll-content,
-    .row-card-no-pd .scroll-content {
-        display: block !important;
+    .card-stats .icon-big {
         height: auto !important;
+        min-height: 48px;
+    }
+
+    .row-card-no-pd .scroll-wrapper,
+    .card-stats .scroll-wrapper,
+    .page-inner .card > .scroll-wrapper {
+        height: auto !important;
+        max-height: none !important;
         overflow: visible !important;
         position: static !important;
+        padding: 0 !important;
+    }
+
+    .row-card-no-pd .scroll-content,
+    .card-stats .scroll-content,
+    .page-inner .card .scroll-content {
+        display: block !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        position: static !important;
+    }
+
+    .row-card-no-pd .scroll-element,
+    .card-stats .scroll-element,
+    .page-inner .card .scroll-element {
+        display: none !important;
+        visibility: hidden !important;
+        width: 0 !important;
+        height: 0 !important;
+        opacity: 0 !important;
     }
 
     .admin-sticky-save {
@@ -620,6 +697,8 @@
     padding: 14px;
     margin-bottom: 10px;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .admin-mobile-card[data-background-color="dark"],

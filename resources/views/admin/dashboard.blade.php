@@ -217,4 +217,5 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                
             </div>
         </div>
+    </div>
     @endsection
