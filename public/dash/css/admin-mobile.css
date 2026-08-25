@@ -23,7 +23,10 @@
 
     .wrapper {
         overflow-x: hidden;
+        overflow-y: visible !important;
         max-width: 100%;
+        height: auto !important;
+        min-height: 100%;
     }
 
     .main-header {
@@ -139,10 +142,15 @@
 
     .main-panel {
         width: 100% !important;
+        max-width: 100% !important;
         float: none !important;
         transform: none !important;
-        max-width: 100%;
         min-width: 0;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        margin-left: 0 !important;
+        padding-bottom: 28px;
     }
 
     .main-panel > .content,
@@ -150,7 +158,10 @@
         overflow: visible !important;
         margin-top: 62px;
         min-width: 0;
-        max-width: 100%;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: 0 !important;
+        padding-bottom: 24px;
     }
 
     #admin-nav-overlay {
@@ -169,17 +180,20 @@
     }
 
     .page-inner {
-        padding: 12px !important;
+        padding: 16px 16px 40px !important;
         margin: 0 !important;
-        max-width: 100%;
+        width: 100% !important;
+        max-width: 100% !important;
         min-width: 0;
     }
 
     .footer {
         position: relative !important;
         width: 100% !important;
-        float: none;
-        padding: 12px !important;
+        float: none !important;
+        clear: both;
+        padding: 16px 16px 28px !important;
+        margin-top: 8px;
     }
 
     .footer .container,
@@ -188,28 +202,55 @@
         text-align: center;
     }
 
-    /* Overflow hygiene */
+    /* Overflow hygiene — do not force every column to 100% (breaks stats icon/value rows) */
     .card,
     .card-body,
     .card-header,
-    .card-footer,
-    .row,
-    [class*="col-"] {
+    .card-footer {
         min-width: 0;
-        max-width: 100%;
-    }
-
-    .card {
-        overflow-x: hidden;
         word-wrap: break-word;
         overflow-wrap: break-word;
+        overflow: visible !important;
+    }
+
+    .page-inner > .row,
+    .page-inner .mb-5.row,
+    .page-inner .mt-2.mb-5.row,
+    .page-inner .row.d-flex {
+        width: 100%;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .page-inner > .row > [class*="col-"],
+    .page-inner .mb-5.row > [class*="col-"],
+    .page-inner .mt-2.mb-5.row > [class*="col-"],
+    .page-inner .row.d-flex > [class*="col-"],
+    .page-inner .col-md-5,
+    .page-inner .col-md-7,
+    .page-inner .col-md-8,
+    .page-inner .col-md-12,
+    .page-inner .col-lg-8,
+    .page-inner .col-lg-12,
+    .page-inner .col-12 {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
+    }
+
+    .page-inner .card {
+        width: 100% !important;
+        max-width: 100% !important;
     }
 
     .card.p-4,
     .card.p-3,
     .card.shadow.p-4,
     .col.card.p-3 {
-        padding: 12px !important;
+        padding: 16px !important;
     }
 
     .card.p-md-5 {
@@ -350,17 +391,48 @@
         display: block !important;
     }
 
-    /* Dashboard stats: 1 col on xs */
-    .row-card-no-pd > [class*="col-"]:not(.col-12) {
-        flex: 0 0 100%;
-        max-width: 100%;
+    /* Dashboard stats: no inner scrollbars, sit in place, more gap */
+    .row-card-no-pd {
+        overflow: visible !important;
+        padding: 8px 4px 4px !important;
     }
 
-    @media (min-width: 576px) {
-        .row-card-no-pd > .col-sm-6 {
-            flex: 0 0 50%;
-            max-width: 50%;
-        }
+    .row-card-no-pd > [class*="col-"]:not(.col-12) {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        margin-bottom: 12px;
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
+    .row-card-no-pd .card,
+    .row-card-no-pd .card.full-height,
+    .card.full-height,
+    .card-stats,
+    .card-stats .card-body {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    .row-card-no-pd [class*="col"] .card:before {
+        display: none !important;
+    }
+
+    .card-stats .scroll-wrapper,
+    .row-card-no-pd .scroll-wrapper,
+    .card-stats .scroll-element {
+        display: none !important;
+    }
+
+    .card-stats .scroll-content,
+    .row-card-no-pd .scroll-content {
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
+        position: static !important;
     }
 
     .admin-sticky-save {
@@ -505,8 +577,9 @@
     .col-md-5,
     .col-md-7,
     .col-md-8.offset-md-2 {
-        flex: 0 0 100%;
-        max-width: 100%;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        width: 100% !important;
         margin-left: 0 !important;
     }
 
