@@ -5,7 +5,7 @@
     <div class="main-panel">
         <div class="content ">
             <div class="page-inner">
-                <div class="d-flex justify-content-between align-items-center">
+                <div class="admin-detail-head d-flex justify-content-between align-items-center">
                     <div>
                         <h1 class="title1 ">Update Plan</h1>
                     </div>

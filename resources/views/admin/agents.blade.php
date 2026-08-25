@@ -19,10 +19,10 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                 <x-success-alert />
                 <div class="mb-5 row">
                     <div class="col-12 card p-3 shadow  ">
-                        <div class="bs-example widget-shadow table-responsive" data-example-id="hoverable-table">
-                            <a href="#" data-toggle="modal" data-target="#addagentModal" class="btn btn-lg"
-                                style="margin:10px;"> <i class="fa fa-plus"></i>
-                                Add agent</a>
+                        <a href="#" data-toggle="modal" data-target="#addagentModal" class="btn btn-lg mb-3">
+                            <i class="fa fa-plus"></i> Add agent
+                        </a>
+                        <div class="admin-desktop-table bs-example widget-shadow table-responsive" data-example-id="hoverable-table">
                             <table id="ShipTable" class="table table-hover ">
                                 <thead>
                                     <tr>
@@ -52,8 +52,23 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                         </tr>
                                     @endforeach
                                 </tbody>
-                                <!-- Add agent Modal -->
-                                <div id="addagentModal" class="modal fade" role="dialog">
+                            </table>
+                        </div>
+                        <div class="admin-mobile-list">
+                            @foreach ($agents as $agent)
+                                <x-admin.mobile-list-card
+                                    :title="optional($agent->duser)->name ?? 'N/A'"
+                                    :subtitle="$agent->total_refered . ' clients referred'"
+                                    :meta="[
+                                        ['label' => 'Clients referred', 'value' => $agent->total_refered],
+                                    ]"
+                                >
+                                    <a class="btn btn-danger btn-sm" href="{{ url('admin/dashboard/delagent') }}/{{ $agent->id }}">Remove</a>
+                                </x-admin.mobile-list-card>
+                            @endforeach
+                        </div>
+                        <!-- Add agent Modal -->
+                        <div id="addagentModal" class="modal fade" role="dialog">
                                     <div class="modal-dialog">
 
                                         <!-- Modal content-->
@@ -83,8 +98,6 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                     </div>
                                 </div>
                                 <!-- /Add agent Modal -->
-                            </table>
-                        </div>
                     </div>
                 </div>
             </div>

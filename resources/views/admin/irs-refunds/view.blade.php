@@ -108,6 +108,7 @@
                                                 <h5 class="card-title">Refund Details</h5>
                                             </div>
                                             <div class="card-body">
+                                                <div class="table-responsive">
                                                 <table class="table">
                                                     <tr>
                                                         <th>Status:</th>
@@ -144,6 +145,7 @@
                                                         </tr>
                                                     @endif
                                                 </table>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

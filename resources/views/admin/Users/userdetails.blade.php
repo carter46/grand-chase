@@ -22,13 +22,15 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                         <div class="p-3 card ">
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-12 ">
-                                        
-                                          <img alt="" src="{{ profile_photo_url($user->profile_photo_path, $user->name) }}" width="60" height="60" style='border-radius: 50%;'><h1 class=" pl-2 d-inline text-primary">{{ $user->name }} {{ $user->middlename }} {{ $user->lastname }}</h1><span></span>
-                                        <div class="d-inline">
-                                            <div class="float-right btn-group">
+                                    <div class="col-md-12">
+                                        <div class="admin-detail-head d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center min-w-0">
+                                                <img alt="" src="{{ profile_photo_url($user->profile_photo_path, $user->name) }}" width="60" height="60" style="border-radius: 50%; flex-shrink:0;">
+                                                <h1 class="pl-2 mb-0 text-primary">{{ $user->name }} {{ $user->middlename }} {{ $user->lastname }}</h1>
+                                            </div>
+                                            <div class="btn-group flex-shrink-0">
                                                 <a class="btn btn-primary btn-sm" href="{{ route('manageusers') }}"> <i
-                                                        class="fa fa-arrow-left"></i> back</a> &nbsp;
+                                                        class="fa fa-arrow-left"></i> back</a>
                                                 <button type="button" class="btn btn-secondary dropdown-toggle btn-sm"
                                                     data-toggle="dropdown" data-display="static" aria-haspopup="true"
                                                     aria-expanded="false">

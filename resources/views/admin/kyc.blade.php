@@ -22,7 +22,7 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                 <div class="mb-5 row">
 
                     <div class="col-12 card p-4  shadow">
-                        <div class="bs-example widget-shadow table-responsive" data-example-id="hoverable-table">
+                        <div class="admin-desktop-table bs-example widget-shadow table-responsive" data-example-id="hoverable-table">
                             <table id="ShipTable" class="table table-hover  text-{{ $text }}">
                                 <thead>
                                     <tr>
@@ -53,6 +53,20 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
 
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="admin-mobile-list">
+                            @foreach ($kycs as $list)
+                                <x-admin.mobile-list-card
+                                    :title="optional($list->user)->name ?? 'N/A'"
+                                    :badge="$list->status == 'Verified' ? 'Verified' : $list->status"
+                                    :badge-class="$list->status == 'Verified' ? 'badge-success' : 'badge-danger'"
+                                    :meta="[
+                                        ['label' => 'Status', 'value' => $list->status],
+                                    ]"
+                                >
+                                    <a href="{{ route('viewkyc', $list->id) }}" class="btn btn-primary btn-sm">View application</a>
+                                </x-admin.mobile-list-card>
+                            @endforeach
                         </div>
                     </div>
                 </div>

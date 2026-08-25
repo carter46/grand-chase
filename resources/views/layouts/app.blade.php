@@ -26,6 +26,7 @@
         <link rel="stylesheet" href="{{ asset('dash/css/' . $theme) }}">
         <link rel="stylesheet" href="{{ asset('dash/css/customs.css') }}">
         <link rel="stylesheet" href="{{ asset('dash/css/style.css') }}">
+        <link rel="stylesheet" href="{{ asset('dash/css/admin-mobile.css') }}">
         {{-- <link rel="stylesheet" href="{{ asset('dash/css/atlantis.min.css') }}"> --}}
         <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css">
         <link rel="stylesheet" type="text/css"
@@ -61,6 +62,7 @@
     <div id="app">
         <div>
             <div class="wrapper">
+                <div id="admin-nav-overlay" aria-hidden="true"></div>
                 @yield('content')
                 <footer class="footer">
                     <div class="container-fluid">
@@ -110,6 +112,7 @@
             }
         </script>
         <script src="{{ asset('dash/js/customs.js') }}"></script>
+        <script src="{{ asset('dash/js/admin-mobile.js') }}"></script>
     @show
 
 </body>

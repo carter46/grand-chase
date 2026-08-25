@@ -20,7 +20,7 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
 
                 <div class="mb-5 row">
                     <div class="col p-4 shadow card ">
-                        <div class="table-responsive" data-example-id="hoverable-table">
+                        <div class="admin-desktop-table table-responsive" data-example-id="hoverable-table">
                             <table id="ShipTable" class="table table-hover ">
                                 <thead>
                                     <tr>
@@ -219,6 +219,30 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                     @endforeach
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="admin-mobile-list">
+                            @foreach ($admins as $admin)
+                                <x-admin.mobile-list-card
+                                    :title="trim($admin->firstName . ' ' . $admin->lastName)"
+                                    :subtitle="$admin->email"
+                                    :badge="$admin->type"
+                                    :badge-class="$admin->acnt_type_active == 'blocked' || $admin->acnt_type_active == null ? 'badge-danger' : 'badge-success'"
+                                    :meta="[
+                                        ['label' => 'ID', 'value' => $admin->id],
+                                        ['label' => 'Phone', 'value' => $admin->phone],
+                                        ['label' => 'Status', 'value' => $admin->acnt_type_active],
+                                    ]"
+                                >
+                                    @if ($admin->acnt_type_active == null || $admin->acnt_type_active == 'blocked')
+                                        <a class="btn btn-primary btn-sm" href="{{ url('admin/dashboard/unblock') }}/{{ $admin->id }}">Unblock</a>
+                                    @else
+                                        <a class="btn btn-danger btn-sm" href="{{ url('admin/dashboard/ublock') }}/{{ $admin->id }}">Block</a>
+                                    @endif
+                                    <a href="#" data-toggle="modal" data-target="#resetpswdModal{{ $admin->id }}" class="btn btn-warning btn-sm">Reset Password</a>
+                                    <a href="#" data-toggle="modal" data-target="#edituser{{ $admin->id }}" class="btn btn-secondary btn-sm">Edit</a>
+                                    <a href="#" data-toggle="modal" data-target="#deleteModal{{ $admin->id }}" class="btn btn-danger btn-sm">Delete</a>
+                                </x-admin.mobile-list-card>
+                            @endforeach
                         </div>
                     </div>
                 </div>

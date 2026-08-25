@@ -38,7 +38,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="table-responsive">
+                                <div class="admin-desktop-table table-responsive">
                                     <table class="table table-hover">
                                         <thead>
                                             <tr>
@@ -156,6 +156,47 @@
                                             @endforelse
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="admin-mobile-list">
+                                    @forelse ($cards as $vcard)
+                                        @php
+                                            $cardBadge = [
+                                                'active' => 'badge-success',
+                                                'inactive' => 'badge-warning',
+                                                'pending' => 'badge-info',
+                                                'blocked' => 'badge-danger',
+                                                'rejected' => 'badge-danger',
+                                            ][$vcard->status] ?? 'badge-secondary';
+                                        @endphp
+                                        <x-admin.mobile-list-card
+                                            :title="$vcard->user ? $vcard->user->name : 'N/A'"
+                                            :subtitle="$vcard->user ? $vcard->user->email : 'N/A'"
+                                            :badge="ucfirst($vcard->status)"
+                                            :badge-class="$cardBadge"
+                                            :avatar="profile_photo_url(optional($vcard->user)->profile_photo_path, optional($vcard->user)->name ?? 'User')"
+                                            :meta="[
+                                                ['label' => 'Card', 'value' => '**** **** **** ' . substr($vcard->card_number, -4)],
+                                                ['label' => 'Type', 'value' => ucfirst(str_replace('_', ' ', $vcard->card_type))],
+                                                ['label' => 'Level', 'value' => ucfirst($vcard->card_level)],
+                                                ['label' => 'Balance', 'value' => $vcard->currency . number_format($vcard->balance, 2)],
+                                                ['label' => 'Created', 'value' => $vcard->created_at->format('M d, Y')],
+                                            ]"
+                                        >
+                                            <a class="btn btn-primary btn-sm" href="{{ route('admin.cards.view', $vcard->id) }}">View</a>
+                                            @if ($vcard->status == 'pending')
+                                                <a class="btn btn-success btn-sm" href="{{ route('admin.cards.approve', $vcard->id) }}">Approve</a>
+                                                <a class="btn btn-danger btn-sm" href="{{ route('admin.cards.reject', $vcard->id) }}">Reject</a>
+                                            @endif
+                                            @if ($vcard->status == 'active')
+                                                <a class="btn btn-warning btn-sm" href="{{ route('admin.cards.block', $vcard->id) }}">Block</a>
+                                            @endif
+                                            @if ($vcard->status == 'blocked' || $vcard->status == 'inactive')
+                                                <a class="btn btn-success btn-sm" href="{{ route('admin.cards.unblock', $vcard->id) }}">Unblock</a>
+                                            @endif
+                                        </x-admin.mobile-list-card>
+                                    @empty
+                                        <p class="text-center mb-0">No virtual cards found.</p>
+                                    @endforelse
                                 </div>
                                 <div class="mt-3">
                                     {{ $cards->links() }}

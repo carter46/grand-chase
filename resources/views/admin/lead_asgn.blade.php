@@ -20,7 +20,7 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
 
                 <div class="row mb-5">
                     <div class="col-lg-12 card p-4  shadow">
-                        <div class="table-responsive" data-example-id="hoverable-table">
+                        <div class="admin-desktop-table table-responsive" data-example-id="hoverable-table">
                             <table id="ShipTable" class="table table-hover ">
                                 <thead>
                                     <tr>
@@ -97,6 +97,30 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                     @endforeach
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="admin-mobile-list">
+                            @foreach ($usersAssigned as $list)
+                                <x-admin.mobile-list-card
+                                    :title="trim($list->name . ' ' . $list->l_name)"
+                                    :subtitle="$list->email"
+                                    :badge="$list->status"
+                                    :meta="[
+                                        ['label' => 'ID', 'value' => $list->id],
+                                        ['label' => 'Balance', 'value' => '$' . $list->account_bal],
+                                        ['label' => 'Phone', 'value' => $list->phone_number],
+                                        ['label' => 'Plan', 'value' => isset($list->dplan->name) ? $list->dplan->name : 'NULL'],
+                                        ['label' => 'Assigned', 'value' => optional($list->tuser)->firstName . ' ' . optional($list->tuser)->lastName],
+                                        ['label' => 'Registered', 'value' => \Carbon\Carbon::parse($list->created_at)->toDayDateTimeString()],
+                                    ]"
+                                >
+                                    @if ($list->cstatus == 'Customer')
+                                        <a class="btn btn-success btn-sm">Converted</a>
+                                    @else
+                                        <a href="{{ url('admin/dashboard/convert') }}/{{ $list->id }}" class="btn btn-primary btn-sm">Convert</a>
+                                    @endif
+                                    <a class="btn btn-info btn-sm" data-toggle="modal" data-target="#editModal{{ $list->id }}">Edit Status</a>
+                                </x-admin.mobile-list-card>
+                            @endforeach
                         </div>
                     </div>
                 </div>

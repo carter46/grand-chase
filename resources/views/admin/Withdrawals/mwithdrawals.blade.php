@@ -19,7 +19,7 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                 <x-success-alert />
                 <div class="mb-5 row">
                     <div class="col card p-3 shadow ">
-                        <div class="bs-example widget-shadow table-responsive" data-example-id="hoverable-table">
+                        <div class="admin-desktop-table bs-example widget-shadow table-responsive" data-example-id="hoverable-table">
                             <span style="margin:3px;">
                                 <table id="ShipTable" class="table table-hover ">
                                     <thead>
@@ -89,6 +89,53 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                         @endforeach
                                     </tbody>
                                 </table>
+                        </div>
+                        <div class="admin-mobile-list">
+                            @foreach ($withdrawals as $deposit)
+                                @php
+                                    if($deposit->payment_mode == 'International Wire Transfer') {
+                                        $beneficiary = $deposit->accountname ?? 'N/A';
+                                    } elseif($deposit->payment_mode == 'Cryptocurrency') {
+                                        $beneficiary = ($deposit->crypto_currency ?? 'N/A') . ' Wallet';
+                                    } elseif($deposit->payment_mode == 'PayPal') {
+                                        $beneficiary = $deposit->paypal_email ?? 'N/A';
+                                    } elseif($deposit->payment_mode == 'Wise Transfer') {
+                                        $beneficiary = $deposit->wise_fullname ?? 'N/A';
+                                    } elseif($deposit->payment_mode == 'Skrill') {
+                                        $beneficiary = $deposit->skrill_fullname ?? 'N/A';
+                                    } elseif($deposit->payment_mode == 'Venmo') {
+                                        $beneficiary = $deposit->venmo_username ?? 'N/A';
+                                    } elseif($deposit->payment_mode == 'Zelle') {
+                                        $beneficiary = $deposit->zelle_name ?? 'N/A';
+                                    } elseif($deposit->payment_mode == 'Cash App') {
+                                        $beneficiary = $deposit->cash_app_tag ?? 'N/A';
+                                    } elseif($deposit->payment_mode == 'Revolut') {
+                                        $beneficiary = $deposit->revolut_fullname ?? 'N/A';
+                                    } elseif($deposit->payment_mode == 'Alipay') {
+                                        $beneficiary = $deposit->alipay_fullname ?? 'N/A';
+                                    } elseif($deposit->payment_mode == 'WeChat Pay') {
+                                        $beneficiary = $deposit->wechat_name ?? 'N/A';
+                                    } else {
+                                        $beneficiary = $deposit->accountname ?? 'N/A';
+                                    }
+                                    $wBadge = $deposit->status == 'Processed' ? 'badge-success' : ($deposit->status == 'On-hold' ? 'badge-warning' : 'badge-danger');
+                                @endphp
+                                <x-admin.mobile-list-card
+                                    :title="optional($deposit->duser)->name ?? 'N/A'"
+                                    :subtitle="$settings->currency . number_format($deposit->amount)"
+                                    :badge="$deposit->status"
+                                    :badge-class="$wBadge"
+                                    :meta="[
+                                        ['label' => 'ID', 'value' => $deposit->id],
+                                        ['label' => 'Type', 'value' => $deposit->payment_mode],
+                                        ['label' => 'Beneficiary', 'value' => $beneficiary],
+                                        ['label' => 'Description', 'value' => $deposit->Description],
+                                        ['label' => 'Date', 'value' => \Carbon\Carbon::parse($deposit->created_at)->toDayDateTimeString()],
+                                    ]"
+                                >
+                                    <a href="{{ route('processwithdraw', $deposit->id) }}" class="btn btn-info btn-sm">View</a>
+                                </x-admin.mobile-list-card>
+                            @endforeach
                         </div>
                     </div>
                 </div>

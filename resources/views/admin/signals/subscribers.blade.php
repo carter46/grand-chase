@@ -16,7 +16,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Subscribers</h5>
-                                <div class="table-responsive">
+                                <div class="admin-desktop-table table-responsive">
                                     <table class="table table-hover">
                                         <thead class="bg-primary text-white">
                                             <th>
@@ -70,6 +70,25 @@
                                             @endforelse
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="admin-mobile-list">
+                                    @forelse ($subscribers->data as $subscriber)
+                                        @php
+                                            $subUser = \App\Models\User::find($subscriber->client_id);
+                                        @endphp
+                                        <x-admin.mobile-list-card
+                                            :title="$subUser->name ?? 'N/A'"
+                                            :subtitle="$subscriber->subscription"
+                                            :badge="$settings->currency . $subscriber->amount_paid"
+                                            badge-class="badge-info"
+                                            :meta="[
+                                                ['label' => 'Expires', 'value' => \Carbon\Carbon::parse($subscriber->expired_at)->toDayDateTimeString()],
+                                                ['label' => 'Started', 'value' => \Carbon\Carbon::parse($subscriber->created_at)->toDayDateTimeString()],
+                                            ]"
+                                        />
+                                    @empty
+                                        <p class="text-center mb-0">No Data Available</p>
+                                    @endforelse
                                 </div>
                                 {{-- {{ $subscribers->links() }} --}}
                             </div>

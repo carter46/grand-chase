@@ -12,13 +12,11 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
     <div class="main-panel">
         <div class="content  ">
             <div class="page-inner">
-                <div class="mt-2 mb-4">
-                    <h1 class="title1  d-inline">{{ $user->name }} login activities</h1>
-                    <div class="d-inline">
-                        <div class="float-right btn-group">
-                            <a class="btn btn-primary btn-sm" href="{{ route('viewuser', $user->id) }}"> <i
-                                    class="fa fa-arrow-left"></i> back</a>
-                        </div>
+                <div class="mt-2 mb-4 admin-detail-head">
+                    <h1 class="title1">{{ $user->name }} login activities</h1>
+                    <div class="btn-group">
+                        <a class="btn btn-primary btn-sm" href="{{ route('viewuser', $user->id) }}"> <i
+                                class="fa fa-arrow-left"></i> back</a>
                     </div>
                 </div>
                 <x-danger-alert />
@@ -31,7 +29,7 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                         </div>
                     @endif
                     <div class="col-md-12 card shadow p-4 ">
-                        <div class="table-responsive" data-example-id="hoverable-table">
+                        <div class="admin-desktop-table table-responsive" data-example-id="hoverable-table">
                             <table id="ShipTable" class="table table-hover ">
                                 <thead>
                                     <tr>
@@ -53,6 +51,18 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                     @endforeach
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="admin-mobile-list">
+                            @foreach ($activities as $activity)
+                                <x-admin.mobile-list-card
+                                    :title="$activity->ip_address"
+                                    :subtitle="$activity->device . '/' . $activity->os . '/' . $activity->browser"
+                                    :meta="[
+                                        ['label' => 'Device', 'value' => $activity->device . '/' . $activity->os . '/' . $activity->browser],
+                                        ['label' => 'Logged in', 'value' => \Carbon\Carbon::parse($activity->created_at)->toDayDateTimeString()],
+                                    ]"
+                                />
+                            @endforeach
                         </div>
                     </div>
                 </div>

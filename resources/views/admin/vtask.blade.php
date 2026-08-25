@@ -19,7 +19,7 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                 <x-success-alert />
                 <div class="row mb-5">
                     <div class="col-lg-12 card p-4  shadow">
-                        <div class="table-responsive" data-example-id="hoverable-table">
+                        <div class="admin-desktop-table table-responsive" data-example-id="hoverable-table">
                             <table id="ShipTable" class="table table-hover ">
                                 <thead>
                                     <tr>
@@ -62,6 +62,26 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                     @endforeach
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="admin-mobile-list">
+                            @foreach ($tasks as $task)
+                                <x-admin.mobile-list-card
+                                    :title="$task->title"
+                                    :subtitle="optional($task->tuser)->firstName . ' ' . optional($task->tuser)->lastName"
+                                    :badge="$task->status"
+                                    :badge-class="$task->status == 'Pending' ? 'badge-danger' : 'badge-success'"
+                                    :meta="[
+                                        ['label' => 'Note', 'value' => $task->note],
+                                        ['label' => 'From', 'value' => $task->start_date],
+                                        ['label' => 'To', 'value' => $task->end_date],
+                                        ['label' => 'Created', 'value' => $task->created_at->toDayDateTimeString()],
+                                    ]"
+                                >
+                                    @if ($task->status == 'Pending')
+                                        <a href="{{ url('admin/dashboard/markdone') }}/{{ $task->id }}" class="btn btn-primary btn-sm">Mark as Done</a>
+                                    @endif
+                                </x-admin.mobile-list-card>
+                            @endforeach
                         </div>
                     </div>
                 </div>

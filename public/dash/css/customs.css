@@ -62,7 +62,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 1000px;
+    width: min(1000px, calc(100% - 24px));
+    max-width: 100%;
     height: 420px;
     box-sizing: border-box;
     background: rgba(0, 0, 0, .5);
@@ -81,12 +82,11 @@
 
 .addrs {
     padding: 0px 100px !important;
-    /* padding: 0px 40px 0px 40px;  */
 }
 
-@media only screen and (max-width: 500px) {
+@media only screen and (max-width: 991px) {
     .addrs {
-        padding: 0px 100px !important;
+        padding: 0 12px !important;
     }
 }
 

@@ -22,8 +22,8 @@
                         <div class="card shadow p-4 ">
                             <div class="card-header">
                                 <div class="row">
-                                    <div class="col-6 d-flex pe-0">
-                                        <div>
+                                    <div class="col-12 col-lg-6 d-flex pe-0">
+                                        <div class="w-100">
                                             <form>
                                                 <div class="input-group">
                                                     <input wire:model.debounce.500ms='searchvalue'
@@ -35,7 +35,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-6">
+                                    <div class="col-12 col-lg-6">
                                         @if ($checkrecord)
                                             <div>
                                                 <div class="d-flex">
@@ -83,7 +83,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="table-responsive" data-example-id="hoverable-table">
+                                <div class="admin-desktop-table table-responsive" data-example-id="hoverable-table">
                                     <table class="table table-hover text-{{ $text }}">
                                         <thead>
                                             <tr>
@@ -136,6 +136,32 @@
                                             @endforelse
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="admin-mobile-list">
+                                    @forelse ($users as $user)
+                                        <x-admin.mobile-list-card
+                                            :title="$user->name"
+                                            :subtitle="$user->email"
+                                            :badge="$user->status"
+                                            :badge-class="$user->status == 'active' ? 'badge-success' : 'badge-danger'"
+                                            :avatar="profile_photo_url($user->profile_photo_path, $user->name)"
+                                            :meta="[
+                                                ['label' => 'Username', 'value' => $user->username],
+                                                ['label' => 'Phone', 'value' => $user->phone],
+                                                ['label' => 'Registered', 'value' => $user->created_at->diffForHumans()],
+                                            ]"
+                                        >
+                                            <x-slot name="leading">
+                                                <input type="checkbox" wire:model='checkrecord'
+                                                    value="{{ $user->id }}" />
+                                            </x-slot>
+                                            <a class="btn btn-secondary btn-sm" href="{{ route('viewuser', $user->id) }}">
+                                                Manage
+                                            </a>
+                                        </x-admin.mobile-list-card>
+                                    @empty
+                                        <p class="text-center mb-0">No Data Available</p>
+                                    @endforelse
                                 </div>
                             </div>
                             <div class="card-footer  py-2">

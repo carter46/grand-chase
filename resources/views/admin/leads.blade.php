@@ -80,7 +80,7 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <div class="table-responsive" data-example-id="hoverable-table">
+                                <div class="admin-desktop-table table-responsive" data-example-id="hoverable-table">
                                     <table id="ShipTable" class="table table-hover ">
                                         <thead>
                                             <tr>
@@ -152,6 +152,23 @@
                                             @endforeach
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="admin-mobile-list">
+                                    @foreach ($users as $list)
+                                        <x-admin.mobile-list-card
+                                            :title="$list->name"
+                                            :subtitle="$list->email"
+                                            :badge="$list->status == 'active' ? 'Active' : 'Inactive'"
+                                            :badge-class="$list->status == 'active' ? 'badge-success' : 'badge-danger'"
+                                            :meta="[
+                                                ['label' => 'Phone', 'value' => $list->phone],
+                                                ['label' => 'Registered', 'value' => $list->created_at->toDayDateTimeString()],
+                                                ['label' => 'Assigned', 'value' => $list->tuser->firstName ? $list->tuser->firstName . ' ' . $list->tuser->lastName : 'Not assigned yet'],
+                                            ]"
+                                        >
+                                            <a class="btn btn-info btn-sm text-white" data-toggle="modal" data-target="#editModal{{ $list->id }}">Edit Status</a>
+                                        </x-admin.mobile-list-card>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>

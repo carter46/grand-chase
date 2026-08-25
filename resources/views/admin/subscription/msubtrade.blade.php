@@ -35,7 +35,7 @@
                                     </h4>
                                 </div> --}}
                                 <div class="col-12">
-                                    <div class="table-responsive" data-example-id="hoverable-table">
+                                    <div class="admin-desktop-table table-responsive" data-example-id="hoverable-table">
                                         <table class="table table-hover">
                                             <thead>
                                                 <tr>
@@ -120,6 +120,40 @@
                                         </table>
 
                                         {{ $subscriptions->links() }}
+                                    </div>
+                                    <div class="admin-mobile-list">
+                                        @foreach ($subscriptions as $sub)
+                                            <x-admin.mobile-list-card
+                                                :title="optional($sub->tuser)->name . ' ' . optional($sub->tuser)->l_name"
+                                                :subtitle="$sub->account_name"
+                                                :badge="$sub->status"
+                                                :meta="[
+                                                    ['label' => 'Account ID', 'value' => $sub->mt4_id],
+                                                    ['label' => 'Type', 'value' => $sub->account_type],
+                                                    ['label' => 'Server', 'value' => $sub->server],
+                                                    ['label' => 'Currency', 'value' => $sub->currency],
+                                                    ['label' => 'Leverage', 'value' => $sub->leverage],
+                                                    ['label' => 'Duration', 'value' => $sub->duration],
+                                                    ['label' => 'Submitted', 'value' => $sub->created_at->toDayDateTimeString()],
+                                                ]"
+                                            >
+                                                @if ($sub->status == 'Pending')
+                                                    <form action="{{ route('create.sub') }}" method="post">
+                                                        @csrf
+                                                        <input type="hidden" name="login" value="{{ $sub->mt4_id }}">
+                                                        <input type="hidden" name="password" value="{{ $sub->mt4_password }}">
+                                                        <input type="hidden" name="serverName" value="{{ $sub->server }}">
+                                                        <input type="hidden" name="acntype" value="{{ $sub->account_type }}">
+                                                        <input type="hidden" name="leverage" value="{{ $sub->leverage }}">
+                                                        <input type="hidden" name="currency" value="{{ $sub->currency }}">
+                                                        <input type="hidden" name="name" value="{{ $sub->account_name }}">
+                                                        <input type="hidden" name="mt4id" value="{{ $sub->id }}">
+                                                        <button type="submit" class="btn btn-primary btn-sm">Process</button>
+                                                    </form>
+                                                @endif
+                                                <a href="{{ url('admin/dashboard/delsub') }}/{{ $sub->id }}" class="btn btn-danger btn-sm">Delete</a>
+                                            </x-admin.mobile-list-card>
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>

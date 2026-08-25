@@ -85,7 +85,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Signals</h5>
-                                <div class="table-responsive">
+                                <div class="admin-desktop-table table-responsive">
                                     <table class="table table-hover">
                                         <thead class="bg-primary text-white">
                                             <th>
@@ -228,6 +228,33 @@
 
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="admin-mobile-list">
+                                    @forelse ($signals as $signal)
+                                        <x-admin.mobile-list-card
+                                            :title="$signal->currency_pair"
+                                            :subtitle="$signal->trade_direction . ' @ ' . $signal->price"
+                                            :badge="$signal->status"
+                                            :badge-class="$signal->status == 'published' ? 'badge-success' : 'badge-danger'"
+                                            :meta="[
+                                                ['label' => 'Ref', 'value' => '#' . $signal->reference],
+                                                ['label' => 'TP1', 'value' => $signal->take_profit1],
+                                                ['label' => 'TP2', 'value' => $signal->take_profit2 ?: '-'],
+                                                ['label' => 'SL', 'value' => $signal->stop_loss1],
+                                                ['label' => 'Result', 'value' => $signal->result ?: '-'],
+                                                ['label' => 'Date', 'value' => \Carbon\Carbon::parse($signal->created_at)->addHour()->toDayDateTimeString()],
+                                            ]"
+                                        >
+                                            @if ($signal->status == 'unpublished')
+                                                <a href="{{ route('pubsignals', ['signal' => $signal->id]) }}" class="btn btn-info btn-sm">Publish</a>
+                                            @else
+                                                <a href="#" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#resultModal{{ $signal->id }}">Add Result</a>
+                                            @endif
+                                            <a href="{{ route('delete.signal', ['signal' => $signal->id]) }}" class="btn btn-danger btn-sm">Delete</a>
+                                        </x-admin.mobile-list-card>
+                                    @empty
+                                        <p class="text-center mb-0">No Data Available</p>
+                                    @endforelse
                                 </div>
                                 {{-- <x-paginator :links="$signals" /> --}}
                             </div>

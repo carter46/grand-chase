@@ -14,7 +14,7 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
-                                <div class="table-responsive" data-example-id="hoverable-table">
+                                <div class="admin-desktop-table table-responsive" data-example-id="hoverable-table">
                                     <table id="ShipTable" class="table table-hover ">
                                         <thead>
                                             <tr>
@@ -149,6 +149,26 @@
                                             @endforeach
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="admin-mobile-list">
+                                    @foreach ($tasks as $task)
+                                        <x-admin.mobile-list-card
+                                            :title="$task->title"
+                                            :subtitle="optional($task->tuser)->firstName . ' ' . optional($task->tuser)->lastName"
+                                            :badge="$task->status"
+                                            :badge-class="$task->status == 'Pending' ? 'badge-danger' : 'badge-success'"
+                                            :meta="[
+                                                ['label' => 'From', 'value' => $task->start_date],
+                                                ['label' => 'To', 'value' => $task->end_date],
+                                                ['label' => 'Created', 'value' => $task->created_at->toDayDateTimeString()],
+                                            ]"
+                                        >
+                                            @if ($task->status == 'Pending')
+                                                <a class="btn btn-success btn-sm text-white" data-toggle="modal" data-target="#edittaskModal{{ $task->id }}">Edit</a>
+                                            @endif
+                                            <a href="{{ url('admin/dashboard/deltask') }}/{{ $task->id }}" class="btn btn-danger btn-sm">Delete</a>
+                                        </x-admin.mobile-list-card>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>

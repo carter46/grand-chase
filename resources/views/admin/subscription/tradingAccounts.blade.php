@@ -105,7 +105,7 @@
                             <div class="mt-3 row">
 
                                 <div class="col-12">
-                                    <div class="table-responsive" data-example-id="hoverable-table">
+                                    <div class="admin-desktop-table table-responsive" data-example-id="hoverable-table">
                                         <table class="table table-hover">
                                             <thead>
                                                 <tr>
@@ -259,6 +259,31 @@
                                             </tbody>
                                         </table>
                                         {{-- {{ $data['links'] }} --}}
+                                    </div>
+                                    <div class="admin-mobile-list">
+                                        @forelse ($data['data'] as $item)
+                                            <x-admin.mobile-list-card
+                                                :title="$item['account_name']"
+                                                :subtitle="'Login: ' . $item['login']"
+                                                :badge="$item['deployment_status']"
+                                                :badge-class="$item['deployment_status'] == 'Deployed' ? 'badge-success' : 'badge-warning'"
+                                                :meta="[
+                                                    ['label' => 'Type', 'value' => $item['account_type']],
+                                                    ['label' => 'Server', 'value' => $item['server']],
+                                                    ['label' => 'Started', 'value' => \Carbon\Carbon::parse($item['start_date'])->toDayDateTimeString()],
+                                                    ['label' => 'Expires', 'value' => \Carbon\Carbon::parse($item['end_date'])->toDayDateTimeString()],
+                                                ]"
+                                            >
+                                                @if ($item['deployment_status'] == 'Deployed')
+                                                    <a href="{{ route('acnt.deployment', ['id' => $item['id'], 'deployment' => 'Undeploy']) }}" class="btn btn-warning btn-sm">Undeploy</a>
+                                                @elseif (!now()->greaterThanOrEqualTo(\Carbon\Carbon::parse($item['end_date'])))
+                                                    <a href="{{ route('acnt.deployment', ['id' => $item['id'], 'deployment' => 'Deploy']) }}" class="btn btn-success btn-sm">Deploy</a>
+                                                @endif
+                                                <a href="#" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal">Delete</a>
+                                            </x-admin.mobile-list-card>
+                                        @empty
+                                            <p class="text-center mb-0">No Data Available</p>
+                                        @endforelse
                                     </div>
                                 </div>
                             </div>

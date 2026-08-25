@@ -38,7 +38,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="table-responsive">
+                                <div class="admin-desktop-table table-responsive">
                                     <table class="table table-hover">
                                         <thead>
                                             <tr>
@@ -92,6 +92,28 @@
                                             @endforelse
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="admin-mobile-list">
+                                    @forelse ($refunds as $refund)
+                                        <x-admin.mobile-list-card
+                                            :title="$refund->user ? $refund->user->name : 'N/A'"
+                                            :subtitle="$refund->user ? $refund->user->email : 'N/A'"
+                                            :badge="'$' . number_format($refund->amount, 2)"
+                                            badge-class="badge-warning"
+                                            :avatar="profile_photo_url(optional($refund->user)->profile_photo_path, optional($refund->user)->name ?? 'User')"
+                                            :meta="[
+                                                ['label' => 'Reference', 'value' => $refund->id],
+                                                ['label' => 'Filing ID', 'value' => $refund->filing_id],
+                                                ['label' => 'Created', 'value' => $refund->created_at->format('M d, Y')],
+                                            ]"
+                                        >
+                                            <a class="btn btn-primary btn-sm" href="{{ route('admin.irs-refunds.view', $refund->id) }}">View</a>
+                                            <a class="btn btn-success btn-sm" href="{{ route('admin.irs-refunds.approve', $refund->id) }}">Approve</a>
+                                            <a class="btn btn-danger btn-sm" href="{{ route('admin.irs-refunds.reject', $refund->id) }}">Reject</a>
+                                        </x-admin.mobile-list-card>
+                                    @empty
+                                        <p class="text-center mb-0">No pending refund requests found.</p>
+                                    @endforelse
                                 </div>
                                 <div class="mt-3">
                                     {{ $refunds->links() }}

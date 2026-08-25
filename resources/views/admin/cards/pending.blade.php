@@ -38,7 +38,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="table-responsive">
+                                <div class="admin-desktop-table table-responsive">
                                     <table class="table table-hover">
                                         <thead>
                                             <tr>
@@ -87,6 +87,28 @@
                                             @endforelse
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="admin-mobile-list">
+                                    @forelse ($cards as $vcard)
+                                        <x-admin.mobile-list-card
+                                            :title="$vcard->user ? $vcard->user->name : 'N/A'"
+                                            :subtitle="$vcard->user ? $vcard->user->email : 'N/A'"
+                                            :badge="'#' . $vcard->id"
+                                            badge-class="badge-info"
+                                            :avatar="profile_photo_url(optional($vcard->user)->profile_photo_path, optional($vcard->user)->name ?? 'User')"
+                                            :meta="[
+                                                ['label' => 'Type', 'value' => ucfirst(str_replace('_', ' ', $vcard->card_type))],
+                                                ['label' => 'Level', 'value' => ucfirst($vcard->card_level)],
+                                                ['label' => 'Applied', 'value' => $vcard->created_at->format('M d, Y h:i A')],
+                                            ]"
+                                        >
+                                            <a href="{{ route('admin.cards.view', $vcard->id) }}" class="btn btn-primary btn-sm">View</a>
+                                            <a href="{{ route('admin.cards.approve', $vcard->id) }}" class="btn btn-success btn-sm">Approve</a>
+                                            <a href="{{ route('admin.cards.reject', $vcard->id) }}" class="btn btn-danger btn-sm">Reject</a>
+                                        </x-admin.mobile-list-card>
+                                    @empty
+                                        <p class="text-center mb-0">No pending card applications found.</p>
+                                    @endforelse
                                 </div>
                                 <div class="mt-3">
                                     {{ $cards->links() }}

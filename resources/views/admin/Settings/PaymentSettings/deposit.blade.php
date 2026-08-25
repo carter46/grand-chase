@@ -2,7 +2,7 @@
     <div class="col-md-12">
         <div>
             <h3 class="d-inline ">Payment Methods</h3>
-            <a href="#" data-toggle="modal" data-target="#adduser" class="float-right btn btn-primary btn-sm"> <i
+            <a href="#" data-toggle="modal" data-target="#adduser" class="btn btn-primary btn-sm mt-2 mt-md-0"> <i
                     class='fas fa-plus-circle'></i> Add New</a>
             <!-- Modal -->
             <div class="modal fade" id="adduser" tabindex="-1" aria-h6ledby="exampleModalh6" aria-hidden="true">

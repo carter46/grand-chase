@@ -14,13 +14,11 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
     <div class="main-panel ">
         <div class="content ">
             <div class="page-inner">
-                <div class="mt-2 mb-5">
-                    <h1 class="title1 d-inline ">Process {{ $withdrawal->payment_mode }} Request</h1>
-                    <div class="d-inline">
-                        <div class="float-right btn-group">
-                            <a class="btn btn-primary btn-sm" href="{{ route('mwithdrawals') }}"> <i
-                                    class="fa fa-arrow-left"></i> back</a>
-                        </div>
+                <div class="mt-2 mb-5 admin-detail-head">
+                    <h1 class="title1">Process {{ $withdrawal->payment_mode }} Request</h1>
+                    <div class="btn-group">
+                        <a class="btn btn-primary btn-sm" href="{{ route('mwithdrawals') }}"> <i
+                                class="fa fa-arrow-left"></i> back</a>
                     </div>
                 </div>
                 <x-danger-alert />

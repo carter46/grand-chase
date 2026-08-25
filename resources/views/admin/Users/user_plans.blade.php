@@ -12,20 +12,18 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
     <div class="main-panel">
         <div class="content ">
             <div class="page-inner">
-                <div class="mt-2 mb-4">
-                    <h1 class="title1  d-inline"> {{ $user->name }} Loans</h1>
-                    <div class="d-inline">
-                        <div class="float-right btn-group">
-                            <a class="btn btn-primary btn-sm" href="{{ route('viewuser', $user->id) }}"> <i
-                                    class="fa fa-arrow-left"></i> back</a>
-                        </div>
+                <div class="mt-2 mb-4 admin-detail-head">
+                    <h1 class="title1"> {{ $user->name }} Loans</h1>
+                    <div class="btn-group">
+                        <a class="btn btn-primary btn-sm" href="{{ route('viewuser', $user->id) }}"> <i
+                                class="fa fa-arrow-left"></i> back</a>
                     </div>
                 </div>
                 <x-danger-alert />
                 <x-success-alert />
                 <div class="mb-5 row">
                     <div class="col card p-3 shadow ">
-                        <div class="bs-example widget-shadow table-responsive" data-example-id="hoverable-table">
+                        <div class="admin-desktop-table bs-example widget-shadow table-responsive" data-example-id="hoverable-table">
                             <span style="margin:3px;">
                                 <table id="ShipTable" class="table table-hover ">
                                     <thead>
@@ -73,6 +71,27 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                         @endforeach
                                     </tbody>
                                 </table>
+                        </div>
+                        <div class="admin-mobile-list">
+                            @foreach ($plans as $plan)
+                                <x-admin.mobile-list-card
+                                    :title="$settings->currency . number_format($plan->amount)"
+                                    :subtitle="$plan->purpose"
+                                    :badge="$plan->active"
+                                    :badge-class="$plan->active != 'Pending' ? 'badge-success' : 'badge-warning'"
+                                    :meta="[
+                                        ['label' => 'Duration', 'value' => $plan->inv_duration],
+                                        ['label' => 'Created', 'value' => \Carbon\Carbon::parse($plan->created_at)->toDayDateTimeString()],
+                                    ]"
+                                >
+                                    <a href="{{ route('deleteplan', $plan->id) }}" class="btn btn-info btn-sm">Delete</a>
+                                    @if ($plan->active == 'Processed')
+                                        <a href="{{ route('markas', ['id' => $plan->id, 'status' => 'Pending']) }}" class="btn btn-danger btn-sm">Mark Pending</a>
+                                    @else
+                                        <a href="{{ route('markas', ['id' => $plan->id, 'status' => 'Processed']) }}" class="btn btn-success btn-sm">Mark Processed</a>
+                                    @endif
+                                </x-admin.mobile-list-card>
+                            @endforeach
                         </div>
                     </div>
                 </div>
