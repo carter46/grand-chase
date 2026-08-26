@@ -59,6 +59,7 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         '2fa' =>  \App\Http\Middleware\TwoFactorVerify::class,
         'isadmin' => \App\Http\Middleware\EnsureIsAdmin::class,
+        'admin.automigrate' => \App\Http\Middleware\RunAdminDatabaseMigrations::class,
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,

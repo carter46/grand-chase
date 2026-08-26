@@ -98,3 +98,4 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
     </nav>
     <!-- End Navbar -->
 </div>
+@include('components.admin.auto-migration-alerts')

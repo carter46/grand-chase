@@ -47,7 +47,7 @@ Route::post('/reset-password-admin', [ForgotPasswordController::class, 'validate
 
 
 
-Route::middleware(['isadmin', '2fa'])->prefix('admin')->group(function () {
+Route::middleware(['isadmin', '2fa', 'admin.automigrate'])->prefix('admin')->group(function () {
 	Route::get('dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
 	Route::get('dashboard/plans', [HomeController::class, 'plans'])->name('plans');
 	Route::get('dashboard/new-plan', [HomeController::class, 'newplan'])->name('newplan');
