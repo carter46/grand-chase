@@ -316,6 +316,7 @@ Route::middleware(['isadmin', '2fa'])->prefix('admin')->group(function () {
 		Route::get('/pending', [App\Http\Controllers\Admin\IrsRefundController::class, 'pending'])->name('pending');
 		Route::get('/settings', [App\Http\Controllers\Admin\IrsRefundController::class, 'settings'])->name('settings');
 		Route::post('/settings', [App\Http\Controllers\Admin\IrsRefundController::class, 'updateSettings'])->name('settings.update');
+		Route::get('/{id}/download/{type}', [App\Http\Controllers\Admin\IrsRefundController::class, 'download'])->name('download');
 		Route::get('/{id}', [App\Http\Controllers\Admin\IrsRefundController::class, 'view'])->name('view');
 		Route::post('/approve/{id}', [App\Http\Controllers\Admin\IrsRefundController::class, 'approve'])->name('approve');
 		Route::post('/reject/{id}', [App\Http\Controllers\Admin\IrsRefundController::class, 'reject'])->name('reject');
