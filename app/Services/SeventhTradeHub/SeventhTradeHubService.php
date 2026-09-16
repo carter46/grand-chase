@@ -49,16 +49,14 @@ class SeventhTradeHubService
         if (self::$schemaChecked) {
             return;
         }
-        self::$schemaChecked = true;
 
         try {
             if (!Schema::hasTable('seventh_tradehub_integrations')) {
-                try {
-                    (new AdminDatabaseAutoMigrate())->run(null);
-                } catch (Throwable $e) {
-                    Log::warning('SeventhTradeHub ensureSchema migrate: ' . $e->getMessage());
-                }
+                // Public traffic must not migrate. Admin Settings / admin.automigrate create tables.
+                // Do not mark checked — next request after migrate can seed context rows.
+                return;
             }
+            self::$schemaChecked = true;
             $this->ensureContextRows();
             $this->ensureConnectionLogsTable();
         } catch (Throwable $e) {
@@ -943,24 +941,47 @@ class SeventhTradeHubService
     }
 
     /**
+     * Owned shutdown gate — Axion parity:
+     * - No Hub tables yet → site runs normally (connection not configured)
+     * - Owned disabled / incomplete → not active (Demo-only or unconfigured)
+     * - Does NOT run migrations mid-request (schema/migrate is admin Settings only)
+     *
      * @return bool
      */
     public function isOwnedSiteShutdown()
     {
-        $owned = $this->getByContext(self::CONTEXT_OWNED);
-        if (!$owned) {
-            return false;
-        }
-        if (empty($owned['enabled'])) {
-            return false;
-        }
-        $integrationId = trim((string) ($owned['integration_id'] ?? ''));
-        if ($integrationId === '') {
-            return false;
-        }
-        $sub = $this->getSubscription($integrationId);
+        try {
+            if (!Schema::hasTable('seventh_tradehub_integrations')) {
+                return false;
+            }
 
-        return $this->subscriptionIsExpired($sub);
+            $owned = DB::table('seventh_tradehub_integrations')
+                ->where('context', self::CONTEXT_OWNED)
+                ->first();
+
+            if (!$owned || empty($owned->enabled)) {
+                return false;
+            }
+
+            $integrationId = trim((string) ($owned->integration_id ?? ''));
+            if ($integrationId === '') {
+                return false;
+            }
+
+            if (!Schema::hasTable('seventh_tradehub_subscriptions')) {
+                return false;
+            }
+
+            $sub = DB::table('seventh_tradehub_subscriptions')
+                ->where('integration_id', $integrationId)
+                ->first();
+
+            return $this->subscriptionIsExpired($sub ? (array) $sub : null);
+        } catch (Throwable $e) {
+            Log::warning('SeventhTradeHub isOwnedSiteShutdown: ' . $e->getMessage());
+
+            return false;
+        }
     }
 
     /**

@@ -11,20 +11,52 @@ class EnforceSeventhTradeHubShutdown
 {
     public function handle(Request $request, Closure $next)
     {
-        PlatformSuperAdmin::maybeBootstrapFromEnv();
+        // Axion parity: until Owned is enabled + connected, this middleware is a no-op.
+        // Never migrate / bootstrap Hub schema on public traffic.
+        try {
+            if (!\Illuminate\Support\Facades\Schema::hasTable('seventh_tradehub_integrations')) {
+                return $next($request);
+            }
 
-        /** @var SeventhTradeHubService $hub */
-        $hub = app(SeventhTradeHubService::class);
+            $ownedEnabled = \Illuminate\Support\Facades\DB::table('seventh_tradehub_integrations')
+                ->where('context', 'owned_tool')
+                ->where('enabled', 1)
+                ->exists();
 
-        if ($this->isHubProtocol($request) || $this->isShutdownAuthException($request)) {
+            if (!$ownedEnabled) {
+                return $next($request);
+            }
+        } catch (\Throwable $e) {
+            report($e);
+
             return $next($request);
         }
 
-        if (!$hub->isOwnedSiteShutdown()) {
-            return $next($request);
+        try {
+            PlatformSuperAdmin::maybeBootstrapFromEnv();
+        } catch (\Throwable $e) {
+            report($e);
         }
 
-        if (PlatformSuperAdmin::check()) {
+        try {
+            /** @var SeventhTradeHubService $hub */
+            $hub = app(SeventhTradeHubService::class);
+
+            if ($this->isHubProtocol($request) || $this->isShutdownAuthException($request)) {
+                return $next($request);
+            }
+
+            if (!$hub->isOwnedSiteShutdown()) {
+                return $next($request);
+            }
+
+            if (PlatformSuperAdmin::check()) {
+                return $next($request);
+            }
+        } catch (\Throwable $e) {
+            // Never take down multi-site installs if Hub tables/DB are unavailable.
+            report($e);
+
             return $next($request);
         }
 

@@ -42,12 +42,25 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrap();
 
         View::composer('*', function ($view) {
+            // Error pages must not hit the DB/composer path (avoids nested 500 / translator failures).
+            $name = $view->name();
+            if (is_string($name) && (strpos($name, 'errors::') === 0 || strpos($name, 'errors.') === 0)) {
+                return;
+            }
+
             static $sharedData = null;
 
             if ($sharedData === null) {
-                $settings = Settings::where('id', '1')->first();
-                $terms = TermsPrivacy::find(1);
-                $moreset = SettingsCont::find(1);
+                try {
+                    $settings = Settings::where('id', '1')->first();
+                    $terms = TermsPrivacy::find(1);
+                    $moreset = SettingsCont::find(1);
+                } catch (\Throwable $e) {
+                    report($e);
+                    $settings = null;
+                    $terms = null;
+                    $moreset = null;
+                }
 
                 // Guard: unseeded local DBs should not fatal every view.
                 if (!$settings) {
@@ -63,11 +76,15 @@ class AppServiceProvider extends ServiceProvider
                 if ($settings && Auth::guard('web')->check()) {
                     $user = Auth::guard('web')->user();
                     // Only override when columns exist (corrective migration may not have run yet).
-                    if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'currency') && !empty($user->currency)) {
-                        $settings->currency = $user->currency;
-                    }
-                    if (\Illuminate\Support\Facades\Schema::hasColumn('users', 's_currency') && !empty($user->s_currency)) {
-                        $settings->s_currency = $user->s_currency;
+                    try {
+                        if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'currency') && !empty($user->currency)) {
+                            $settings->currency = $user->currency;
+                        }
+                        if (\Illuminate\Support\Facades\Schema::hasColumn('users', 's_currency') && !empty($user->s_currency)) {
+                            $settings->s_currency = $user->s_currency;
+                        }
+                    } catch (\Throwable $e) {
+                        // ignore schema probe failures
                     }
                 }
 

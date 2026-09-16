@@ -87,23 +87,27 @@ class PlatformSuperAdmin
      */
     public static function maybeBootstrapFromEnv()
     {
-        if (!Schema::hasColumn('admins', 'is_super_admin')) {
-            return;
-        }
+        try {
+            if (!Schema::hasColumn('admins', 'is_super_admin')) {
+                return;
+            }
 
-        if (Admin::where('is_super_admin', 1)->exists()) {
-            return;
-        }
+            if (Admin::where('is_super_admin', 1)->exists()) {
+                return;
+            }
 
-        $email = trim((string) (env('SEVENTH_TRADEHUB_SUPER_ADMIN_EMAIL') ?: getenv('SEVENTH_TRADEHUB_SUPER_ADMIN_EMAIL') ?: ''));
-        if ($email === '') {
-            return;
-        }
+            $email = trim((string) (env('SEVENTH_TRADEHUB_SUPER_ADMIN_EMAIL') ?: getenv('SEVENTH_TRADEHUB_SUPER_ADMIN_EMAIL') ?: ''));
+            if ($email === '') {
+                return;
+            }
 
-        $admin = Admin::whereRaw('LOWER(email) = ?', [strtolower($email)])->first();
-        if ($admin) {
-            $admin->is_super_admin = 1;
-            $admin->save();
+            $admin = Admin::whereRaw('LOWER(email) = ?', [strtolower($email)])->first();
+            if ($admin) {
+                $admin->is_super_admin = 1;
+                $admin->save();
+            }
+        } catch (\Throwable $e) {
+            // Fail open — missing migration/DB must not 500 the whole site.
         }
     }
 

@@ -77,6 +77,23 @@ composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
 Then commit the updated `vendor/` with the lockfile yourself.
 
+## After deploy: clear Laravel caches (fixes blank 500 / “translator does not exist”)
+
+If a site returns HTTP 500 and the log mentions `Target class [translator] does not exist`, the real error is usually a broken `bootstrap/cache` (especially an empty `packages.php`). On each domain that uses this codebase:
+
+1. Delete these if present: `bootstrap/cache/packages.php`, `bootstrap/cache/services.php`, `bootstrap/cache/config.php`, `bootstrap/cache/routes-*.php`
+2. Ensure `bootstrap/cache` is writable (not read-only)
+3. Run:
+   ```bash
+   php artisan package:discover
+   php artisan config:clear
+   php artisan cache:clear
+   php artisan view:clear
+   ```
+4. Load any admin page once so Hub migrations can auto-apply for that site’s DB
+
+Do **not** copy an empty `bootstrap/cache/packages.php` between sites.
+
 ## 7th Trade Hub cron (M9)
 
 Owned subscription poll runs via Laravel scheduler every 10 minutes (`seventh-tradehub:poll` with `withoutOverlapping`). Hostinger must invoke Artisan every minute:
