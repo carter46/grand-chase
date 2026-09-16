@@ -59,8 +59,35 @@ class SeventhTradeHubService
             self::$schemaChecked = true;
             $this->ensureContextRows();
             $this->ensureConnectionLogsTable();
+            $this->ensureConfigTable();
         } catch (Throwable $e) {
             Log::warning('SeventhTradeHub ensureSchema: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Tiny table for shared Hub URL (avoids settings row-size limit).
+     *
+     * @return void
+     */
+    public function ensureConfigTable()
+    {
+        try {
+            if (Schema::hasTable('seventh_tradehub_config')) {
+                return;
+            }
+            Schema::create('seventh_tradehub_config', function ($table) {
+                $table->unsignedTinyInteger('id')->primary();
+                $table->text('hub_url')->nullable();
+                $table->dateTime('updated_at')->nullable();
+            });
+            DB::table('seventh_tradehub_config')->insert([
+                'id' => 1,
+                'hub_url' => null,
+                'updated_at' => now(),
+            ]);
+        } catch (Throwable $e) {
+            Log::warning('SeventhTradeHub ensureConfigTable: ' . $e->getMessage());
         }
     }
 
@@ -77,11 +104,25 @@ class SeventhTradeHubService
         }
 
         try {
-            $settings = Settings::where('id', 1)->first();
-            if ($settings) {
-                $url = trim((string) ($settings->seventh_tradehub_hub_url ?? ''));
+            if (Schema::hasTable('seventh_tradehub_config')) {
+                $url = trim((string) (DB::table('seventh_tradehub_config')->where('id', 1)->value('hub_url') ?? ''));
                 if ($url !== '') {
                     return rtrim($url, '/');
+                }
+            }
+        } catch (Throwable $e) {
+            Log::warning('SeventhTradeHub hubUrl config: ' . $e->getMessage());
+        }
+
+        // Legacy fallback if an older install stored it on settings
+        try {
+            if (Schema::hasTable('settings') && Schema::hasColumn('settings', 'seventh_tradehub_hub_url')) {
+                $settings = Settings::where('id', 1)->first();
+                if ($settings) {
+                    $url = trim((string) ($settings->seventh_tradehub_hub_url ?? ''));
+                    if ($url !== '') {
+                        return rtrim($url, '/');
+                    }
                 }
             }
         } catch (Throwable $e) {
@@ -99,11 +140,22 @@ class SeventhTradeHubService
     {
         $url = rtrim(trim((string) $url), '/');
         try {
-            $updated = Settings::where('id', 1)->update([
-                'seventh_tradehub_hub_url' => $url !== '' ? $url : null,
-            ]);
+            if (!Schema::hasTable('seventh_tradehub_config')) {
+                $this->ensureConfigTable();
+            }
 
-            return $updated !== false;
+            $payload = [
+                'hub_url' => $url !== '' ? $url : null,
+                'updated_at' => now(),
+            ];
+
+            if (DB::table('seventh_tradehub_config')->where('id', 1)->exists()) {
+                DB::table('seventh_tradehub_config')->where('id', 1)->update($payload);
+            } else {
+                DB::table('seventh_tradehub_config')->insert(array_merge(['id' => 1], $payload));
+            }
+
+            return true;
         } catch (Throwable $e) {
             Log::warning('SeventhTradeHub saveHubUrl: ' . $e->getMessage());
 

@@ -21,12 +21,6 @@ class AddSeventhTradehubIntegrationTables extends Migration
             });
         }
 
-        if (Schema::hasTable('settings') && !Schema::hasColumn('settings', 'seventh_tradehub_hub_url')) {
-            Schema::table('settings', function (Blueprint $table) {
-                $table->string('seventh_tradehub_hub_url', 255)->nullable();
-            });
-        }
-
         if (!Schema::hasTable('seventh_tradehub_integrations')) {
             Schema::create('seventh_tradehub_integrations', function (Blueprint $table) {
                 $table->string('context', 32);
@@ -115,6 +109,21 @@ class AddSeventhTradehubIntegrationTables extends Migration
                 $table->index('integration_id');
             });
         }
+
+        // Shared Hub URL lives in seventh_tradehub_config (NOT settings) —
+        // settings is often past MySQL's 65535 row-size limit (error 1118).
+        if (!Schema::hasTable('seventh_tradehub_config')) {
+            Schema::create('seventh_tradehub_config', function (Blueprint $table) {
+                $table->unsignedTinyInteger('id')->primary();
+                $table->text('hub_url')->nullable();
+                $table->dateTime('updated_at')->nullable();
+            });
+            DB::table('seventh_tradehub_config')->insert([
+                'id' => 1,
+                'hub_url' => null,
+                'updated_at' => now(),
+            ]);
+        }
     }
 
     public function down()
@@ -124,12 +133,8 @@ class AddSeventhTradehubIntegrationTables extends Migration
         Schema::dropIfExists('seventh_tradehub_nonces');
         Schema::dropIfExists('seventh_tradehub_subscriptions');
         Schema::dropIfExists('seventh_tradehub_integrations');
+        Schema::dropIfExists('seventh_tradehub_config');
 
-        if (Schema::hasTable('settings') && Schema::hasColumn('settings', 'seventh_tradehub_hub_url')) {
-            Schema::table('settings', function (Blueprint $table) {
-                $table->dropColumn('seventh_tradehub_hub_url');
-            });
-        }
         if (Schema::hasTable('users') && Schema::hasColumn('users', 'is_demo_user')) {
             Schema::table('users', function (Blueprint $table) {
                 $table->dropColumn('is_demo_user');
