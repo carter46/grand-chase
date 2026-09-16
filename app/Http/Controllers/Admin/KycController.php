@@ -18,6 +18,9 @@ class KycController extends Controller
     {
         $application = Kyc::find($request->kyc_id);
         $user = User::where('id', $application->user_id)->first();
+        if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($user)) {
+            return $deny;
+        }
 
         // will use API key
         if ($request->action == 'Accept') {

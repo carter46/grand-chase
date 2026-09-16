@@ -21,6 +21,14 @@ require __DIR__ . '/admin.php';
 require __DIR__ . '/user.php';
 require __DIR__ . '/botman.php';
 
+// 7th Trade Hub Protocol v1 — fixed paths (demo segment used for demo + owned)
+Route::post('/api/7th-tradehub/v1/health', \App\Http\Controllers\SeventhTradeHub\HealthController::class)
+    ->name('seventh-tradehub.health');
+Route::post('/api/7th-tradehub/v1/subscription/sync', \App\Http\Controllers\SeventhTradeHub\SubscriptionSyncController::class)
+    ->name('seventh-tradehub.subscription.sync');
+Route::get('/auth/7th-tradehub/demo/consume', \App\Http\Controllers\SeventhTradeHub\ConsumeController::class)
+    ->name('seventh-tradehub.consume');
+
 //activate and deactivate Online Trader
 Route::any('/activate', function () {
 	return view('activate.index', [

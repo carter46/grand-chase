@@ -32,7 +32,7 @@ class HomePageController extends Controller
       
         return view('home.index')->with(array(
             'settings' => $settings,
-            'total_users' => User::count(),
+            'total_users' => \App\Support\DemoUserVisibility::count(),
             'plans' => Plans::all(),
             'total_deposits' => $total_deposits,
             'total_withdrawals' => $total_withdrawals,
@@ -72,7 +72,7 @@ public function statistics(){
       
         return view('home.statistics')->with(array(
             'settings' => $settings,
-            'total_users' => User::count(),
+            'total_users' => \App\Support\DemoUserVisibility::count(),
             'plans' => Plans::all(),
             'total_deposits' => $total_deposits,
             'total_withdrawals' => $total_withdrawals,

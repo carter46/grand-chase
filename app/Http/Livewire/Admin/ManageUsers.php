@@ -55,7 +55,19 @@ class ManageUsers extends Component
     public function getUsersProperty()
     {
 
-        return User::search($this->searchvalue)
+        $query = \App\Support\DemoUserVisibility::excludeFromQuery(User::query());
+
+        if (!empty($this->searchvalue)) {
+            $search = $this->searchvalue;
+            $query->where(function ($q) use ($search) {
+                $q->where('id', 'like', '%' . $search . '%')
+                    ->orWhere('name', 'like', '%' . $search . '%')
+                    ->orWhere('username', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
+            });
+        }
+
+        return $query
             ->orderBy($this->orderby, $this->orderdirection)
             ->paginate($this->pagenum);
     }
@@ -122,10 +134,9 @@ class ManageUsers extends Component
 
     public function addRoi()
     {
-
-        $users = DB::table('users')
-            ->whereIn('id', $this->checkrecord)
-            ->get();
+        $users = \App\Support\DemoUserVisibility::excludeFromQuery(
+            User::whereIn('id', $this->checkrecord)
+        )->get();
         $plan = Plans::where('id', $this->plan)->first();
 
         foreach ($users as $user) {
@@ -166,9 +177,9 @@ class ManageUsers extends Component
 
     public function topup()
     {
-        $users = DB::table('users')
-            ->whereIn('id', $this->checkrecord)
-            ->get();
+        $users = \App\Support\DemoUserVisibility::excludeFromQuery(
+            User::whereIn('id', $this->checkrecord)
+        )->get();
 
         foreach ($users as $user) {
 
@@ -217,10 +228,9 @@ class ManageUsers extends Component
     //Delete user
     public function delsystemuser()
     {
-
-        $users = DB::table('users')
-            ->whereIn('id', $this->checkrecord)
-            ->get();
+        $users = \App\Support\DemoUserVisibility::excludeFromQuery(
+            User::whereIn('id', $this->checkrecord)
+        )->get();
 
         foreach ($users as $user) {
 

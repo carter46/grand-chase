@@ -29,6 +29,9 @@ class TopupController extends Controller
         if (!$user) {
             return redirect()->back()->with('message', 'Selected user could not be found.');
         }
+        if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($user)) {
+            return $deny;
+        }
 
         $userdpo = Deposit::where('user', $request->user_id)->first();
         $settings = Settings::find(1);

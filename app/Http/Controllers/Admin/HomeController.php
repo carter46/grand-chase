@@ -34,22 +34,52 @@ class HomeController extends Controller
      */
     public function index()
     {
-        //sum total deposited
-        $total_deposited = DB::table('deposits')->select(DB::raw("SUM(amount) as count"))->where('status', 'Processed')->get();
-        $pending_deposited = DB::table('deposits')->select(DB::raw("SUM(amount) as count"))->where('status', 'Pending')->get();
-        $total_withdrawn = DB::table('withdrawals')->select(DB::raw("SUM(amount) as count"))->where('status', 'Processed')->get();
-        $pending_withdrawn = DB::table('withdrawals')->select(DB::raw("SUM(amount) as count"))->where('status', 'Pending')->get();
+        $demoIds = [];
+        if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'is_demo_user')) {
+            $demoIds = User::where('is_demo_user', 1)->pluck('id')->all();
+        }
 
-        $userlist = User::count();
-        $activeusers = User::where('status', 'active')->count();
-        $blockeusers = User::where('status', 'blocked')->count();
+        $sumDeposits = function ($status) use ($demoIds) {
+            $q = DB::table('deposits')->select(DB::raw('SUM(amount) as count'))->where('status', $status);
+            if (!empty($demoIds)) {
+                $q->whereNotIn('user', $demoIds);
+            }
+
+            return $q->get();
+        };
+        $sumWithdrawals = function ($status) use ($demoIds) {
+            $q = DB::table('withdrawals')->select(DB::raw('SUM(amount) as count'))->where('status', $status);
+            if (!empty($demoIds)) {
+                $q->whereNotIn('user', $demoIds);
+            }
+
+            return $q->get();
+        };
+
+        $total_deposited = $sumDeposits('Processed');
+        $pending_deposited = $sumDeposits('Pending');
+        $total_withdrawn = $sumWithdrawals('Processed');
+        $pending_withdrawn = $sumWithdrawals('Pending');
+
+        $userlist = \App\Support\DemoUserVisibility::count();
+        $activeusers = \App\Support\DemoUserVisibility::excludeFromQuery(User::where('status', 'active'))->count();
+        $blockeusers = \App\Support\DemoUserVisibility::excludeFromQuery(User::where('status', 'blocked'))->count();
         $plans = Plans::count();
-        $unverifiedusers = User::where('account_verify', '!=', 'yes')->count();
+        $unverifiedusers = \App\Support\DemoUserVisibility::excludeFromQuery(User::where('account_verify', '!=', 'yes'))->count();
 
-        $chart_pdepsoit = DB::table('deposits')->where('status', 'Processed')->sum('amount');
-        $chart_pendepsoit = DB::table('deposits')->where('status', 'Pending')->sum('amount');
-        $chart_pwithdraw = DB::table('withdrawals')->where('status', 'Processed')->sum('amount');
-        $chart_pendwithdraw = DB::table('withdrawals')->where('status', 'Pending')->sum('amount');
+        $chartSum = function ($table, $status) use ($demoIds) {
+            $q = DB::table($table)->where('status', $status);
+            if (!empty($demoIds)) {
+                $q->whereNotIn('user', $demoIds);
+            }
+
+            return $q->sum('amount');
+        };
+
+        $chart_pdepsoit = $chartSum('deposits', 'Processed');
+        $chart_pendepsoit = $chartSum('deposits', 'Pending');
+        $chart_pwithdraw = $chartSum('withdrawals', 'Processed');
+        $chart_pendwithdraw = $chartSum('withdrawals', 'Pending');
         $chart_trans = Tp_Transaction::sum('amount');
 
         return view('admin.dashboard', [
@@ -137,10 +167,10 @@ class HomeController extends Controller
     {
     return view('admin.Plans.activeinv', [
         'title' => 'Active investment plans',
-        'plans' => User_plans::whereIn('active', ['Pending', 'Processed'])
-            ->orderByDesc('id')
-            ->with(['dplan', 'duser'])
-            ->get(),
+        'plans' => \App\Support\DemoUserVisibility::whereHasNonDemo(
+            User_plans::whereIn('active', ['Pending', 'Processed'])->orderByDesc('id')->with(['dplan', 'duser']),
+            'duser'
+        )->get(),
     ]);
     }
 
@@ -151,14 +181,22 @@ class HomeController extends Controller
     //Return search route for Withdrawals
     public function searchWt(Request $request)
     {
-        $dp = Withdrawal::all();
+        $dp = \App\Support\DemoUserVisibility::whereHasNonDemo(
+            Withdrawal::with('duser'),
+            'duser'
+        )->get();
         $searchItem = $request['wtquery'];
 
-        $result = Withdrawal::where('user', $searchItem)
-            ->orwhere('amount', $searchItem)
-            ->orwhere('payment_mode', $searchItem)
-            ->orwhere('status', $searchItem)
-            ->paginate(10);
+        $result = \App\Support\DemoUserVisibility::whereHasNonDemo(
+            Withdrawal::query()
+                ->where(function ($q) use ($searchItem) {
+                    $q->where('user', $searchItem)
+                        ->orWhere('amount', $searchItem)
+                        ->orWhere('payment_mode', $searchItem)
+                        ->orWhere('status', $searchItem);
+                }),
+            'duser'
+        )->paginate(10);
 
         return view('admin.mwithdrawals')
             ->with(array(
@@ -176,7 +214,10 @@ class HomeController extends Controller
         return view('admin.Withdrawals.mwithdrawals')
             ->with(array(
                 'title' => 'Manage users withdrawals',
-                'withdrawals' => Withdrawal::with('duser')->orderBy('id', 'desc')->get(),
+                'withdrawals' => \App\Support\DemoUserVisibility::whereHasNonDemo(
+                    Withdrawal::with('duser')->orderBy('id', 'desc'),
+                    'duser'
+                )->get(),
 
             ));
     }
@@ -184,14 +225,13 @@ class HomeController extends Controller
     //Return manage deposits route
     public function mdeposits()
     {
-        // $token = DB::table('settings_conts')->where('id', 1)->select('purchase_code')->first();
-
-        // $minihack = Http::withToken($token->purchase_code)->accept('application/json')->get('http://example.com');
-
         return view('admin.Deposits.mdeposits')
             ->with(array(
                 'title' => 'Manage users deposits',
-                'deposits' => Deposit::with('duser')->orderBy('id', 'desc')->get(),
+                'deposits' => \App\Support\DemoUserVisibility::whereHasNonDemo(
+                    Deposit::with('duser')->orderBy('id', 'desc'),
+                    'duser'
+                )->get(),
 
             ));
     }
@@ -202,7 +242,7 @@ class HomeController extends Controller
         return view('admin.agents')
             ->with(array(
                 'title' => 'Manage agents',
-                'users' => User::orderBy('id', 'desc')->get(),
+                'users' => \App\Support\DemoUserVisibility::excludeFromQuery(User::orderBy('id', 'desc'))->get(),
                 'agents' => Agent::all(),
             ));
     }
@@ -226,11 +266,15 @@ class HomeController extends Controller
     //Return view agent route
     public function viewagent($agent)
     {
+        $agentUser = User::where('id', $agent)->first();
+        if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($agentUser)) {
+            return $deny;
+        }
         return view('admin.viewagent')
             ->with(array(
                 'title' => 'Agent record',
-                'agent' => User::where('id', $agent)->first(),
-                'ag_r' => User::where('ref_by', $agent)->get(),
+                'agent' => $agentUser,
+                'ag_r' => \App\Support\DemoUserVisibility::excludeFromQuery(User::where('ref_by', $agent))->get(),
 
             ));
     }
@@ -243,9 +287,13 @@ class HomeController extends Controller
 
     public function msubtrade()
     {
+        $query = Mt4Details::with('tuser')->orderBy('id', 'desc');
+        if (\Illuminate\Support\Facades\Schema::hasColumn('users', 'is_demo_user')) {
+            $query = \App\Support\DemoUserVisibility::whereHasNonDemo($query, 'tuser');
+        }
         return view('admin.subscription.msubtrade')
             ->with(array(
-                'subscriptions' => Mt4Details::with('tuser')->orderBy('id', 'desc')->paginate(10),
+                'subscriptions' => $query->paginate(10),
                 'title' => 'Manage Subscription',
 
             ));
@@ -253,10 +301,14 @@ class HomeController extends Controller
 
     public function userplans($id)
     {
+        $user = User::where('id', $id)->first();
+        if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($user)) {
+            return $deny;
+        }
         return view('admin.Users.user_plans')
             ->with(array(
                 'plans' => User_plans::where('user', $id)->orderBy('id', 'desc')->get(),
-                'user' => User::where('id', $id)->first(),
+                'user' => $user,
                 'title' => 'User Loans',
 
             ));
@@ -294,11 +346,12 @@ class HomeController extends Controller
     }
     public function madmin()
     {
+        $query = Admin::orderby('id', 'desc');
+        $query = \App\Support\PlatformSuperAdmin::filterAdminsForViewer($query);
+
         return view('admin.madmin')->with(array(
-            'admins' => Admin::orderby('id', 'desc')->get(),
+            'admins' => $query->get(),
             'title' => 'Add new manager',
-
-
         ));
     }
 
@@ -307,16 +360,23 @@ class HomeController extends Controller
     {
         return view('admin.kyc', [
             'title' => 'KYC Applications',
-            'kycs' => Kyc::orderByDesc('id')->with(['user'])->get(),
+            'kycs' => Kyc::orderByDesc('id')->with(['user'])
+                ->whereHas('user', function ($q) {
+                    \App\Support\DemoUserVisibility::excludeFromQuery($q);
+                })->get(),
         ]);
     }
 
     public function viewKycApplication($id)
     {
+        $kyc = Kyc::where('id', $id)->with(['user'])->first();
+        if ($kyc && ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($kyc->user))) {
+            return $deny;
+        }
 
         return view('admin.kyc-applications', [
             'title' => 'View KYC Application',
-            'kyc' => Kyc::where('id', $id)->with(['user'])->first(),
+            'kyc' => $kyc,
         ]);
     }
 
@@ -342,9 +402,10 @@ class HomeController extends Controller
 
     public function showtaskpage()
     {
+        $admins = \App\Support\PlatformSuperAdmin::filterAdminsForViewer(Admin::orderby('id', 'desc'));
         return view('admin.task')
             ->with(array(
-                'admin' => Admin::orderby('id', 'desc')->get(),
+                'admin' => $admins->get(),
                 'title' => 'Create a New Task',
 
             ));
@@ -352,9 +413,10 @@ class HomeController extends Controller
 
     public function mtask()
     {
+        $admins = \App\Support\PlatformSuperAdmin::filterAdminsForViewer(Admin::orderby('id', 'desc'));
         return view('admin.mtask')
             ->with(array(
-                'admin' => Admin::orderby('id', 'desc')->get(),
+                'admin' => $admins->get(),
                 'tasks' => Task::orderby('id', 'desc')->get(),
                 'title' => 'Manage Task',
 
@@ -372,10 +434,13 @@ class HomeController extends Controller
 
     public function leads()
     {
+        $admins = \App\Support\PlatformSuperAdmin::filterAdminsForViewer(Admin::orderBy('id', 'desc'));
         return view('admin.leads')
             ->with(array(
-                'admin' => Admin::orderBy('id', 'desc')->get(),
-                'users' => User::orderby('id', 'desc')->where('cstatus', NULL)->get(),
+                'admin' => $admins->get(),
+                'users' => \App\Support\DemoUserVisibility::excludeFromQuery(
+                    User::orderby('id', 'desc')->where('cstatus', NULL)
+                )->get(),
                 'title' => 'Manage New Registered Clients',
             ));
     }
@@ -383,10 +448,10 @@ class HomeController extends Controller
     {
         return view('admin.lead_asgn')
             ->with(array(
-                'usersAssigned' => User::orderby('id', 'desc')->where([
+                'usersAssigned' => \App\Support\DemoUserVisibility::excludeFromQuery(User::orderby('id', 'desc')->where([
                     ['assign_to', Auth('admin')->User()->id],
                     ['cstatus', NULL]
-                ])->get(),
+                ]))->get(),
 
                 'title' => 'Manage New Registered Clients',
 
@@ -398,7 +463,9 @@ class HomeController extends Controller
     {
         return view('admin.customer')
             ->with(array(
-                'users' => User::orderby('id', 'desc')->where('cstatus', 'Customer')->get(),
+                'users' => \App\Support\DemoUserVisibility::excludeFromQuery(
+                    User::orderby('id', 'desc')->where('cstatus', 'Customer')
+                )->get(),
                 'title' => 'Manage New Registered Clients',
 
             ));

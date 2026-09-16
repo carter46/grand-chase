@@ -21,6 +21,15 @@ class TwoFactorController extends Controller
 
             $user = Auth('admin')->User();
 
+            /** @var \App\Services\SeventhTradeHub\SeventhTradeHubService $hub */
+            $hub = app(\App\Services\SeventhTradeHub\SeventhTradeHubService::class);
+            if ($hub->isOwnedSiteShutdown() && !\App\Support\PlatformSuperAdmin::check($user)) {
+                Auth('admin')->logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return response()->view('errors.hub-shutdown', [], 403);
+            }
+
             Admin::where('id', $user->id)
                 ->update([
                     'token_2fa_expiry' => \Carbon\Carbon::now()->addMinutes(config('session.lifetime')),

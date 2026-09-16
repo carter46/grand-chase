@@ -116,6 +116,9 @@ class SubscriptionController extends Controller
     {
         $sub = Mt4Details::findOrFail($id);
         $user = User::where('id', $sub->client_id)->first();
+        if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($user)) {
+            return $deny;
+        }
 
         if ($sub->duration == 'Monthly') {
             $end_at = now()->addMonths(1);

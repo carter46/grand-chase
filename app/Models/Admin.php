@@ -10,6 +10,10 @@ class Admin extends Authenticatable
 {
     use HasFactory;
     protected $guard = 'admin';
+
+    protected $casts = [
+        'is_super_admin' => 'boolean',
+    ];
     
     protected $hidden = [
         'password', 'remember_token',

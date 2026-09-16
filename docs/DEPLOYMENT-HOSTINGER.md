@@ -76,3 +76,14 @@ composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 ```
 
 Then commit the updated `vendor/` with the lockfile yourself.
+
+## 7th Trade Hub cron (M9)
+
+Owned subscription poll runs via Laravel scheduler every 10 minutes (`seventh-tradehub:poll` with `withoutOverlapping`). Hostinger must invoke Artisan every minute:
+
+```cron
+* * * * * php /home/USER/domains/YOUR_DOMAIN/public_html/artisan schedule:run >> /dev/null 2>&1
+```
+
+Adjust the path to this app’s `artisan`. Platform SA seed (`admin@demo.com`) is applied by migration on the next authenticated admin dashboard load (`admin.automigrate`). After go-live, rotate that seed password and run Hub MERCHANT-GO-LIVE smoke on the public HTTPS URL.
+

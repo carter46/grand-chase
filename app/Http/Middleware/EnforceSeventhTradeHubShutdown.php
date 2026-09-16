@@ -1,0 +1,106 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use App\Services\SeventhTradeHub\SeventhTradeHubService;
+use App\Support\PlatformSuperAdmin;
+use Closure;
+use Illuminate\Http\Request;
+
+class EnforceSeventhTradeHubShutdown
+{
+    public function handle(Request $request, Closure $next)
+    {
+        PlatformSuperAdmin::maybeBootstrapFromEnv();
+
+        /** @var SeventhTradeHubService $hub */
+        $hub = app(SeventhTradeHubService::class);
+
+        if ($this->isHubProtocol($request) || $this->isShutdownAuthException($request)) {
+            return $next($request);
+        }
+
+        if (!$hub->isOwnedSiteShutdown()) {
+            return $next($request);
+        }
+
+        if (PlatformSuperAdmin::check()) {
+            return $next($request);
+        }
+
+        // Logged-in non-SA admin or user during shutdown
+        if (
+            $request->expectsJson()
+            || $request->is('api/*')
+            || $request->ajax()
+            || $request->is('livewire/*')
+            || $request->header('X-Livewire')
+        ) {
+            return response()->json([
+                'success' => false,
+                'ok' => false,
+                'error' => 'site_shutdown',
+                'message' => 'Site is shut down. Only a super administrator can continue.',
+            ], 403);
+        }
+
+        return response()->view('errors.hub-shutdown', [], 403);
+    }
+
+    private function isHubProtocol(Request $request)
+    {
+        $path = '/' . ltrim($request->path(), '/');
+        $patterns = [
+            '/api/7th-tradehub/v1/health',
+            '/api/7th-tradehub/v1/subscription/sync',
+            '/auth/7th-tradehub/demo/consume',
+        ];
+        foreach ($patterns as $pattern) {
+            if (stripos($path, $pattern) !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function isShutdownAuthException(Request $request)
+    {
+        $path = '/' . ltrim($request->path(), '/');
+        $exceptions = [
+            '/login',
+            '/logout',
+            '/admin/login',
+            '/admin/logout',
+            '/admin/validate_admin',
+            '/admin/forgot-password',
+            '/admin/send-request',
+            '/admin/reset-password',
+            '/admin/2fa',
+            '/admin/twofa',
+            '/forgot-password',
+            '/reset-password',
+            '/reset-password-admin',
+            '/two-factor-challenge',
+            '/user/two-factor-authentication',
+        ];
+        foreach ($exceptions as $ex) {
+            if (stripos($path, $ex) === 0 || $path === $ex) {
+                return true;
+            }
+        }
+        if ($request->routeIs(
+            'adminlogin',
+            'login',
+            'logout',
+            'adminlogout',
+            'twofalogin',
+            'sendpasswordrequest',
+            'restpass',
+            'resetview',
+            'admin.forgetpassword'
+        )) {
+            return true;
+        }
+        return false;
+    }
+}

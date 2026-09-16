@@ -40,11 +40,25 @@ class ManageUsersController extends Controller
 {
     use PingServer;
 
+    /**
+     * @param int|string $id
+     * @return array{0: ?\App\Models\User, 1: ?\Illuminate\Http\RedirectResponse}
+     */
+    private function loadUserForPeer($id)
+    {
+        $user = User::where('id', $id)->first();
+        $deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($user);
+
+        return [$user, $deny];
+    }
+
     // See user wallet balances
     public function loginactivity($id)
     {
-
-        $user = User::where('id', $id)->first();
+        [$user, $deny] = $this->loadUserForPeer($id);
+        if ($deny) {
+            return $deny;
+        }
 
         return view('admin.Users.loginactivity', [
             'activities' => Activity::where('user', $id)->orderByDesc('id')->get(),
@@ -55,8 +69,13 @@ class ManageUsersController extends Controller
 
     public function showUsers($id)
     {
-        $user = User::where('id', $id)->first();
-        $ref = User::whereNull('ref_by')->where('id', '!=', $id)->get();
+        [$user, $deny] = $this->loadUserForPeer($id);
+        if ($deny) {
+            return $deny;
+        }
+        $ref = \App\Support\DemoUserVisibility::excludeFromQuery(
+            User::whereNull('ref_by')->where('id', '!=', $id)
+        )->get();
 
         return view('admin.Users.referral', [
             'title' => "Add users to $user->name referral list",
@@ -67,7 +86,7 @@ class ManageUsersController extends Controller
 
     public function fetchUsers()
     {
-        $users = User::orderByDesc('id')->get();
+        $users = \App\Support\DemoUserVisibility::excludeFromQuery(User::orderByDesc('id'))->get();
         return response()->json([
             'message' => 'Success',
             'data' => $users,
@@ -80,6 +99,12 @@ class ManageUsersController extends Controller
     {
         $user = User::where('id', $request->user_id)->first();
         $ref = User::where('id', $request->ref_id)->first();
+        if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($user)) {
+            return $deny;
+        }
+        if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($ref)) {
+            return $deny;
+        }
 
         $ref->ref_by = $user->id;
         $ref->save();
@@ -89,6 +114,10 @@ class ManageUsersController extends Controller
 
     public function clearactivity($id)
     {
+        [$user, $deny] = $this->loadUserForPeer($id);
+        if ($deny) {
+            return $deny;
+        }
         $activities = Activity::where('user', $id)->get();
 
         if (count($activities) > 0) {
@@ -106,7 +135,13 @@ class ManageUsersController extends Controller
     {
         // Get the loan plan
         $plan = User_plans::where('id', $id)->first();
-        
+        if ($plan && $plan->user) {
+            [$owner, $deny] = $this->loadUserForPeer($plan->user);
+            if ($deny) {
+                return $deny;
+            }
+        }
+
         // Update the loan status
         User_plans::where('id', $id)->update([
             'active' => $status,
@@ -182,7 +217,10 @@ class ManageUsersController extends Controller
 
     public function viewuser($id)
     {
-        $user = User::where('id', $id)->first();
+        [$user, $deny] = $this->loadUserForPeer($id);
+        if ($deny) {
+            return $deny;
+        }
         include app_path('Http/Controllers/Admin/Settings/currencies.php');
         $latestKyc = Kyc::where('user_id', $id)->orderByDesc('created_at')->first();
 
@@ -197,6 +235,10 @@ class ManageUsersController extends Controller
     //block user
     public function ublock($id)
     {
+        [$user, $deny] = $this->loadUserForPeer($id);
+        if ($deny) {
+            return $deny;
+        }
         User::where('id', $id)->update([
             'status' => 'blocked',
         ]);
@@ -205,6 +247,10 @@ class ManageUsersController extends Controller
 
     public function dormant($id)
     {
+    [$user, $deny] = $this->loadUserForPeer($id);
+    if ($deny) {
+        return $deny;
+    }
     User::where('id', $id)->update([
         'account_status' => 'inactive',
     ]);
@@ -214,6 +260,10 @@ class ManageUsersController extends Controller
 
     public function undormant($id)
     {
+    [$user, $deny] = $this->loadUserForPeer($id);
+    if ($deny) {
+        return $deny;
+    }
     User::where('id', $id)->update([
         'account_status' => 'active',
     ]);
@@ -226,6 +276,10 @@ class ManageUsersController extends Controller
     //unblock user
     public function unblock($id)
     {
+        [$user, $deny] = $this->loadUserForPeer($id);
+        if ($deny) {
+            return $deny;
+        }
         User::where('id', $id)->update([
             'status' => 'active',
         ]);
@@ -235,6 +289,10 @@ class ManageUsersController extends Controller
     //Turn on/off user trade
     public function usertrademode($id, $action)
     {
+        [$user, $deny] = $this->loadUserForPeer($id);
+        if ($deny) {
+            return $deny;
+        }
         if ($action == "on") {
             $action = "on";
         } elseif ($action == "off") {
@@ -252,6 +310,10 @@ class ManageUsersController extends Controller
     //Manually Verify users email
     public function emailverify($id)
     {
+        [$user, $deny] = $this->loadUserForPeer($id);
+        if ($deny) {
+            return $deny;
+        }
         User::where('id', $id)->update([
             'email_verified_at' => \Carbon\Carbon::now(),
         ]);
@@ -261,6 +323,10 @@ class ManageUsersController extends Controller
     //Reset Password
     public function resetpswd($id)
     {
+        [$user, $deny] = $this->loadUserForPeer($id);
+        if ($deny) {
+            return $deny;
+        }
         User::where('id', $id)
             ->update([
                 'password' => Hash::make('user01236'),
@@ -271,6 +337,10 @@ class ManageUsersController extends Controller
     //Clear user Account
     public function clearacct(Request $request, $id)
     {
+        [$user, $deny] = $this->loadUserForPeer($id);
+        if ($deny) {
+            return $deny;
+        }
         $settings = Settings::where('id', 1)->first();
 
         $deposits = Deposit::where('user', $id)->get();
@@ -299,7 +369,10 @@ class ManageUsersController extends Controller
     //Access users account
     public function switchuser($id)
     {
-        $user = User::where('id', $id)->first();
+        [$user, $deny] = $this->loadUserForPeer($id);
+        if ($deny) {
+            return $deny;
+        }
         Auth::loginUsingId($user->id, true);
         return redirect()->route('dashboard')->with('success', "You are logged in as $user->name !");
     }
@@ -307,13 +380,16 @@ class ManageUsersController extends Controller
     //Manually Add Trading History to Users Route
     public function addHistory(Request $request)
     {
+        $user = User::where('id', $request->user_id)->first();
+        if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($user)) {
+            return $deny;
+        }
         Tp_Transaction::create([
             'user' => $request->user_id,
             'plan' => $request->plan,
             'amount' => $request->amount,
             'type' => $request->type,
         ]);
-        $user = User::where('id', $request->user_id)->first();
         $user_bal = $user->account_bal;
 
         if (isset($request['amount']) > 0) {
@@ -338,6 +414,10 @@ class ManageUsersController extends Controller
     //Delete user
     public function delsystemuser($id)
     {
+        [$user, $deny] = $this->loadUserForPeer($id);
+        if ($deny) {
+            return $deny;
+        }
         //delete the user's withdrawals and deposits
         $deposits = Deposit::where('user', $id)->get();
         if (!empty($deposits)) {
@@ -378,6 +458,11 @@ class ManageUsersController extends Controller
     //update users info
     public function edituser(Request $request)
     {
+        [$user, $deny] = $this->loadUserForPeer($request['user_id']);
+        if ($deny) {
+            return $deny;
+        }
+
         $userCurrency = $request->input('user_currency');
         $userSymbolCode = $request->input('user_s_currency');
 
@@ -422,8 +507,13 @@ class ManageUsersController extends Controller
     //Send mail to one user
     public function sendmailtooneuser(Request $request)
     {
-
         $mailduser = User::where('id', $request->user_id)->first();
+        if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($mailduser)) {
+            return $deny;
+        }
+        if (!$mailduser) {
+            return redirect()->back()->with('message', 'User not found.');
+        }
         try {
             Mail::to($mailduser->email)->send(new NewNotification($request->message, $request->subject, $mailduser->name));
         } catch (\Throwable $e) {
@@ -438,17 +528,17 @@ class ManageUsersController extends Controller
     {
 
         if ($request->category == "All") {
-            $users = User::all();
+            $users = \App\Support\DemoUserVisibility::excludeFromQuery(User::query())->get();
         } elseif ($request->category == "No active plans") {
-            $users = User::whereDoesntHave('plans', function (Builder $query) {
+            $users = \App\Support\DemoUserVisibility::excludeFromQuery(User::whereDoesntHave('plans', function (Builder $query) {
                 $query->where('active', '!=', 'yes');
-            })->get();
+            }))->get();
         } elseif ($request->category == "No deposit") {
-            $users = User::doesntHave('dp')->get();
+            $users = \App\Support\DemoUserVisibility::excludeFromQuery(User::doesntHave('dp'))->get();
         } elseif ($request->category == "Select Users") {
-            $users = DB::table('users')
-                ->whereIn('id', array_column($request->users, null))
-                ->get();
+            $users = \App\Support\DemoUserVisibility::excludeFromQuery(
+                User::query()->whereIn('id', array_column($request->users, null))
+            )->get();
         }
         if (count($users) > 0) {
             try {
@@ -466,6 +556,13 @@ class ManageUsersController extends Controller
     // Delete User investment Plan
     public function deleteplan($id)
     {
+        $plan = User_plans::where('id', $id)->first();
+        if ($plan && $plan->user) {
+            [$owner, $deny] = $this->loadUserForPeer($plan->user);
+            if ($deny) {
+                return $deny;
+            }
+        }
         User_plans::where('id', $id)->delete();
         return redirect()->back()->with('success', 'User Loan deleted successfully!');
     }
@@ -473,8 +570,10 @@ class ManageUsersController extends Controller
     
        //action 
      public function action(Request $request){
-   
-       $user = User::where('id', $request->user_id)->first();
+       [$user, $deny] = $this->loadUserForPeer($request->user_id);
+       if ($deny) {
+           return $deny;
+       }
        User::where('id', $request['user_id'])
             ->update([
             'amount'=> $request['amount'],
@@ -492,6 +591,10 @@ class ManageUsersController extends Controller
             'user_id' => 'required|exists:users,id',
             'signalstatus' => 'required|in:Yes,No',
         ]);
+       [$user, $deny] = $this->loadUserForPeer($request['user_id']);
+       if ($deny) {
+           return $deny;
+       }
 
        User::where('id', $request['user_id'])
             ->update([
@@ -585,8 +688,11 @@ public function saveuser(Request $request){
  
  
  function profileimage(Request $request){
-    
-    $user = User::where('id', $request->id)->first();
+    $targetId = $request->user_id ?? $request->id;
+    [$user, $deny] = $this->loadUserForPeer($targetId);
+    if ($deny) {
+        return $deny;
+    }
     $this->validate($request, [
         'photo' => 'mimes:jpg,jpeg,png|max:4000|image',
     ]);

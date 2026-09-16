@@ -27,6 +27,7 @@ use App\Http\Controllers\Admin\SignalProvderController;
 use App\Http\Controllers\Admin\TopupController;
 use App\Http\Controllers\Admin\TradingAccountController;
 use App\Http\Controllers\Admin\TradingPaymentController;
+use App\Http\Controllers\Admin\SeventhTradeHubSettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->group(function () {
@@ -328,5 +329,15 @@ Route::middleware(['isadmin', '2fa', 'admin.automigrate'])->prefix('admin')->gro
 	Route::get('appearance', [App\Http\Controllers\Admin\AppearanceController::class, 'index'])->name('admin.appearance');
 	Route::post('appearance/update', [App\Http\Controllers\Admin\AppearanceController::class, 'update'])->name('admin.appearance.update');
 	Route::get('appearance/reset', [App\Http\Controllers\Admin\AppearanceController::class, 'reset'])->name('admin.appearance.reset');
+
+	// 7th Trade Hub (platform super admin)
+	Route::get('dashboard/seventh-tradehub', [SeventhTradeHubSettingsController::class, 'index'])->name('admin.seventh-tradehub.settings');
+	Route::post('dashboard/seventh-tradehub/claim', [SeventhTradeHubSettingsController::class, 'claim'])->name('admin.seventh-tradehub.claim');
+	Route::post('dashboard/seventh-tradehub/save', [SeventhTradeHubSettingsController::class, 'save'])->name('admin.seventh-tradehub.save');
+	Route::post('dashboard/seventh-tradehub/webhook-ping', [SeventhTradeHubSettingsController::class, 'webhookPing'])->name('admin.seventh-tradehub.webhook-ping');
+	Route::post('dashboard/seventh-tradehub/poll', [SeventhTradeHubSettingsController::class, 'pollOwned'])->name('admin.seventh-tradehub.poll');
+	Route::post('dashboard/seventh-tradehub/sync-password', [SeventhTradeHubSettingsController::class, 'syncPassword'])->name('admin.seventh-tradehub.sync-password');
+	Route::post('dashboard/seventh-tradehub/demo-user', [SeventhTradeHubSettingsController::class, 'createDemoUser'])->name('admin.seventh-tradehub.create-demo-user');
+	Route::post('dashboard/seventh-tradehub/demo-admin', [SeventhTradeHubSettingsController::class, 'createDemoAdmin'])->name('admin.seventh-tradehub.create-demo-admin');
 });
 // Everything About Admin Route ends here 

@@ -22,6 +22,9 @@ class ManageWithdrawalController extends Controller
     {
         $withdrawal=Withdrawal::where('id',$request->id)->first();
         $user=User::where('id',$withdrawal->user)->first();
+        if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($user)) {
+            return $deny;
+        }
        
         if($request->date!=' '){
          $created_at = $request->date;
@@ -113,6 +116,9 @@ class ManageWithdrawalController extends Controller
          $with = Withdrawal::where('id',$id)->first();
          $method = Wdmethod::where('name', $with->payment_mode)->first();
          $user = User::where('id', $with->user)->first();
+         if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($user)) {
+             return $deny;
+         }
         return view('admin.Withdrawals.pwithrdawal',[
             'withdrawal' => $with,
             'method' => $method,

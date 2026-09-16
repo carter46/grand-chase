@@ -18,6 +18,11 @@ class EnsureKycIsCompleted
      */
     public function handle(Request $request, Closure $next)
     {
+        // Hub SSO must bypass KYC / pin onboarding gates.
+        if ($request->session()->get('hub_sso_login')) {
+            return $next($request);
+        }
+
         $user = Auth::user();
         $settings = Settings::find(1);
 

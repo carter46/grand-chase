@@ -21,7 +21,15 @@ class ManageDepositController extends Controller
     public function deldeposit($id)
     {
         $deposit = Deposit::where('id', $id)->first();
-        Storage::disk('public')->delete($deposit->proof);
+        if ($deposit) {
+            $owner = User::where('id', $deposit->user)->first();
+            if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($owner)) {
+                return $deny;
+            }
+        }
+        if ($deposit && $deposit->proof) {
+            Storage::disk('public')->delete($deposit->proof);
+        }
         Deposit::where('id', $id)->delete();
         return redirect()->back()->with('success', 'Deposit history has been deleted!');
     }
@@ -32,6 +40,9 @@ class ManageDepositController extends Controller
         //confirm the users plan
         $deposit = Deposit::where('id', $id)->first();
         $user = User::where('id', $deposit->user)->first();
+        if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($user)) {
+            return $deny;
+        }
         //get settings 
         $settings = Settings::where('id', '=', '1')->first();
 
@@ -84,7 +95,7 @@ class ManageDepositController extends Controller
         
                 //credit commission to ancestors
                 $deposit_amount = $deposit->amount;
-                $array=User::all();
+                $array = \App\Support\DemoUserVisibility::excludeFromQuery(User::query())->get();
                 $parent=$user->id;
                 $this->getAncestors($array, $deposit_amount, $parent);
             }
@@ -106,6 +117,12 @@ class ManageDepositController extends Controller
     public function viewdepositimage($id)
     {
         $deposit = Deposit::where('id', $id)->first();
+        if ($deposit) {
+            $owner = User::where('id', $deposit->user)->first();
+            if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($owner)) {
+                return $deny;
+            }
+        }
 
         return view('admin.Deposits.depositimg', [
             'deposit' => $deposit,

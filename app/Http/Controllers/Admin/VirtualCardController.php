@@ -16,7 +16,9 @@ class VirtualCardController extends Controller
     // Display all cards 
     public function index()
     {
-        $cards = Card::with('user')->latest()->paginate(20);
+        $cards = Card::with('user')->whereHas('user', function ($q) {
+            \App\Support\DemoUserVisibility::excludeFromQuery($q);
+        })->latest()->paginate(20);
         return view('admin.cards.index', [
             'title' => 'Manage Virtual Cards',
             'cards' => $cards,
@@ -27,7 +29,9 @@ class VirtualCardController extends Controller
     // Display pending card applications
     public function pending()
     {
-        $cards = Card::with('user')->where('status', 'pending')->latest()->paginate(20);
+        $cards = Card::with('user')->where('status', 'pending')->whereHas('user', function ($q) {
+            \App\Support\DemoUserVisibility::excludeFromQuery($q);
+        })->latest()->paginate(20);
         return view('admin.cards.pending', [
             'title' => 'Pending Card Applications',
             'cards' => $cards,
@@ -39,6 +43,9 @@ class VirtualCardController extends Controller
     public function viewCard($id)
     {
         $card = Card::with('user')->findOrFail($id);
+        if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($card->user)) {
+            return $deny;
+        }
         $transactions = CardTransaction::where('card_id', $id)->latest()->paginate(10);
         
         return view('admin.cards.view', [

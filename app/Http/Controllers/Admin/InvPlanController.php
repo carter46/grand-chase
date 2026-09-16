@@ -65,9 +65,9 @@ class InvPlanController extends Controller
         }
 
         //remove users from the plan before deleting
-        $users=User::where('plan',$id)->get();
-        foreach($users as $user){
-            User::where('id',$user->id)
+        $users = \App\Support\DemoUserVisibility::excludeFromQuery(User::where('plan', $id))->get();
+        foreach ($users as $user) {
+            User::where('id', $user->id)
             ->update([
                 'plan' => 0,
                 //'confirmed_plan' => 0,

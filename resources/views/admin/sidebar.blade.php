@@ -287,6 +287,14 @@
                         </a>
                     </li>
                 @endif --}}
+                @if (\App\Support\PlatformSuperAdmin::check() || \App\Support\PlatformSuperAdmin::canShowClaim())
+                    <li class="nav-item {{ request()->routeIs('admin.seventh-tradehub.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.seventh-tradehub.settings') }}">
+                            <i class="fas fa-link"></i>
+                            <p>7th Trade Hub</p>
+                        </a>
+                    </li>
+                @endif
                 @if (Auth('admin')->User()->type == 'Super Admin')
                     <li
                         class="nav-item {{ request()->routeIs('addmanager') ? 'active' : '' }} {{ request()->routeIs('madmin') ? 'active' : '' }}">
@@ -325,6 +333,13 @@
                                         <span class="sub-item">App Settings</span>
                                     </a>
                                 </li>
+                                @if (\App\Support\PlatformSuperAdmin::check() || \App\Support\PlatformSuperAdmin::canShowClaim())
+                                <li>
+                                    <a href="{{ route('admin.seventh-tradehub.settings') }}">
+                                        <span class="sub-item">7th Trade Hub</span>
+                                    </a>
+                                </li>
+                                @endif
                                 {{-- <li>
                                     <a href="{{ route('refsetshow') }}">
                                         <span class="sub-item">Referral/Bonus Settings</span>

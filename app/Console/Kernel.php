@@ -24,7 +24,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        
+        $schedule->command('seventh-tradehub:poll')->everyTenMinutes()->withoutOverlapping(9);
+        $schedule->call(function () {
+            if (!\Illuminate\Support\Facades\Schema::hasTable('seventh_tradehub_nonces')) {
+                return;
+            }
+            \Illuminate\Support\Facades\DB::table('seventh_tradehub_nonces')
+                ->where('seen_at', '<', now()->subDays(7))
+                ->delete();
+        })->daily()->name('seventh-tradehub-nonce-prune')->withoutOverlapping();
     }
 
     /**

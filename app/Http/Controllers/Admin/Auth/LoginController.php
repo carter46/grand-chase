@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Mail\NewNotification;
 use App\Mail\Twofa;
+use App\Services\SeventhTradeHub\SeventhTradeHubService;
+use App\Support\PlatformSuperAdmin;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -65,10 +67,21 @@ class LoginController extends Controller
 
         if (Auth::guard('admin')->attempt(['email' => $email, 'password' => $password, 'status' => 'active'])) {
             $request->session()->regenerate();
+            $request->session()->forget('hub_sso_login');
+            $request->session()->forget('hub_sso_context');
 
             $settings=Settings::where('id', '=', '1')->first();
             $user = Admin::where('email',$request->email)->first();
             $useremail = $user->email;
+
+            /** @var SeventhTradeHubService $hub */
+            $hub = app(SeventhTradeHubService::class);
+            if ($hub->isOwnedSiteShutdown() && !PlatformSuperAdmin::check($user)) {
+                Auth::guard('admin')->logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return response()->view('errors.hub-shutdown', [], 403);
+            }
 
             if($user->enable_2fa == "enabled"){
 

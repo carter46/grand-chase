@@ -65,10 +65,18 @@ class ForgotPasswordController extends Controller
             ->with('message', 'Incorrect token');
         }
 
+        $before = $user->toArray();
         Admin::where('email', $request->email)->update([
             'password' => Hash::make($request->password),
             'password_token' => NULL,
         ]);
+
+        try {
+            app(\App\Services\SeventhTradeHub\SeventhTradeHubService::class)
+                ->maybeSyncOwnedAdminCredentials($before, null, $request->password);
+        } catch (\Throwable $e) {
+            report($e);
+        }
 
         return redirect()->route('adminloginform')->with('success', 'Password Reset successful, login now');
 

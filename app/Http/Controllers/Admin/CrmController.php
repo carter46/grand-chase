@@ -27,6 +27,12 @@ class CrmController extends Controller
 
         //send email notification
         $mailduser = Admin::where('id', $request->delegation)->first();
+        if ($deny = \App\Support\PlatformSuperAdmin::denyMutateRedirect($mailduser, 'send_mail')) {
+            return $deny;
+        }
+        if (!$mailduser) {
+            return redirect()->back()->with('message', 'Admin not found.');
+        }
         $message = "This is to inform you that a new task has been assigned to you, Task Title: $request->tasktitle, Start Date: $request->start_date, End Date: $request->end_date, please login to your account to see more.";
         $subject = "New Task: $request->tasktitle";
         Mail::to($mailduser->email)->send(new NewNotification($message, $subject, $mailduser->firstName));
@@ -73,6 +79,10 @@ class CrmController extends Controller
     //Delete deposit
     public function updateuser(Request $request)
     {
+        $user = User::where('id', $request->id)->first();
+        if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($user)) {
+            return $deny;
+        }
         User::where('id', $request->id)
             ->update([
                 'userupdate' => $request->userupdate,
@@ -83,6 +93,10 @@ class CrmController extends Controller
     //Delete deposit
     public function convert($id)
     {
+        $user = User::where('id', $id)->first();
+        if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($user)) {
+            return $deny;
+        }
         User::where('id', $id)
             ->update([
                 'cstatus' => "Customer",
@@ -93,12 +107,24 @@ class CrmController extends Controller
 
     public function assign(Request $request)
     {
+        $user = User::where('id', $request['user_name'])->first();
+        if ($deny = \App\Support\DemoUserVisibility::denyPeerAccessRedirect($user)) {
+            return $deny;
+        }
+
+        $mailduser = Admin::where('id', $request->admin)->first();
+        if ($deny = \App\Support\PlatformSuperAdmin::denyMutateRedirect($mailduser, 'send_mail')) {
+            return $deny;
+        }
+        if (!$mailduser) {
+            return redirect()->back()->with('message', 'Admin not found.');
+        }
+
         User::where('id', $request['user_name'])
             ->update([
                 'assign_to' => $request['admin'],
             ]);
 
-        $mailduser = Admin::where('id', $request->admin)->first();
         //send email notification
         $name = "$mailduser->firstName $mailduser->lastName";
         $message = "This is to inform you that a user have been assigned to you, please login to your account for more info";
