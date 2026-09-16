@@ -12,6 +12,36 @@ After every pull, Hostinger auto-runs **Composer** when it sees `composer.lock`.
 
 **Important:** The Git pull of your code usually still succeeds. The red “Deployment failed” is often only the Composer step. If `vendor/` is **committed in Git**, the app can still run after pull even when Hostinger’s Composer step errors.
 
+### Pull aborted: “untracked working tree files would be overwritten”
+
+Hostinger sometimes runs Composer on the server and leaves **untracked** files under `vendor/`. A later Git pull then fails when GitHub also has those paths (e.g. `vendor/bin/phpunit`).
+
+On the domain (SSH or Hostinger Terminal), from `public_html`:
+
+```bash
+# See branch name first
+git branch --show-current
+git fetch origin
+# Force working tree to match GitHub (keeps .env; resets tracked files)
+git reset --hard origin/main
+# If your default branch is master:
+# git reset --hard origin/master
+# Remove leftover untracked vendor junk that blocks the next pull
+git clean -fd vendor/
+```
+
+Then click **Deploy / Pull** again (or `git pull`). After a successful pull:
+
+```bash
+rm -f bootstrap/cache/packages.php bootstrap/cache/services.php bootstrap/cache/config.php
+rm -f storage/framework/views/*.php
+php artisan package:discover --ansi || true
+php artisan config:clear || true
+php artisan view:clear || true
+```
+
+Do **not** run `composer install` on Hostinger for this project — vendor is committed from local builds.
+
 ## Deployment workflow
 
 1. **Local:** Edit code.

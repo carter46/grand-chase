@@ -985,36 +985,54 @@ class SeventhTradeHubService
     }
 
     /**
-     * @return array{active: bool, reason: string}
+     * @return array{active: bool, applicable: bool, reason: string}
      */
     public function shutdownDiagnostic()
     {
         $owned = $this->getByContext(self::CONTEXT_OWNED);
         if (!$owned) {
-            return ['active' => false, 'reason' => 'No Owned integration row'];
+            return [
+                'active' => false,
+                'applicable' => false,
+                'reason' => 'Not applicable yet — Owned context row is missing (open this page after migrate, or Save Owned once). Demo SSO/health do not need Owned.',
+            ];
         }
         if (empty($owned['enabled'])) {
-            return ['active' => false, 'reason' => 'Owned integration is disabled — enable Owned and Save (Demo-only sites ignore Hub Shutdown Site)'];
+            return [
+                'active' => false,
+                'applicable' => false,
+                'reason' => 'Not applicable — Owned is disabled. Demo-only sites stay fully online; Hub Shutdown Site is ignored until you enable Owned and Save.',
+            ];
         }
         $op = $this->operationalStatus($owned);
         if (empty($op['ok'])) {
-            return ['active' => false, 'reason' => 'Owned not ready: ' . ($op['reason'] ?? 'incomplete credentials')];
+            return [
+                'active' => false,
+                'applicable' => true,
+                'reason' => 'Owned enabled but not ready: ' . ($op['reason'] ?? 'incomplete credentials') . ' — complete Owned credentials before Hub can push/poll expiry.',
+            ];
         }
         $integrationId = trim((string) ($owned['integration_id'] ?? ''));
         $sub = $this->getSubscription($integrationId);
         if (!$sub) {
-            return ['active' => false, 'reason' => 'No local subscription row yet — Hub sync/poll has not written expiry state (check Owned Integration ID matches Hub My Tools, then use Pull subscription)'];
+            return [
+                'active' => false,
+                'applicable' => true,
+                'reason' => 'Owned ready — no local subscription row yet. Use Pull subscription (or wait for Hub sync/poll). Site stays open until expiry is recorded.',
+            ];
         }
         if ($this->subscriptionIsExpired($sub)) {
             return [
                 'active' => true,
-                'reason' => 'Shutdown active (status=' . ($sub['status'] ?? '') . ', expires_at=' . ($sub['expires_at'] ?? '') . ')',
+                'applicable' => true,
+                'reason' => 'Owned gate ACTIVE (status=' . ($sub['status'] ?? '') . ', expires_at=' . ($sub['expires_at'] ?? '') . '). Non–platform-SA users/admins see session expired; login + health/sync stay up.',
             ];
         }
 
         return [
             'active' => false,
-            'reason' => 'Subscription not expired locally (status=' . ($sub['status'] ?? '') . ', expires_at=' . ($sub['expires_at'] ?? 'none') . ', last_sync_at=' . ($sub['last_sync_at'] ?? 'never') . ')',
+            'applicable' => true,
+            'reason' => 'Owned connected — subscription OK (status=' . ($sub['status'] ?? '') . ', expires_at=' . ($sub['expires_at'] ?? 'none') . ', last_sync_at=' . ($sub['last_sync_at'] ?? 'never') . ').',
         ];
     }
 

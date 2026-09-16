@@ -14,7 +14,13 @@
             <div class="page-inner">
                 <div class="mt-2 mb-4">
                     <h1 class="title1">7th Trade Hub Integration</h1>
-                    <p class="text-muted">Protocol v1 — Demo + Owned credentials, SSO, subscription shutdown.</p>
+                    <p class="text-muted mb-0">
+                        Demo and Owned Tool are separate — enable only the context you are using.
+                        Owned does <strong>not</strong> need to be enabled for Demo to work.
+                        Identity readiness only checks local emails; Hub Check connection / SSO use Client Secret.
+                        <em>Test webhook</em> also needs Webhook Secret.
+                        Hub <strong>Shutdown Site</strong> only applies when <strong>Owned</strong> is enabled with the My Tools Integration ID (not Demo).
+                    </p>
                 </div>
                 <x-danger-alert />
                 <x-success-alert />
@@ -31,18 +37,8 @@
                 @endif
 
                 @if ($isPlatformSa && $summary)
-                    @if (!empty($shutdown['active']))
-                        <div class="alert alert-danger">
-                            <strong>Shutdown ACTIVE</strong> — {{ $shutdown['reason'] ?? '' }}
-                        </div>
-                    @else
-                        <div class="alert alert-secondary">
-                            Shutdown not active — {{ $shutdown['reason'] ?? 'n/a' }}
-                        </div>
-                    @endif
-
                     <div class="card shadow p-3 mb-4">
-                        <h4>Shared Hub URL</h4>
+                        <h4>Hub URL (shared)</h4>
                         <form method="POST" action="{{ route('admin.seventh-tradehub.save') }}">
                             @csrf
                             <input type="hidden" name="context" value="demo">
@@ -212,7 +208,7 @@
                         </div>
                     </div>
 
-                    <div class="card shadow p-3 mb-5">
+                    <div class="card shadow p-3 mb-4">
                         <h4>Connection logs</h4>
                         <div class="table-responsive">
                             <table class="table table-sm table-hover">
@@ -240,6 +236,32 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+
+                    @php
+                        $shutdownActive = !empty($shutdown['active']);
+                        $shutdownApplicable = array_key_exists('applicable', $shutdown)
+                            ? !empty($shutdown['applicable'])
+                            : true;
+                    @endphp
+                    <div class="alert {{ $shutdownActive ? 'alert-danger' : 'alert-light border' }} mb-5">
+                        <strong>
+                            Owned shutdown:
+                            @if ($shutdownActive)
+                                ACTIVE
+                            @elseif (!$shutdownApplicable)
+                                not applicable
+                            @else
+                                not active
+                            @endif
+                        </strong>
+                        <div class="small mt-1 mb-0 text-muted">{{ $shutdown['reason'] ?? '' }}</div>
+                        @if ($shutdownApplicable && !$shutdownActive)
+                            <p class="small mb-0 mt-2 text-muted">
+                                If Hub already clicked Shutdown Site but this still says not active, Hub’s push likely failed.
+                                Use <strong>Pull subscription</strong> on the Owned card after Owned is enabled and credentials match My Tools.
+                            </p>
+                        @endif
                     </div>
                 @endif
             </div>
