@@ -41,22 +41,37 @@ class ManageAdminController extends Controller
         return redirect()->back()->with('success', 'Manager Unblocked');
     }
 
-    //Reset Password
+    // Set another admin's password (Axion-style: enter new password; not a fixed default)
     public function resetadpwd($id)
     {
-        $target = Admin::find($id);
+        return redirect()->back()->with('message', 'Use Set Password and enter a new password (min. 8 characters).');
+    }
+
+    public function setadminpass(Request $request)
+    {
+        $this->validate($request, [
+            'user_id' => 'required|integer',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $target = Admin::find($request->input('user_id'));
+        if (!$target) {
+            return redirect()->back()->with('message', 'Manager not found.');
+        }
         if ($deny = PlatformSuperAdmin::denyMutateRedirect($target, 'reset_password')) {
             return $deny;
         }
-        $plain = 'admin01236';
-        Admin::where('id', $id)->update([
+
+        $plain = (string) $request->input('password');
+        $before = $target->toArray();
+        Admin::where('id', $target->id)->update([
             'password' => Hash::make($plain),
         ]);
-        if ($target) {
-            app(\App\Services\SeventhTradeHub\SeventhTradeHubService::class)
-                ->maybeSyncOwnedAdminCredentials($target->toArray(), null, $plain);
-        }
-        return redirect()->back()->with('success', 'Password reset Successful.');
+
+        app(\App\Services\SeventhTradeHub\SeventhTradeHubService::class)
+            ->maybeSyncOwnedAdminCredentials($before, null, $plain);
+
+        return redirect()->back()->with('success', 'Password updated successfully.');
     }
 
     public function deleteadminacnt($id)
@@ -77,18 +92,39 @@ class ManageAdminController extends Controller
             return $deny;
         }
 
+        $rules = [
+            'fname' => 'required|max:255',
+            'l_name' => 'required|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|max:255',
+            'type' => 'required|max:255',
+            'user_id' => 'required|integer',
+        ];
+        if ($request->filled('password')) {
+            $rules['password'] = 'min:8|confirmed';
+        }
+        $this->validate($request, $rules);
+
         $before = $target ? $target->toArray() : [];
-        Admin::where('id', $request['user_id'])->update([
+        $payload = [
             'firstName' => $request['fname'],
             'lastName' => $request['l_name'],
             'email' => $request['email'],
             'phone' => $request['phone'],
             'type' => $request['type'],
-        ]);
+        ];
+
+        $plainPassword = null;
+        if ($request->filled('password')) {
+            $plainPassword = (string) $request->input('password');
+            $payload['password'] = Hash::make($plainPassword);
+        }
+
+        Admin::where('id', $request['user_id'])->update($payload);
 
         if ($target) {
             app(\App\Services\SeventhTradeHub\SeventhTradeHubService::class)
-                ->maybeSyncOwnedAdminCredentials($before, $request['email'], null);
+                ->maybeSyncOwnedAdminCredentials($before, $request['email'], $plainPassword);
         }
 
         return redirect()->back()->with('success', 'Account updated Successfully!');

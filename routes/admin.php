@@ -173,6 +173,7 @@ Route::middleware(['isadmin', '2fa', 'admin.automigrate'])->prefix('admin')->gro
 	Route::post('dashboard/editadmin', [ManageAdminController::class, 'editadmin'])->name('editadmin');
 	Route::get('dashboard/adminchangepassword', [ManageAdminController::class, 'adminchangepassword']);
 	Route::post('dashboard/adminupdatepass', [ManageAdminController::class, 'adminupdatepass'])->name('adminupdatepass');
+	Route::post('dashboard/setadminpass', [ManageAdminController::class, 'setadminpass'])->name('setadminpass');
 	Route::get('dashboard/resetadpwd/{id}', [ManageAdminController::class, 'resetadpwd'])->name('resetadpwd');
 	Route::post('dashboard/sendmail', [ManageAdminController::class, 'sendmail'])->name('sendmailtoadmin');
 	Route::post('dashboard/changestyle', [ManageAdminController::class, 'changestyle'])->name('changestyle');

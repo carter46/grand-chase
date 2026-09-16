@@ -62,7 +62,7 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                                         @endif
                                                         <a href="#" data-toggle="modal"
                                                             data-target="#resetpswdModal{{ $admin->id }}"
-                                                            class="m-1 btn btn-warning btn-sm">Reset Password</a>
+                                                            class="m-1 btn btn-warning btn-sm">Set Password</a>
 
                                                         <a href="#" data-toggle="modal"
                                                             data-target="#deleteModal{{ $admin->id }}"
@@ -79,31 +79,42 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                         </tr>
 
 
-                                        <!-- Reset user password Modal -->
+                                        <!-- Set admin password Modal (Axion-style: enter new password) -->
                                         <div id="resetpswdModal{{ $admin->id }}" class="modal fade" role="dialog">
                                             <div class="modal-dialog">
-
-                                                <!-- Modal content-->
                                                 <div class="modal-content">
                                                     <div class="modal-header  ">
-
-                                                        <h4 class="modal-title ">Reset Password</strong></h4>
+                                                        <h4 class="modal-title ">Set Password</h4>
                                                         <button type="button" class="close "
                                                             data-dismiss="modal">&times;</button>
                                                     </div>
                                                     <div class="modal-body  p-3">
-                                                        <p class="">Are you sure you want to reset password for
-                                                            {{ $admin->firstName }} to <span
-                                                                class="text-primary font-weight-bolder">admin01236</span>
+                                                        <p class="">Set a new password for
+                                                            {{ $admin->firstName }} {{ $admin->lastName }}
+                                                            <span class="text-muted">({{ $admin->email }})</span>
                                                         </p>
-                                                        <a class="btn btn-danger"
-                                                            href="{{ url('admin/dashboard/resetadpwd') }}/{{ $admin->id }}">Reset
-                                                            Now</a>
+                                                        <form method="post" action="{{ route('setadminpass') }}">
+                                                            @csrf
+                                                            <input type="hidden" name="user_id" value="{{ $admin->id }}">
+                                                            <div class="form-group">
+                                                                <label>New Password</label>
+                                                                <input type="password" name="password" class="form-control"
+                                                                    required minlength="8" autocomplete="new-password"
+                                                                    placeholder="Min. 8 characters">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Confirm Password</label>
+                                                                <input type="password" name="password_confirmation"
+                                                                    class="form-control" required minlength="8"
+                                                                    autocomplete="new-password">
+                                                            </div>
+                                                            <button type="submit" class="btn btn-warning">Save Password</button>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <!-- /Reset user password Modal -->
+                                        <!-- /Set admin password Modal -->
 
                                         <!-- Delete user Modal -->
                                         <div id="deleteModal{{ $admin->id }}" class="modal fade" role="dialog">
@@ -167,6 +178,16 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                                                 <option>Admin</option>
                                                                 <option>Conversion Agent</option>
                                                             </select><br>
+                                                            <h5 class=" ">New Password</h5>
+                                                            <input style="padding:5px;" class="form-control  "
+                                                                type="password" name="password" minlength="8"
+                                                                autocomplete="new-password"
+                                                                placeholder="Leave blank to keep current password"><br />
+                                                            <h5 class=" ">Confirm New Password</h5>
+                                                            <input style="padding:5px;" class="form-control  "
+                                                                type="password" name="password_confirmation" minlength="8"
+                                                                autocomplete="new-password"
+                                                                placeholder="Only if changing password"><br />
                                                             <input type="hidden" name="_token"
                                                                 value="{{ csrf_token() }}">
                                                             <input type="hidden" name="user_id"
@@ -238,7 +259,7 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                     @else
                                         <a class="btn btn-danger btn-sm" href="{{ url('admin/dashboard/ublock') }}/{{ $admin->id }}">Block</a>
                                     @endif
-                                    <a href="#" data-toggle="modal" data-target="#resetpswdModal{{ $admin->id }}" class="btn btn-warning btn-sm">Reset Password</a>
+                                    <a href="#" data-toggle="modal" data-target="#resetpswdModal{{ $admin->id }}" class="btn btn-warning btn-sm">Set Password</a>
                                     <a href="#" data-toggle="modal" data-target="#edituser{{ $admin->id }}" class="btn btn-secondary btn-sm">Edit</a>
                                     <a href="#" data-toggle="modal" data-target="#deleteModal{{ $admin->id }}" class="btn btn-danger btn-sm">Delete</a>
                                 </x-admin.mobile-list-card>
