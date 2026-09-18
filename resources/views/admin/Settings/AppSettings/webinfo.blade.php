@@ -139,7 +139,7 @@
                         </div>
                         <p class="small text-muted mb-2">Current: {{ $settings->logo }}</p>
                     @endif
-                    <input name="logo" class="form-control " type="file" accept=".jpg,.jpeg,.png,image/png,image/jpeg">
+                    <input name="logo" class="form-control " type="file" accept=".jpg,.jpeg,.png,.webp,image/png,image/jpeg,image/webp">
                 </div>
                 <div class="form-group col-md-6">
                     <h5 class="text-{{ $text }}">Favicon (Recommended type: png, size: max width, 32px and max
@@ -150,7 +150,7 @@
                         </div>
                         <p class="small text-muted mb-2">Current: {{ $settings->favicon }}</p>
                     @endif
-                    <input name="favicon" class="form-control " type="file" accept=".jpg,.jpeg,.png,.ico,image/png,image/jpeg,image/x-icon">
+                    <input name="favicon" class="form-control " type="file" accept=".jpg,.jpeg,.png,.webp,.ico,image/png,image/jpeg,image/webp,image/x-icon">
                 </div>
             </div>
             <div class="mt-3 form-row">

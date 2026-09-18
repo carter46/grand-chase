@@ -96,7 +96,7 @@ class ProfileController extends Controller
         
         
         $this->validate($request, [
-            'photo' => 'mimes:jpg,jpeg,png|max:4000|image',
+            'photo' => 'mimes:jpg,jpeg,png,webp|max:4000',
         ]);
         
         
@@ -107,10 +107,10 @@ class ProfileController extends Controller
 
             $document1 = $request->file('photo');
             $filename1 = $document1->getClientOriginalName();
-            $ext = array_pop(explode(".", $filename1));
-            $whitelist = array('jpeg','jpg','png');
+            $ext = strtolower((string) array_pop(explode(".", $filename1)));
+            $whitelist = array('jpeg','jpg','png','webp');
   
-            if (in_array($ext, $whitelist)) {
+            if (in_array($ext, $whitelist, true)) {
   
                   $cardname = $strtxt . $filename1 . time();
                   // save to storage/app/uploads as the new $filename

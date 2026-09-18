@@ -123,7 +123,7 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                                              <div class="form-group col-md-12">
                                                 <h6 class="text-{{ $text }}">Upload Profile photo</h6>
                                                 <input type="file" class="form-control  text-{{ $text }}"
-                                                    name="photo"  required>
+                                                    name="photo" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" required>
                                             </div>
 														<div class="form-group col-md-12">
 															<h6 class="text-{{$text}}">Password</h6>

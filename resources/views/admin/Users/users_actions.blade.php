@@ -197,7 +197,7 @@
                      </div>
                      <div class="form-group">
                          <h5 class=" ">Profile image</h5>
-                         <input type="file" name="photo" class="form-control  ">
+                         <input type="file" name="photo" class="form-control" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
                      </div>
                      
                      <div class="form-group">
