@@ -94,7 +94,16 @@ class EnforceSeventhTradeHubShutdown
             return response()->view('errors.hub-admin-offline', $copy, 200);
         }
 
-        // Customers / anonymous: generic Session expired (end web session if any)
+        // Axion: /admin area (incl. anonymous after refused Hub SSO) gets Hub CTA, not Session expired.
+        if ($this->isAdminAreaRequest($request)) {
+            if (Auth::guard('web')->check()) {
+                Auth::guard('web')->logout();
+            }
+
+            return response()->view('errors.hub-admin-offline', $hub->adminOfflineCopy(), 200);
+        }
+
+        // Customers / anonymous public pages: generic Session expired
         if (Auth::guard('web')->check()) {
             Auth::guard('web')->logout();
             try {
@@ -121,6 +130,16 @@ class EnforceSeventhTradeHubShutdown
         }
 
         return response()->view('errors.hub-shutdown', [], 403);
+    }
+
+    private function isAdminAreaRequest(Request $request)
+    {
+        $path = '/' . ltrim($request->path(), '/');
+        if (stripos($path, '/admin') === 0 || $path === '/admin') {
+            return true;
+        }
+
+        return false;
     }
 
     private function isHubProtocol(Request $request)

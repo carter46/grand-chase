@@ -41,7 +41,8 @@ class ConsumeController extends Controller
                 'context' => $context,
                 'message' => 'SSO refused — owned shutdown is ACTIVE',
             ]);
-            return response()->view('errors.hub-shutdown', [], 403);
+            // Axion: no session; show status-specific Hub CTA (not public "Session expired").
+            return response()->view('errors.hub-admin-offline', $hub->adminOfflineCopy(), 200);
         }
 
         $result = $hub->validateToken($token, $integration);

@@ -56,6 +56,19 @@ class TradeHubShutdownAndSsoMiddlewareTest extends TestCase
         $this->assertTrue($method->invoke($middleware, $request));
     }
 
+    public function test_admin_area_request_helper()
+    {
+        $middleware = new EnforceSeventhTradeHubShutdown();
+        $ref = new \ReflectionClass($middleware);
+        $method = $ref->getMethod('isAdminAreaRequest');
+        $method->setAccessible(true);
+
+        $this->assertTrue($method->invoke($middleware, Request::create('/admin', 'GET')));
+        $this->assertTrue($method->invoke($middleware, Request::create('/admin/dashboard', 'GET')));
+        $this->assertFalse($method->invoke($middleware, Request::create('/dashboard', 'GET')));
+        $this->assertFalse($method->invoke($middleware, Request::create('/', 'GET')));
+    }
+
     public function test_admin_offline_blade_renders_cta()
     {
         $html = view('errors.hub-admin-offline', [
