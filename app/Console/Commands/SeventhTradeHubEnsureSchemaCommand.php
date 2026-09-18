@@ -132,14 +132,31 @@ class SeventhTradeHubEnsureSchemaCommand extends Command
                 Schema::create('seventh_tradehub_config', function (Blueprint $table) {
                     $table->unsignedTinyInteger('id')->primary();
                     $table->text('hub_url')->nullable();
+                    $table->dateTime('last_reconcile_at')->nullable();
+                    $table->unsignedTinyInteger('owned_shutdown_latch')->default(0);
                     $table->dateTime('updated_at')->nullable();
                 });
                 DB::table('seventh_tradehub_config')->insert([
                     'id' => 1,
                     'hub_url' => null,
+                    'last_reconcile_at' => null,
+                    'owned_shutdown_latch' => 0,
                     'updated_at' => now(),
                 ]);
                 $this->info('Created seventh_tradehub_config (Hub URL storage)');
+            } else {
+                if (!Schema::hasColumn('seventh_tradehub_config', 'last_reconcile_at')) {
+                    Schema::table('seventh_tradehub_config', function (Blueprint $table) {
+                        $table->dateTime('last_reconcile_at')->nullable()->after('hub_url');
+                    });
+                    $this->info('Added seventh_tradehub_config.last_reconcile_at');
+                }
+                if (!Schema::hasColumn('seventh_tradehub_config', 'owned_shutdown_latch')) {
+                    Schema::table('seventh_tradehub_config', function (Blueprint $table) {
+                        $table->unsignedTinyInteger('owned_shutdown_latch')->default(0);
+                    });
+                    $this->info('Added seventh_tradehub_config.owned_shutdown_latch');
+                }
             }
 
             // Platform SA seed (same as migration)

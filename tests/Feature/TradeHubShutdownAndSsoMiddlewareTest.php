@@ -55,4 +55,55 @@ class TradeHubShutdownAndSsoMiddlewareTest extends TestCase
         $request = Request::create('/api/7th-tradehub/v1/health', 'POST');
         $this->assertTrue($method->invoke($middleware, $request));
     }
+
+    public function test_admin_offline_blade_renders_cta()
+    {
+        $html = view('errors.hub-admin-offline', [
+            'status' => 'expired',
+            'message' => 'Your website subscription has expired. Sign in to your 7th Trade Hub account to renew this website subscription.',
+            'cta_href' => 'https://7th-tradehub.online/login',
+            'cta_label' => 'Sign in to 7th Trade Hub',
+        ])->render();
+
+        $this->assertStringContainsString('Admin · subscription expired', $html);
+        $this->assertStringContainsString('subscription has expired', $html);
+        $this->assertStringContainsString('https://7th-tradehub.online/login', $html);
+        $this->assertStringContainsString('Sign in to 7th Trade Hub', $html);
+        $this->assertStringContainsString('target="_blank"', $html);
+        $this->assertStringContainsString('rel="noopener"', $html);
+        $this->assertStringNotContainsString('Session expired', $html);
+    }
+
+    public function test_admin_offline_copy_matches_merchant_guide()
+    {
+        $hub = app(\App\Services\SeventhTradeHub\SeventhTradeHubService::class);
+
+        $expired = $hub->adminOfflineCopy('expired');
+        $this->assertSame(
+            'Your website subscription has expired. Sign in to your 7th Trade Hub account to renew this website subscription.',
+            $expired['message']
+        );
+        $this->assertSame('Sign in to 7th Trade Hub', $expired['cta_label']);
+        $this->assertStringEndsWith('/login', $expired['cta_href']);
+
+        $suspended = $hub->adminOfflineCopy('suspended');
+        $this->assertSame(
+            'This website has been suspended. Contact 7th Trade Hub support for help.',
+            $suspended['message']
+        );
+        $this->assertSame('Open Help Center', $suspended['cta_label']);
+        $this->assertStringEndsWith('/help', $suspended['cta_href']);
+
+        $cancelled = $hub->adminOfflineCopy('cancelled');
+        $this->assertSame(
+            'This website subscription has been cancelled. Contact 7th Trade Hub support for help.',
+            $cancelled['message']
+        );
+
+        $inactive = $hub->adminOfflineCopy('inactive');
+        $this->assertSame(
+            'This website is inactive. Contact 7th Trade Hub support for help.',
+            $inactive['message']
+        );
+    }
 }

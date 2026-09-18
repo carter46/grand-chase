@@ -6,6 +6,7 @@ use App\Services\SeventhTradeHub\SeventhTradeHubService;
 use App\Support\PlatformSuperAdmin;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EnforceSeventhTradeHubShutdown
 {
@@ -46,6 +47,13 @@ class EnforceSeventhTradeHubShutdown
                 return $next($request);
             }
 
+            // Push primary; throttled GET when local state is missing / clock-stale / trust-stale.
+            try {
+                $hub->maybeReconcileOwnedSubscription();
+            } catch (\Throwable $e) {
+                report($e);
+            }
+
             if (!$hub->isOwnedSiteShutdown()) {
                 return $next($request);
             }
@@ -60,7 +68,43 @@ class EnforceSeventhTradeHubShutdown
             return $next($request);
         }
 
-        // Logged-in non-SA admin or user during shutdown
+        /** @var SeventhTradeHubService $hub */
+        $hub = app(SeventhTradeHubService::class);
+
+        // Axion: regular admin keeps session; every non-excepted page shows Hub status CTA.
+        if (Auth::guard('admin')->check()) {
+            $copy = $hub->adminOfflineCopy();
+
+            if (
+                $request->expectsJson()
+                || $request->is('api/*')
+                || $request->ajax()
+                || $request->is('livewire/*')
+                || $request->header('X-Livewire')
+            ) {
+                return response()->json([
+                    'success' => false,
+                    'ok' => false,
+                    'error' => 'site_shutdown',
+                    'message' => 'Website subscription is offline. Use the Hub link on the admin screen.',
+                    'status' => $copy['status'] ?? '',
+                ], 403);
+            }
+
+            return response()->view('errors.hub-admin-offline', $copy, 200);
+        }
+
+        // Customers / anonymous: generic Session expired (end web session if any)
+        if (Auth::guard('web')->check()) {
+            Auth::guard('web')->logout();
+            try {
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+            } catch (\Throwable $e) {
+                // ignore
+            }
+        }
+
         if (
             $request->expectsJson()
             || $request->is('api/*')

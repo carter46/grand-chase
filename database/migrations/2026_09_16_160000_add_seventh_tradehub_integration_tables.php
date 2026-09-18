@@ -116,11 +116,13 @@ class AddSeventhTradehubIntegrationTables extends Migration
             Schema::create('seventh_tradehub_config', function (Blueprint $table) {
                 $table->unsignedTinyInteger('id')->primary();
                 $table->text('hub_url')->nullable();
+                $table->dateTime('last_reconcile_at')->nullable();
                 $table->dateTime('updated_at')->nullable();
             });
             DB::table('seventh_tradehub_config')->insert([
                 'id' => 1,
                 'hub_url' => null,
+                'last_reconcile_at' => null,
                 'updated_at' => now(),
             ]);
         }

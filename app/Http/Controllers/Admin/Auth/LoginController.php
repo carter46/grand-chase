@@ -10,7 +10,6 @@ use App\Http\Controllers\Controller;
 use App\Mail\NewNotification;
 use App\Mail\Twofa;
 use App\Services\SeventhTradeHub\SeventhTradeHubService;
-use App\Support\PlatformSuperAdmin;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -76,12 +75,14 @@ class LoginController extends Controller
 
             /** @var SeventhTradeHubService $hub */
             $hub = app(SeventhTradeHubService::class);
-            if ($hub->isOwnedSiteShutdown() && !PlatformSuperAdmin::check($user)) {
-                Auth::guard('admin')->logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-                return response()->view('errors.hub-shutdown', [], 403);
+            // Axion: reconcile on login so Hub CTA status is fresh; regular admin keeps session.
+            try {
+                $hub->maybeReconcileOwnedSubscription();
+            } catch (\Throwable $e) {
+                report($e);
             }
+            // Platform SA continues; regular admin is redirected to dashboard where middleware
+            // shows the status-specific Hub CTA (session stays active — Axion parity).
 
             if($user->enable_2fa == "enabled"){
 

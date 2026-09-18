@@ -39,6 +39,12 @@ class SeventhTradeHubService
     /** @var bool */
     private static $credentialOutboxReady = false;
 
+    /** @var bool Request-scoped reconcile guard (Axion static $done parity). */
+    private static $reconcileAttemptedThisRequest = false;
+
+    const MAX_TRUST_AGE_SECONDS = 86400; // 24h
+    const RECONCILE_INTERVAL_SECONDS = 900; // 15m
+
     /**
      * Ensure Hub tables / context rows exist (best-effort).
      *
@@ -73,19 +79,35 @@ class SeventhTradeHubService
     public function ensureConfigTable()
     {
         try {
-            if (Schema::hasTable('seventh_tradehub_config')) {
+            if (!Schema::hasTable('seventh_tradehub_config')) {
+                Schema::create('seventh_tradehub_config', function ($table) {
+                    $table->unsignedTinyInteger('id')->primary();
+                    $table->text('hub_url')->nullable();
+                    $table->dateTime('last_reconcile_at')->nullable();
+                    $table->unsignedTinyInteger('owned_shutdown_latch')->default(0);
+                    $table->dateTime('updated_at')->nullable();
+                });
+                DB::table('seventh_tradehub_config')->insert([
+                    'id' => 1,
+                    'hub_url' => null,
+                    'last_reconcile_at' => null,
+                    'owned_shutdown_latch' => 0,
+                    'updated_at' => now(),
+                ]);
+
                 return;
             }
-            Schema::create('seventh_tradehub_config', function ($table) {
-                $table->unsignedTinyInteger('id')->primary();
-                $table->text('hub_url')->nullable();
-                $table->dateTime('updated_at')->nullable();
-            });
-            DB::table('seventh_tradehub_config')->insert([
-                'id' => 1,
-                'hub_url' => null,
-                'updated_at' => now(),
-            ]);
+
+            if (!Schema::hasColumn('seventh_tradehub_config', 'last_reconcile_at')) {
+                Schema::table('seventh_tradehub_config', function ($table) {
+                    $table->dateTime('last_reconcile_at')->nullable()->after('hub_url');
+                });
+            }
+            if (!Schema::hasColumn('seventh_tradehub_config', 'owned_shutdown_latch')) {
+                Schema::table('seventh_tradehub_config', function ($table) {
+                    $table->unsignedTinyInteger('owned_shutdown_latch')->default(0)->after('last_reconcile_at');
+                });
+            }
         } catch (Throwable $e) {
             Log::warning('SeventhTradeHub ensureConfigTable: ' . $e->getMessage());
         }
@@ -799,24 +821,25 @@ class SeventhTradeHubService
 
         $incomingUpdated = trim((string) ($subscription['updated_at'] ?? ''));
         $incomingExpires = trim((string) ($subscription['expires_at'] ?? ''));
-        $status = trim((string) ($subscription['status'] ?? 'pending_setup'));
+        $status = $this->normalizeSubscriptionStatus($subscription['status'] ?? 'pending_setup');
+        if ($status === '') {
+            $status = 'pending_setup';
+        }
         $toolId = isset($subscription['tool_id']) ? (int) $subscription['tool_id'] : null;
         $publicId = trim((string) ($subscription['public_id'] ?? ''));
 
-        $incomingExpired = strtolower($status) === 'expired';
-        if (!$incomingExpired && $incomingExpires !== '') {
-            $incomingExpDt = $this->parseUtcTimestamp($incomingExpires);
-            if ($incomingExpDt && $incomingExpDt < new DateTimeImmutable('now', new DateTimeZone('UTC'))) {
-                $incomingExpired = true;
-            }
-        }
+        // Monotonic "offline wins": merchant-guide offline statuses or past expires_at.
+        $incomingOffline = $this->subscriptionIsOffline([
+            'status' => $status,
+            'expires_at' => $incomingExpires,
+        ]);
 
         $existing = $this->getSubscription($integrationId);
         if ($existing) {
             $storedUpdated = trim((string) ($existing['updated_at'] ?? ''));
-            $storedExpired = $this->subscriptionIsExpired($existing);
+            $storedOffline = $this->subscriptionIsOffline($existing);
 
-            if (!$incomingExpired) {
+            if (!$incomingOffline) {
                 if ($storedUpdated !== '' && $incomingUpdated !== '') {
                     $storedDt = $this->parseUtcTimestamp($storedUpdated);
                     $incomingDt = $this->parseUtcTimestamp($incomingUpdated);
@@ -835,7 +858,7 @@ class SeventhTradeHubService
                     }
                 }
 
-                if ($storedExpired) {
+                if ($storedOffline) {
                     if ($storedUpdated === '' || $incomingUpdated === '') {
                         return [
                             'applied' => false,
@@ -868,7 +891,7 @@ class SeventhTradeHubService
                 $incomingDt = $this->parseUtcTimestamp($incomingUpdated);
                 if ($storedDt && $incomingDt && $incomingDt < $storedDt) {
                     Log::info(
-                        'SeventhTradeHub applySubscription: applying expire despite older updated_at for ' .
+                        'SeventhTradeHub applySubscription: applying offline despite older updated_at for ' .
                         $integrationId . ' incoming=' . $incomingUpdated . ' stored=' . $storedUpdated
                     );
                 }
@@ -885,7 +908,7 @@ class SeventhTradeHubService
             $updDt = $this->parseUtcTimestamp($incomingUpdated);
             $updatedForDb = $updDt ? $updDt->format('Y-m-d H:i:s') : $incomingUpdated;
         }
-        if ($incomingExpired) {
+        if ($incomingOffline) {
             $nowUtc = new DateTimeImmutable('now', new DateTimeZone('UTC'));
             $updDt = $updatedForDb !== null ? $this->parseUtcTimestamp((string) $updatedForDb) : null;
             if (!$updDt || $updDt < $nowUtc) {
@@ -895,6 +918,10 @@ class SeventhTradeHubService
 
         try {
             if (!Schema::hasTable('seventh_tradehub_subscriptions')) {
+                if ($incomingOffline) {
+                    $this->setOwnedShutdownLatch(true);
+                }
+
                 return [
                     'applied' => false,
                     'skipped' => false,
@@ -902,6 +929,8 @@ class SeventhTradeHubService
                     'reason' => 'db_write_failed',
                 ];
             }
+
+            $lastSyncUtc = (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('Y-m-d H:i:s');
 
             DB::table('seventh_tradehub_subscriptions')->updateOrInsert(
                 ['integration_id' => $integrationId],
@@ -911,11 +940,14 @@ class SeventhTradeHubService
                     'status' => $status,
                     'expires_at' => $expiresForDb,
                     'updated_at' => $updatedForDb,
-                    'last_sync_at' => now(),
+                    'last_sync_at' => $lastSyncUtc,
                 ]
             );
         } catch (Throwable $e) {
             Log::warning('SeventhTradeHub applySubscription: ' . $e->getMessage());
+            if ($incomingOffline) {
+                $this->setOwnedShutdownLatch(true);
+            }
 
             return [
                 'applied' => false,
@@ -925,12 +957,13 @@ class SeventhTradeHubService
             ];
         }
 
-        $shutdown = $this->isOwnedSiteShutdown();
+        $this->setOwnedShutdownLatch($incomingOffline);
+        $shutdown = $incomingOffline || $this->isOwnedSiteShutdown();
         Log::info(
             'SeventhTradeHub applySubscription: applied integration=' . $integrationId .
             ' status=' . $status .
             ' expires_at=' . ($expiresForDb ?? '') .
-            ' incoming_expired=' . ($incomingExpired ? '1' : '0') .
+            ' incoming_offline=' . ($incomingOffline ? '1' : '0') .
             ' shutdown_active=' . ($shutdown ? '1' : '0')
         );
 
@@ -938,7 +971,7 @@ class SeventhTradeHubService
             'applied' => true,
             'skipped' => false,
             'shutdown_active' => $shutdown,
-            'reason' => $incomingExpired ? 'ok_expired' : 'ok',
+            'reason' => $incomingOffline ? 'ok_offline' : 'ok',
         ];
     }
 
@@ -968,16 +1001,46 @@ class SeventhTradeHubService
     }
 
     /**
+     * Merchant-guide offline Hub statuses (authenticated / application sites).
+     * `pending_setup` alone is NOT offline here — only active is “fully online”,
+     * but Hub’s merchant guide + PHP sample gate on these four + past expires_at.
+     * Unknown non-active statuses still fail closed.
+     *
+     * @return list<string>
+     */
+    public function offlineSubscriptionStatuses()
+    {
+        return ['expired', 'suspended', 'cancelled', 'inactive'];
+    }
+
+    /**
+     * @param string|null $status
+     * @return string
+     */
+    public function normalizeSubscriptionStatus($status)
+    {
+        return strtolower(trim((string) $status));
+    }
+
+    /**
+     * Whether a subscription payload / row should shut the site down.
+     * Offline when Hub status is expired|suspended|cancelled|inactive,
+     * unknown non-active (not pending_setup), or expires_at is past.
+     *
      * @param array<string, mixed>|null $subscription
      * @return bool
      */
-    public function subscriptionIsExpired($subscription)
+    public function subscriptionIsOffline($subscription)
     {
         if (!$subscription) {
             return false;
         }
-        $status = strtolower(trim((string) ($subscription['status'] ?? '')));
-        if ($status === 'expired') {
+        $status = $this->normalizeSubscriptionStatus($subscription['status'] ?? '');
+        if (in_array($status, $this->offlineSubscriptionStatuses(), true)) {
+            return true;
+        }
+        // Unknown Hub values (not active / pending_setup) → fail closed
+        if ($status !== '' && $status !== 'active' && $status !== 'pending_setup') {
             return true;
         }
         $expiresAt = trim((string) ($subscription['expires_at'] ?? ''));
@@ -993,10 +1056,148 @@ class SeventhTradeHubService
     }
 
     /**
-     * Owned shutdown gate — Axion parity:
-     * - No Hub tables yet → site runs normally (connection not configured)
-     * - Owned disabled / incomplete → not active (Demo-only or unconfigured)
-     * - Does NOT run migrations mid-request (schema/migrate is admin Settings only)
+     * Fail-closed: local `active` older than max trust age is not trusted.
+     *
+     * @param array<string, mixed>|null $subscription
+     * @return bool
+     */
+    public function subscriptionTrustExpired($subscription)
+    {
+        if (!$subscription || $this->subscriptionIsOffline($subscription)) {
+            return false;
+        }
+        $lastSync = trim((string) ($subscription['last_sync_at'] ?? ''));
+        if ($lastSync === '') {
+            return true;
+        }
+        $syncDt = $this->parseUtcTimestamp($lastSync);
+        if (!$syncDt) {
+            return true;
+        }
+        $age = (new DateTimeImmutable('now', new DateTimeZone('UTC')))->getTimestamp() - $syncDt->getTimestamp();
+
+        return $age > self::MAX_TRUST_AGE_SECONDS;
+    }
+
+    /**
+     * @deprecated Prefer subscriptionIsOffline — kept for callers that still say "expired".
+     *
+     * @param array<string, mixed>|null $subscription
+     * @return bool
+     */
+    public function subscriptionIsExpired($subscription)
+    {
+        return $this->subscriptionIsOffline($subscription);
+    }
+
+    /**
+     * Status string for regular-admin offline CTA.
+     * Maps past expires_at / trust-stale active to `expired`.
+     *
+     * @param array<string, mixed>|null $subscription
+     * @return string
+     */
+    public function resolveOfflineDisplayStatus($subscription)
+    {
+        if (!$subscription) {
+            return '';
+        }
+        $status = $this->normalizeSubscriptionStatus($subscription['status'] ?? '');
+        if ($status !== '' && $status !== 'active') {
+            return $status;
+        }
+        $expiresAt = trim((string) ($subscription['expires_at'] ?? ''));
+        if ($expiresAt !== '') {
+            $exp = $this->parseUtcTimestamp($expiresAt);
+            if ($exp && $exp < new DateTimeImmutable('now', new DateTimeZone('UTC'))) {
+                return 'expired';
+            }
+        }
+        if ($status === 'active' && $this->subscriptionTrustExpired($subscription)) {
+            return 'expired';
+        }
+
+        return $status;
+    }
+
+    /**
+     * Current owned subscription display status for UI / logging.
+     *
+     * @return string
+     */
+    public function ownedSubscriptionStatus()
+    {
+        $owned = $this->getByContext(self::CONTEXT_OWNED);
+        if (!$owned) {
+            return '';
+        }
+        $integrationId = trim((string) ($owned['integration_id'] ?? ''));
+        if ($integrationId === '') {
+            return '';
+        }
+        $sub = $this->getSubscription($integrationId);
+        if (!$sub) {
+            return '';
+        }
+
+        return $this->resolveOfflineDisplayStatus($sub);
+    }
+
+    /**
+     * Status-specific Hub CTA copy for regular admins after password/2FA login.
+     *
+     * @param string|null $status
+     * @return array{status: string, message: string, cta_href: string, cta_label: string, hub_url: string}
+     */
+    public function adminOfflineCopy($status = null)
+    {
+        $status = $this->normalizeSubscriptionStatus($status ?: $this->ownedSubscriptionStatus());
+        $hubUrl = $this->hubUrl();
+        if ($hubUrl === '') {
+            $hubUrl = 'https://7th-tradehub.online';
+        }
+        $hubUrl = rtrim($hubUrl, '/');
+
+        $message = 'This website subscription is offline. Contact 7th Trade Hub support for help.';
+        $ctaHref = $hubUrl . '/help';
+        $ctaLabel = 'Open Help Center';
+
+        switch ($status) {
+            case 'expired':
+                $message = 'Your website subscription has expired. Sign in to your 7th Trade Hub account to renew this website subscription.';
+                $ctaHref = $hubUrl . '/login';
+                $ctaLabel = 'Sign in to 7th Trade Hub';
+                break;
+            case 'cancelled':
+                $message = 'This website subscription has been cancelled. Contact 7th Trade Hub support for help.';
+                break;
+            case 'suspended':
+                $message = 'This website has been suspended. Contact 7th Trade Hub support for help.';
+                break;
+            case 'inactive':
+                $message = 'This website is inactive. Contact 7th Trade Hub support for help.';
+                break;
+            case 'pending_setup':
+                $message = 'This website subscription is not active yet. Sign in to your 7th Trade Hub account to finish setup.';
+                $ctaHref = $hubUrl . '/login';
+                $ctaLabel = 'Sign in to 7th Trade Hub';
+                break;
+        }
+
+        return [
+            'status' => $status,
+            'message' => $message,
+            'cta_href' => $ctaHref,
+            'cta_label' => $ctaLabel,
+            'hub_url' => $hubUrl,
+        ];
+    }
+
+    /**
+     * Owned shutdown gate:
+     * - Unconfigured / Owned disabled → site stays open
+     * - Offline status / past expires_at / trust age exceeded → shut down (+ latch)
+     * - No local subscription → honor latch only (Axion-style; avoids breaking mid-setup)
      *
      * @return bool
      */
@@ -1021,18 +1222,184 @@ class SeventhTradeHubService
             }
 
             if (!Schema::hasTable('seventh_tradehub_subscriptions')) {
-                return false;
+                return $this->ownedShutdownLatchIsSet();
             }
 
             $sub = DB::table('seventh_tradehub_subscriptions')
                 ->where('integration_id', $integrationId)
                 ->first();
 
-            return $this->subscriptionIsExpired($sub ? (array) $sub : null);
+            if (!$sub) {
+                return $this->ownedShutdownLatchIsSet();
+            }
+
+            $subArr = (array) $sub;
+            if ($this->subscriptionIsOffline($subArr) || $this->subscriptionTrustExpired($subArr)) {
+                $this->setOwnedShutdownLatch(true);
+
+                return true;
+            }
+
+            $this->setOwnedShutdownLatch(false);
+
+            return false;
         } catch (Throwable $e) {
             Log::warning('SeventhTradeHub isOwnedSiteShutdown: ' . $e->getMessage());
 
             return false;
+        }
+    }
+
+    /**
+     * Soft latch when Hub said offline but local row write failed, or after confirmed offline.
+     * Cleared when a fresh online snapshot applies. Stored in seventh_tradehub_config (no file latch).
+     *
+     * @return bool
+     */
+    protected function ownedShutdownLatchIsSet()
+    {
+        try {
+            $this->ensureConfigTable();
+            if (!Schema::hasTable('seventh_tradehub_config') || !Schema::hasColumn('seventh_tradehub_config', 'owned_shutdown_latch')) {
+                return false;
+            }
+
+            return (int) (DB::table('seventh_tradehub_config')->where('id', 1)->value('owned_shutdown_latch') ?? 0) === 1;
+        } catch (Throwable $e) {
+            return false;
+        }
+    }
+
+    /**
+     * @param bool $active
+     * @return void
+     */
+    protected function setOwnedShutdownLatch($active)
+    {
+        try {
+            $this->ensureConfigTable();
+            if (!Schema::hasTable('seventh_tradehub_config') || !Schema::hasColumn('seventh_tradehub_config', 'owned_shutdown_latch')) {
+                return;
+            }
+            $payload = [
+                'owned_shutdown_latch' => $active ? 1 : 0,
+                'updated_at' => now(),
+            ];
+            if (DB::table('seventh_tradehub_config')->where('id', 1)->exists()) {
+                DB::table('seventh_tradehub_config')->where('id', 1)->update($payload);
+            } else {
+                DB::table('seventh_tradehub_config')->insert(array_merge([
+                    'id' => 1,
+                    'hub_url' => null,
+                    'last_reconcile_at' => null,
+                ], $payload));
+            }
+        } catch (Throwable $e) {
+            Log::warning('SeventhTradeHub setOwnedShutdownLatch: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Throttled Hub GET when local owned state is missing, offline-by-clock, or past max trust age.
+     * Push remains primary; cron poll remains optional backup.
+     *
+     * @return void
+     */
+    public function maybeReconcileOwnedSubscription()
+    {
+        if (self::$reconcileAttemptedThisRequest || app()->runningInConsole()) {
+            return;
+        }
+        self::$reconcileAttemptedThisRequest = true;
+
+        try {
+            $owned = $this->getByContext(self::CONTEXT_OWNED);
+            if (!$owned || empty($owned['enabled']) || !$this->isIntegrationOperational($owned)) {
+                return;
+            }
+
+            $integrationId = trim((string) ($owned['integration_id'] ?? ''));
+            if ($integrationId === '') {
+                return;
+            }
+
+            $sub = $this->getSubscription($integrationId);
+            $needs = !$sub
+                || $this->subscriptionIsOffline($sub)
+                || $this->subscriptionTrustExpired($sub);
+            if (!$needs) {
+                return;
+            }
+
+            // Already offline by Hub status (not merely clock-stale active) — push owns that path.
+            if ($sub && $this->subscriptionIsOffline($sub) && !$this->subscriptionTrustExpired($sub)) {
+                $status = $this->normalizeSubscriptionStatus($sub['status'] ?? '');
+                if ($status !== 'active' && $status !== '') {
+                    return;
+                }
+            }
+
+            $lastAttempt = $this->getLastReconcileAttemptAt();
+            if ($lastAttempt) {
+                $age = (new DateTimeImmutable('now', new DateTimeZone('UTC')))->getTimestamp() - $lastAttempt->getTimestamp();
+                if ($age < self::RECONCILE_INTERVAL_SECONDS) {
+                    return;
+                }
+            }
+
+            $this->markReconcileAttempt();
+            $this->pollSubscription($owned);
+        } catch (Throwable $e) {
+            Log::warning('SeventhTradeHub maybeReconcileOwnedSubscription: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * @return DateTimeImmutable|null
+     */
+    protected function getLastReconcileAttemptAt()
+    {
+        try {
+            $this->ensureConfigTable();
+            if (!Schema::hasTable('seventh_tradehub_config') || !Schema::hasColumn('seventh_tradehub_config', 'last_reconcile_at')) {
+                return null;
+            }
+            $raw = trim((string) (DB::table('seventh_tradehub_config')->where('id', 1)->value('last_reconcile_at') ?? ''));
+            if ($raw === '') {
+                return null;
+            }
+
+            return $this->parseUtcTimestamp($raw);
+        } catch (Throwable $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @return void
+     */
+    protected function markReconcileAttempt()
+    {
+        try {
+            $this->ensureConfigTable();
+            if (!Schema::hasTable('seventh_tradehub_config')) {
+                return;
+            }
+            $now = (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('Y-m-d H:i:s');
+            $payload = ['updated_at' => now()];
+            if (Schema::hasColumn('seventh_tradehub_config', 'last_reconcile_at')) {
+                $payload['last_reconcile_at'] = $now;
+            }
+            if (DB::table('seventh_tradehub_config')->where('id', 1)->exists()) {
+                DB::table('seventh_tradehub_config')->where('id', 1)->update($payload);
+            } else {
+                DB::table('seventh_tradehub_config')->insert(array_merge([
+                    'id' => 1,
+                    'hub_url' => null,
+                ], $payload));
+            }
+        } catch (Throwable $e) {
+            Log::warning('SeventhTradeHub markReconcileAttempt: ' . $e->getMessage());
         }
     }
 
@@ -1070,14 +1437,21 @@ class SeventhTradeHubService
             return [
                 'active' => false,
                 'applicable' => true,
-                'reason' => 'Owned ready — no local subscription row yet. Use Pull subscription (or wait for Hub sync/poll). Site stays open until expiry is recorded.',
+                'reason' => 'Owned ready — no local subscription row yet. Use Pull subscription (or wait for Hub sync/poll). Site stays open until Hub writes status.',
             ];
         }
-        if ($this->subscriptionIsExpired($sub)) {
+        if ($this->subscriptionIsOffline($sub)) {
             return [
                 'active' => true,
                 'applicable' => true,
-                'reason' => 'Owned gate ACTIVE (status=' . ($sub['status'] ?? '') . ', expires_at=' . ($sub['expires_at'] ?? '') . '). Non–platform-SA users/admins see session expired; login + health/sync stay up.',
+                'reason' => 'Owned gate ACTIVE (status=' . ($sub['status'] ?? '') . ', expires_at=' . ($sub['expires_at'] ?? '') . '). Regular admins get Hub CTAs on login; public sees Session expired.',
+            ];
+        }
+        if ($this->subscriptionTrustExpired($sub)) {
+            return [
+                'active' => true,
+                'applicable' => true,
+                'reason' => 'Fail-closed: last_sync_at older than max trust age (' . ($sub['last_sync_at'] ?? 'never') . ').',
             ];
         }
 
@@ -2017,7 +2391,7 @@ class SeventhTradeHubService
             'subscription' => $subscription,
             'shutdown_active' => $context === self::CONTEXT_OWNED
                 && !empty($integration['enabled'])
-                && $this->subscriptionIsExpired($subscription),
+                && ($this->subscriptionIsOffline($subscription) || $this->subscriptionTrustExpired($subscription)),
         ];
     }
 

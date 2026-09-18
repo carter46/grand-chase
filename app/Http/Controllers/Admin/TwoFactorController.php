@@ -23,11 +23,11 @@ class TwoFactorController extends Controller
 
             /** @var \App\Services\SeventhTradeHub\SeventhTradeHubService $hub */
             $hub = app(\App\Services\SeventhTradeHub\SeventhTradeHubService::class);
-            if ($hub->isOwnedSiteShutdown() && !\App\Support\PlatformSuperAdmin::check($user)) {
-                Auth('admin')->logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-                return response()->view('errors.hub-shutdown', [], 403);
+            // Axion: refresh Hub state after 2FA; regular admin keeps session and sees CTA on /admin.
+            try {
+                $hub->maybeReconcileOwnedSubscription();
+            } catch (\Throwable $e) {
+                report($e);
             }
 
             Admin::where('id', $user->id)
