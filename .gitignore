@@ -28,8 +28,10 @@ yarn-error.log
 !/storage/framework/sessions/.gitignore
 /storage/framework/views/*
 !/storage/framework/views/.gitignore
-/bootstrap/cache/*.php
+/bootstrap/cache/*
 !/bootstrap/cache/.gitignore
+!/bootstrap/cache/packages.php
+!/bootstrap/cache/services.php
 
 # Production SQL dumps contain PII and secrets — keep local/private; rotate credentials after any share
 /database/u502532383_uscounty.sql

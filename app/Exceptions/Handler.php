@@ -79,8 +79,6 @@ class Handler extends ExceptionHandler
                 '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Server Error</title></head>'
                 . '<body style="font-family:sans-serif;padding:2rem;">'
                 . '<h1>Server Error</h1><p>' . $safe . '</p>'
-                . '<p>If this persists after deploy, delete bootstrap/cache/*.php '
-                . 'and storage/framework/views/*, then reload.</p>'
                 . '</body></html>',
                 500,
                 ['Content-Type' => 'text/html; charset=UTF-8']
