@@ -179,4 +179,32 @@ class PlatformSuperAdmin
             $q->where('is_super_admin', 0)->orWhereNull('is_super_admin');
         });
     }
+
+    /**
+     * Only platform Super Admin may manage admin accounts, add admins,
+     * or change admin passwords/emails. Regular site admins cannot.
+     *
+     * @param \App\Models\Admin|null $admin
+     * @return bool
+     */
+    public static function canManageAdmins($admin = null)
+    {
+        return self::check($admin);
+    }
+
+    /**
+     * Redirect when a regular admin hits admin-management or self-password routes.
+     *
+     * @return \Illuminate\Http\RedirectResponse|null
+     */
+    public static function denyUnlessCanManageAdmins()
+    {
+        if (self::canManageAdmins()) {
+            return null;
+        }
+
+        return redirect()
+            ->route('admin.dashboard')
+            ->with('message', 'Only a Super Admin can manage administrator accounts or change admin passwords.');
+    }
 }

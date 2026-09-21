@@ -295,7 +295,7 @@
                         </a>
                     </li>
                 @endif
-                @if (Auth('admin')->User()->type == 'Super Admin')
+                @if (\App\Support\PlatformSuperAdmin::canManageAdmins())
                     <li
                         class="nav-item {{ request()->routeIs('addmanager') ? 'active' : '' }} {{ request()->routeIs('madmin') ? 'active' : '' }}">
                         <a data-toggle="collapse" href="#adm">
@@ -318,7 +318,9 @@
                             </ul>
                         </div>
                     </li>
+                @endif
 
+                @if (Auth('admin')->User()->type == 'Super Admin')
                     <li
                         class="nav-item {{ request()->routeIs('appsettingshow') ? 'active' : '' }} {{ request()->routeIs('termspolicy') ? 'active' : '' }} {{ request()->routeIs('refsetshow') ? 'active' : '' }} {{ request()->routeIs('paymentview') ? 'active' : '' }} {{ request()->routeIs('subview') ? 'active' : '' }} {{ request()->routeIs('frontpage') ? 'active' : '' }} {{ request()->routeIs('allipaddress') ? 'active' : '' }} {{ request()->routeIs('ipaddress') ? 'active' : '' }} {{ request()->routeIs('editpaymethod') ? 'active' : '' }} {{ request()->routeIs('managecryptoasset') ? 'active' : '' }}">
                         <a data-toggle="collapse" href="#settings">

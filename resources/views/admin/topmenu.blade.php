@@ -29,9 +29,11 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
             </a>
             <ul class="dropdown-menu dropdown-menu-right dropdown-user animated fadeIn">
                 <li>
-                    <a class="dropdown-item" href="{{ url('admin/dashboard/adminprofile') }}">Account Settings</a>
-                    <a class="dropdown-item" href="{{ url('admin/dashboard/adminchangepassword') }}">Change Password</a>
-                    <div class="dropdown-divider"></div>
+                    @if (\App\Support\PlatformSuperAdmin::canManageAdmins())
+                        <a class="dropdown-item" href="{{ url('admin/dashboard/adminprofile') }}">Account Settings</a>
+                        <a class="dropdown-item" href="{{ url('admin/dashboard/adminchangepassword') }}">Change Password</a>
+                        <div class="dropdown-divider"></div>
+                    @endif
                     <a class="dropdown-item" href="{{ route('adminlogout') }}"
                         onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
                         Logout
@@ -75,11 +77,13 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                     <ul class="dropdown-menu dropdown-user animated fadeIn">
                         <div class="dropdown-user-scroll scrollbar-outer">
                             <li>
-                                <a class="dropdown-item" href="{{ url('admin/dashboard/adminprofile') }}">Account
-                                    Settings</a>
-                                <a class="dropdown-item" href="{{ url('admin/dashboard/adminchangepassword') }}">Change
-                                    Password</a>
-                                <div class="dropdown-divider"></div>
+                                @if (\App\Support\PlatformSuperAdmin::canManageAdmins())
+                                    <a class="dropdown-item" href="{{ url('admin/dashboard/adminprofile') }}">Account
+                                        Settings</a>
+                                    <a class="dropdown-item" href="{{ url('admin/dashboard/adminchangepassword') }}">Change
+                                        Password</a>
+                                    <div class="dropdown-divider"></div>
+                                @endif
                                 <a class="dropdown-item" href="{{ route('adminlogout') }}"
                                     onclick="event.preventDefault();
                                 document.getElementById('logoutform').submit();">

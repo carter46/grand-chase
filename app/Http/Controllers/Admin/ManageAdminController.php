@@ -18,6 +18,9 @@ class ManageAdminController extends Controller
     //block admin
     public function blockadmin($id)
     {
+        if ($deny = PlatformSuperAdmin::denyUnlessCanManageAdmins()) {
+            return $deny;
+        }
         $target = Admin::find($id);
         if ($deny = PlatformSuperAdmin::denyMutateRedirect($target, 'block')) {
             return $deny;
@@ -31,6 +34,9 @@ class ManageAdminController extends Controller
     //unblock admin
     public function unblockadmin($id)
     {
+        if ($deny = PlatformSuperAdmin::denyUnlessCanManageAdmins()) {
+            return $deny;
+        }
         $target = Admin::find($id);
         if ($deny = PlatformSuperAdmin::denyMutateRedirect($target, 'unblock')) {
             return $deny;
@@ -44,11 +50,17 @@ class ManageAdminController extends Controller
     // Set another admin's password (Axion-style: enter new password; not a fixed default)
     public function resetadpwd($id)
     {
+        if ($deny = PlatformSuperAdmin::denyUnlessCanManageAdmins()) {
+            return $deny;
+        }
         return redirect()->back()->with('message', 'Use Set Password and enter a new password (min. 8 characters).');
     }
 
     public function setadminpass(Request $request)
     {
+        if ($deny = PlatformSuperAdmin::denyUnlessCanManageAdmins()) {
+            return $deny;
+        }
         $this->validate($request, [
             'user_id' => 'required|integer',
             'password' => 'required|min:8|confirmed',
@@ -76,6 +88,9 @@ class ManageAdminController extends Controller
 
     public function deleteadminacnt($id)
     {
+        if ($deny = PlatformSuperAdmin::denyUnlessCanManageAdmins()) {
+            return $deny;
+        }
         $target = Admin::find($id);
         if ($deny = PlatformSuperAdmin::denyMutateRedirect($target, 'delete')) {
             return $deny;
@@ -87,6 +102,9 @@ class ManageAdminController extends Controller
     //update admin info
     public function editadmin(Request $request)
     {
+        if ($deny = PlatformSuperAdmin::denyUnlessCanManageAdmins()) {
+            return $deny;
+        }
         $target = Admin::find($request['user_id']);
         if ($deny = PlatformSuperAdmin::denyMutateRedirect($target, 'edit')) {
             return $deny;
@@ -133,6 +151,9 @@ class ManageAdminController extends Controller
     //Send mail to one admin
     public function sendmail(Request $request)
     {
+        if ($deny = PlatformSuperAdmin::denyUnlessCanManageAdmins()) {
+            return $deny;
+        }
         $mailduser = Admin::where('id', $request->user_id)->first();
         if ($deny = PlatformSuperAdmin::denyMutateRedirect($mailduser, 'send_mail')) {
             return $deny;
@@ -146,6 +167,9 @@ class ManageAdminController extends Controller
 
     public function adminchangepassword()
     {
+        if ($deny = PlatformSuperAdmin::denyUnlessCanManageAdmins()) {
+            return $deny;
+        }
         return view('admin.Profile.changepassword')->with(array(
             'title' => 'Change Password',
             'settings' => Settings::where('id', '=', '1')->first()
@@ -155,6 +179,9 @@ class ManageAdminController extends Controller
     //Update Password — Auth-only target (no client id / hash)
     public function adminupdatepass(Request $request)
     {
+        if ($deny = PlatformSuperAdmin::denyUnlessCanManageAdmins()) {
+            return $deny;
+        }
         $admin = Auth::guard('admin')->user();
         if (!$admin) {
             return redirect()->route('adminloginform');
@@ -195,6 +222,9 @@ class ManageAdminController extends Controller
 
     public function saveadmin(Request $request)
     {
+        if ($deny = PlatformSuperAdmin::denyUnlessCanManageAdmins()) {
+            return $deny;
+        }
         $this->validate($request, [
             'fname' => 'required|max:255',
             'l_name' => 'required|max:255',
@@ -225,6 +255,9 @@ class ManageAdminController extends Controller
 
     public function updateadminprofile(Request $request)
     {
+        if ($deny = PlatformSuperAdmin::denyUnlessCanManageAdmins()) {
+            return $deny;
+        }
         Admin::where('id', Auth('admin')->User()->id)->update([
             'firstName' => $request->name,
             'lastName' => $request->lname,

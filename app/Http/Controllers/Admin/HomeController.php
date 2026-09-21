@@ -339,6 +339,10 @@ class HomeController extends Controller
 
     public function addmanager()
     {
+        if ($deny = \App\Support\PlatformSuperAdmin::denyUnlessCanManageAdmins()) {
+            return $deny;
+        }
+
         return view('admin.addadmin')->with(array(
             'title' => 'Add new manager',
             'settings' => Settings::where('id', '=', '1')->first()
@@ -346,6 +350,10 @@ class HomeController extends Controller
     }
     public function madmin()
     {
+        if ($deny = \App\Support\PlatformSuperAdmin::denyUnlessCanManageAdmins()) {
+            return $deny;
+        }
+
         $query = Admin::orderby('id', 'desc');
         $query = \App\Support\PlatformSuperAdmin::filterAdminsForViewer($query);
 
@@ -382,6 +390,10 @@ class HomeController extends Controller
 
     public function adminprofile()
     {
+        if ($deny = \App\Support\PlatformSuperAdmin::denyUnlessCanManageAdmins()) {
+            return $deny;
+        }
+
         return view('admin.Profile.profile')
             ->with(array(
                 'title' => 'Admin Profile',
