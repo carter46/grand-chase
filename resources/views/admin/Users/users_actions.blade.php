@@ -399,13 +399,27 @@
          <!-- Modal content-->
          <div class="modal-content">
              <div class="modal-header ">
-                 <h4 class="modal-title ">Reset Password</strong></h4>
+                 <h4 class="modal-title ">Set Password</h4>
                  <button type="button" class="close " data-dismiss="modal">&times;</button>
              </div>
-             <div class="modal-body ">
-                 <p class="">Are you sure you want to reset password for {{ $user->name }} to <span
-                         class="text-primary font-weight-bolder">user01236</span></p>
-                 <a class="btn " href="{{ url('admin/dashboard/resetpswd') }}/{{ $user->id }}">Reset Now</a>
+             <div class="modal-body p-3">
+                 <p class="">Set a new password for {{ $user->name }}
+                     <span class="text-muted">({{ $user->email }})</span>
+                 </p>
+                 <form method="post" action="{{ route('resetpswd', $user->id) }}">
+                     @csrf
+                     <div class="form-group">
+                         <label>New Password</label>
+                         <input type="password" name="password" class="form-control" required minlength="8"
+                             autocomplete="new-password" placeholder="Min. 8 characters">
+                     </div>
+                     <div class="form-group">
+                         <label>Confirm Password</label>
+                         <input type="password" name="password_confirmation" class="form-control" required
+                             minlength="8" autocomplete="new-password">
+                     </div>
+                     <button type="submit" class="btn btn-warning">Save Password</button>
+                 </form>
              </div>
          </div>
      </div>

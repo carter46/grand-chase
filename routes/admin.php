@@ -112,7 +112,7 @@ Route::middleware(['isadmin', '2fa', 'admin.automigrate'])->prefix('admin')->gro
 	Route::post('dashboard/edituser', [ManageUsersController::class, 'edituser'])->name('edituser');
 	Route::post('dashboard/user-transfer-step/{id}', [ManageUsersController::class, 'toggleTransferStep'])->name('usertransferstep');
 	// getusers route removed — ManageUsersController::getusers was missing (use fetchusers)
-	Route::get('dashboard/resetpswd/{id}', [ManageUsersController::class, 'resetpswd'])->name('resetpswd');
+	Route::post('dashboard/resetpswd/{id}', [ManageUsersController::class, 'resetpswd'])->name('resetpswd');
 	Route::get('dashboard/login-activity/{id}', [ManageUsersController::class, 'loginactivity'])->name('loginactivity');
 	Route::get('dashboard/clear-activity/{id}', [ManageUsersController::class, 'clearactivity'])->name('clearactivity');
 	Route::get('dashboard/add-referral/{id}', [ManageUsersController::class, 'showUsers'])->name('showusers');

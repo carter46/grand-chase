@@ -321,17 +321,29 @@ class ManageUsersController extends Controller
     }
 
     //Reset Password
-    public function resetpswd($id)
+    public function resetpswd(Request $request, $id)
     {
         [$user, $deny] = $this->loadUserForPeer($id);
         if ($deny) {
             return $deny;
         }
-        User::where('id', $id)
+        if (!$user) {
+            return redirect()->back()->with('message', 'User not found.');
+        }
+
+        $password = (string) $request->input('password');
+        if (strlen($password) < 8) {
+            return redirect()->back()->with('message', 'The new password must be at least 8 characters.');
+        }
+        if ($password !== (string) $request->input('password_confirmation')) {
+            return redirect()->back()->with('message', 'The password confirmation does not match.');
+        }
+
+        User::where('id', $user->id)
             ->update([
-                'password' => Hash::make('user01236'),
+                'password' => Hash::make($password),
             ]);
-        return redirect()->back()->with('success', 'Password has been reset to default');
+        return redirect()->back()->with('success', 'Password updated successfully for ' . $user->name . '.');
     }
 
     //Clear user Account
