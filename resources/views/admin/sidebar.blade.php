@@ -320,7 +320,7 @@
                     </li>
                 @endif
 
-                @if (Auth('admin')->User()->type == 'Super Admin')
+                @if (Auth('admin')->User()->type == 'Super Admin' || Auth('admin')->User()->type == 'Admin')
                     <li
                         class="nav-item {{ request()->routeIs('appsettingshow') ? 'active' : '' }} {{ request()->routeIs('termspolicy') ? 'active' : '' }} {{ request()->routeIs('refsetshow') ? 'active' : '' }} {{ request()->routeIs('paymentview') ? 'active' : '' }} {{ request()->routeIs('subview') ? 'active' : '' }} {{ request()->routeIs('frontpage') ? 'active' : '' }} {{ request()->routeIs('allipaddress') ? 'active' : '' }} {{ request()->routeIs('ipaddress') ? 'active' : '' }} {{ request()->routeIs('editpaymethod') ? 'active' : '' }} {{ request()->routeIs('managecryptoasset') ? 'active' : '' }}">
                         <a data-toggle="collapse" href="#settings">
@@ -335,13 +335,6 @@
                                         <span class="sub-item">App Settings</span>
                                     </a>
                                 </li>
-                                @if (\App\Support\PlatformSuperAdmin::check() || \App\Support\PlatformSuperAdmin::canShowClaim())
-                                <li>
-                                    <a href="{{ route('admin.seventh-tradehub.settings') }}">
-                                        <span class="sub-item">7th Trade Hub</span>
-                                    </a>
-                                </li>
-                                @endif
                                 {{-- <li>
                                     <a href="{{ route('refsetshow') }}">
                                         <span class="sub-item">Referral/Bonus Settings</span>

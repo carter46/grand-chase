@@ -173,10 +173,13 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                                             <br>
                                                             <h5 class=" ">Type</h5>
                                                             <select class="form-control  " name="type">
-                                                                <option>{{ $admin->type }}</option>
-                                                                <option>Super Admin</option>
-                                                                <option>Admin</option>
-                                                                <option>Conversion Agent</option>
+                                                                @php $adminRoles = ['Super Admin', 'Admin', 'Conversion Agent']; @endphp
+                                                                @if ($admin->type && !in_array($admin->type, $adminRoles, true))
+                                                                    <option value="{{ $admin->type }}" selected>{{ $admin->type }}</option>
+                                                                @endif
+                                                                @foreach ($adminRoles as $role)
+                                                                    <option value="{{ $role }}" {{ $admin->type === $role ? 'selected' : '' }}>{{ $role }}</option>
+                                                                @endforeach
                                                             </select><br>
                                                             <h5 class=" ">New Password</h5>
                                                             <input style="padding:5px;" class="form-control  "
