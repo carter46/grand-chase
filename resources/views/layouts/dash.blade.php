@@ -125,7 +125,7 @@
         integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK" crossorigin="anonymous">
     </script>
     @livewireScripts
-    @include('partials.password-reveal')
+    @include('partials.password-reveal', ['noSave' => true])
 </body>
 
 </html>

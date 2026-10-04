@@ -1017,6 +1017,6 @@
     @include('includes.live-chat-widget')
 
     @yield('scripts')
-    @include('partials.password-reveal')
+    @include('partials.password-reveal', ['noSave' => true])
 </body>
 </html>

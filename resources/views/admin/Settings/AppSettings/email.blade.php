@@ -169,7 +169,10 @@
         result.classList.add('d-none');
 
         // Include current form SMTP fields so you can test before/after Save
-        var payload = $('#emailform').serializeArray();
+        // Drop the form's _method=PUT spoof; the test route only accepts POST.
+        var payload = $('#emailform').serializeArray().filter(function (field) {
+            return field.name !== '_method';
+        });
         payload.push({ name: 'test_to', value: to });
 
         $.ajax({

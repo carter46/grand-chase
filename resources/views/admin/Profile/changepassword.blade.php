@@ -23,15 +23,15 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                             @csrf
                             <div class="">
                                 <h5 class=" ">Old Password</h5>
-                                <input type="password" name="old_password" class="form-control  " required autocomplete="current-password">
+                                <input type="password" name="old_password" class="form-control  " required autocomplete="current-password" data-allow-save>
                             </div>
                             <div class="">
                                 <h5 class=" ">New Password* </h5>
-                                <input type="password" name="password" class="form-control  " required autocomplete="new-password">
+                                <input type="password" name="password" class="form-control  " required autocomplete="new-password" data-allow-save>
                             </div>
                             <div class="">
                                 <h5 class=" ">Confirm Password</h5>
-                                <input type="password" name="password_confirmation" class="form-control  " required autocomplete="new-password">
+                                <input type="password" name="password_confirmation" class="form-control  " required autocomplete="new-password" data-allow-save>
                             </div> <br>
                             <input type="submit" class="btn btn-primary" value="Submit">
                         </form>

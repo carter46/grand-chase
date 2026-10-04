@@ -1068,25 +1068,28 @@
                             <i data-lucide="key" class="h-5 w-5 text-gray-400"></i>
                         </div>
                         <input 
-                            type="password" 
+                            type="text" 
                             name="pin" 
                             id="pin_input" 
                             x-model="pin"
+                            inputmode="numeric"
+                            autocomplete="off"
+                            data-pw-mask
                             pattern="[0-9]+"
                             minlength="4"
                             maxlength="10"
-                            class="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                            class="pw-masked block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
                             placeholder="Enter your 4-10 digit PIN"
                             required
                         />
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center" x-data="{ shown: false }">
                             <button 
                                 type="button" 
                                 class="text-gray-400 hover:text-gray-500 focus:outline-none"
-                                @click="document.getElementById('pin_input').type = document.getElementById('pin_input').type === 'password' ? 'text' : 'password'"
+                                @click="shown = !shown; window.pwSetVisible(document.getElementById('pin_input'), shown)"
                             >
-                                <i data-lucide="eye" class="h-5 w-5" x-show="document.getElementById('pin_input').type === 'password'"></i>
-                                <i data-lucide="eye-off" class="h-5 w-5" x-show="document.getElementById('pin_input').type === 'text'"></i>
+                                <i data-lucide="eye" class="h-5 w-5" x-show="!shown"></i>
+                                <i data-lucide="eye-off" class="h-5 w-5" x-show="shown" style="display: none;"></i>
                             </button>
                         </div>
                     </div>
