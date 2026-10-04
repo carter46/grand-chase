@@ -45,13 +45,9 @@ class AppSettingsController extends Controller
                 'code1'=> $request->code1,
                 'code2'=> $request->code2,
                 'code3'=> $request->code3,
-                'code1status' => $request->code1status,
-                'code2status' => $request->code2status,
-                'code3status' => $request->code3status,
                 'code1message'=> $request->code1message,
                 'code2message'=> $request->code2message,
                 'code3message'=> $request->code3message,
-                'otp'=>$request->otp,
             ]);
 
             return redirect()->back()->with('success', 'Settings Saved successfully');

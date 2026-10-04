@@ -110,6 +110,7 @@ Route::middleware(['isadmin', '2fa', 'admin.automigrate'])->prefix('admin')->gro
 	Route::post('dashboard/AddHistory', [ManageUsersController::class, 'addHistory'])->name('addhistory');
 	Route::post('dashboard/profileimage', [ManageUsersController::class, 'profileimage'])->name('profileimage');
 	Route::post('dashboard/edituser', [ManageUsersController::class, 'edituser'])->name('edituser');
+	Route::post('dashboard/user-transfer-step/{id}', [ManageUsersController::class, 'toggleTransferStep'])->name('usertransferstep');
 	// getusers route removed — ManageUsersController::getusers was missing (use fetchusers)
 	Route::get('dashboard/resetpswd/{id}', [ManageUsersController::class, 'resetpswd'])->name('resetpswd');
 	Route::get('dashboard/login-activity/{id}', [ManageUsersController::class, 'loginactivity'])->name('loginactivity');

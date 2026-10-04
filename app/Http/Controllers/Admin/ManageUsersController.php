@@ -490,6 +490,13 @@ class ManageUsersController extends Controller
             'limit' => $request['limit'],
         ];
 
+        // A code that is required on transfers must never be blanked, or the user could not finish a transfer.
+        foreach (['code1', 'code2', 'code3'] as $codeKey) {
+            if (trim((string) $payload[$codeKey]) === '' && $user && $user->{$codeKey . '_required'}) {
+                $payload[$codeKey] = $user->{$codeKey};
+            }
+        }
+
         // Per-user currency columns are added via corrective migration after baseline.
         // Guard so go-live dump import does not SQL-error before that migration runs.
         if (Schema::hasColumn('users', 'currency')) {
@@ -502,6 +509,40 @@ class ManageUsersController extends Controller
         User::where('id', $request['user_id'])->update($payload);
 
         return redirect()->back()->with('success', 'User details updated Successfully!');
+    }
+
+    //turn a user's transfer verification step (code1/code2/code3/otp) on or off
+    public function toggleTransferStep(Request $request, $id)
+    {
+        $this->validate($request, [
+            'step' => 'required|in:code1,code2,code3,otp',
+            'enabled' => 'required|boolean',
+        ]);
+
+        [$user, $deny] = $this->loadUserForPeer($id);
+        if ($deny || !$user) {
+            return response()->json(['success' => false, 'message' => 'User not found or access denied.'], 403);
+        }
+
+        $step = $request->input('step');
+        $enabled = $request->boolean('enabled');
+        $column = $step === 'otp' ? 'transfer_otp_required' : $step . '_required';
+
+        $updates = [$column => $enabled ? 1 : 0];
+        if ($enabled && $step !== 'otp' && trim((string) $user->{$step}) === '') {
+            $updates[$step] = (string) random_int(100000, 999999);
+        }
+
+        User::where('id', $user->id)->update($updates);
+
+        $settings = Settings::where('id', '1')->first();
+        $label = $step === 'otp' ? 'Transfer OTP' : ($settings->{$step} ?: strtoupper($step)) . ' code';
+
+        return response()->json([
+            'success' => true,
+            'message' => $label . ($enabled ? ' turned on' : ' turned off') . ' for ' . $user->name . '.',
+            'code' => $updates[$step] ?? null,
+        ]);
     }
 
     //Send mail to one user

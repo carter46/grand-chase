@@ -130,8 +130,8 @@ public function localtransfer()
 public function code1()
 
 {
-    if(auth::user()->transferaction==1){
-       return back();
+    if (!session()->has('data') || !auth::user()->code1_required) {
+        return redirect()->route('withdrawalsdeposits');
     }
     return view('user.code1')->with(array(
         'title' => 'Transfer Code',
@@ -141,8 +141,8 @@ public function code1()
 //return code2 account form view
 public function code2()
 {
-     if(auth::user()->transferaction==1){
-       return back();
+    if (!session()->has('data') || !auth::user()->code2_required) {
+        return redirect()->route('withdrawalsdeposits');
     }
     return view('user.code2')->with(array(
         'title' => 'Transfer Code',
@@ -153,8 +153,8 @@ public function code2()
 //return code2 account form view
 public function code3()
 {
-     if(auth::user()->transferaction==1){
-       return back();
+    if (!session()->has('data') || !auth::user()->code3_required) {
+        return redirect()->route('withdrawalsdeposits');
     }
     return view('user.code3')->with(array(
         'title' => 'Transfer Code',

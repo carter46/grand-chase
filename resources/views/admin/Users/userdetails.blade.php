@@ -217,30 +217,37 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                     </div>
                                 </div>
 
-                                <div class="p-3 border row ">
-                                    <div class="col-md-4 border-right">
-                                        <h5>{{ $settings->code1 }} Code</h5>
+                                @foreach (['code1', 'code2', 'code3'] as $codeKey)
+                                    <div class="p-3 border row align-items-center">
+                                        <div class="col-md-4 border-right">
+                                            <h5>{{ $settings->{$codeKey} }} Code</h5>
+                                        </div>
+                                        <div class="col-md-8 d-flex align-items-center justify-content-between flex-wrap">
+                                            <h5 class="mb-0" id="{{ $codeKey }}-value">{{ $user->{$codeKey} ?: 'Not set' }}</h5>
+                                            <label class="transfer-switch mb-0" for="{{ $codeKey }}-toggle">
+                                                <input type="checkbox" class="transfer-step-toggle"
+                                                    id="{{ $codeKey }}-toggle" data-step="{{ $codeKey }}"
+                                                    {{ $user->{$codeKey . '_required'} ? 'checked' : '' }}>
+                                                <span class="transfer-switch-slider"></span>
+                                                <span class="transfer-switch-label">Required on transfers</span>
+                                            </label>
+                                        </div>
                                     </div>
-                                    <div class="col-md-8">
-                                        <h5>{{ $user->code1 }}</h5>
-                                    </div>
-                                </div>
+                                @endforeach
 
-                                <div class="p-3 border row ">
+                                <div class="p-3 border row align-items-center">
                                     <div class="col-md-4 border-right">
-                                        <h5>{{ $settings->code2 }} Code</h5>
+                                        <h5>Transfer OTP (Email)</h5>
                                     </div>
-                                    <div class="col-md-8">
-                                        <h5>{{ $user->code2 }}</h5>
-                                    </div>
-                                </div>
-
-                                <div class="p-3 border row ">
-                                    <div class="col-md-4 border-right">
-                                        <h5>{{ $settings->code3 }} Code</h5>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <h5>{{ $user->code3 }}</h5>
+                                    <div class="col-md-8 d-flex align-items-center justify-content-between flex-wrap">
+                                        <h5 class="mb-0">One-time code emailed on each transfer</h5>
+                                        <label class="transfer-switch mb-0" for="otp-toggle">
+                                            <input type="checkbox" class="transfer-step-toggle"
+                                                id="otp-toggle" data-step="otp"
+                                                {{ $user->transfer_otp_required ? 'checked' : '' }}>
+                                            <span class="transfer-switch-slider"></span>
+                                            <span class="transfer-switch-label">Required on transfers</span>
+                                        </label>
                                     </div>
                                 </div>
                                 <div class="p-3 border row ">
@@ -286,4 +293,61 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
             </div>
         </div>
         @include('admin.Users.users_actions')
+        <style>
+            .transfer-switch { display: inline-flex; align-items: center; cursor: pointer; position: relative; }
+            .transfer-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+            .transfer-switch-slider { position: relative; width: 44px; height: 24px; background: #c9ced6; border-radius: 24px; transition: background .2s; flex-shrink: 0; }
+            .transfer-switch-slider::before { content: ''; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; background: #fff; border-radius: 50%; transition: transform .2s; }
+            .transfer-switch input:checked + .transfer-switch-slider { background: #31ce36; }
+            .transfer-switch input:checked + .transfer-switch-slider::before { transform: translateX(20px); }
+            .transfer-switch input:disabled + .transfer-switch-slider { opacity: .6; }
+            .transfer-switch-label { margin-left: 10px; font-weight: 600; }
+        </style>
+        <script>
+            document.querySelectorAll('.transfer-step-toggle').forEach(function (toggle) {
+                toggle.addEventListener('change', function () {
+                    var step = toggle.getAttribute('data-step');
+                    var enabled = toggle.checked;
+                    toggle.disabled = true;
+
+                    fetch("{{ route('usertransferstep', $user->id) }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({ step: step, enabled: enabled ? 1 : 0 })
+                    })
+                        .then(function (response) {
+                            return response.json().catch(function () {
+                                throw new Error(response.status === 419
+                                    ? 'Your session expired. Please refresh the page and try again.'
+                                    : 'Could not update this setting.');
+                            }).then(function (data) {
+                                if (!response.ok || !data.success) {
+                                    throw new Error(data.message || 'Could not update this setting.');
+                                }
+                                return data;
+                            });
+                        })
+                        .then(function (data) {
+                            if (data.code) {
+                                var valueEl = document.getElementById(step + '-value');
+                                if (valueEl) {
+                                    valueEl.textContent = data.code;
+                                }
+                            }
+                            $.notify({ message: data.message }, { type: 'success', placement: { from: 'top', align: 'right' } });
+                        })
+                        .catch(function (error) {
+                            toggle.checked = !enabled;
+                            $.notify({ message: error.message }, { type: 'danger', placement: { from: 'top', align: 'right' } });
+                        })
+                        .finally(function () {
+                            toggle.disabled = false;
+                        });
+                });
+            });
+        </script>
     @endsection

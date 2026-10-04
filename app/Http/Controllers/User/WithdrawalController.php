@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\WithdrawalStatus;
 use App\Traits\Coinpayment;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Session;
 use Twilio\Rest\Client;
 use Illuminate\Support\Facades\Log;
@@ -78,13 +79,19 @@ class WithdrawalController extends Controller
 
     public function getotp()
     {
-        
-    if(auth::user()->transferaction==1){
-       return back();
-    }
+        $user = User::where('id', Auth::user()->id)->first();
+
+        if (!Session::has('data')) {
+            return redirect()->route('withdrawalsdeposits')
+                ->with('message', 'No pending transfer found. Please start a new transfer.');
+        }
+
+        if (($this->pendingTransferSteps($user)[0] ?? null) !== 'otp') {
+            return $this->redirectToNextTransferStep($user);
+        }
+
         $code = $this->RandomStringGenerator(6);
 
-        $user = Auth::user();
         User::where('id', $user->id)->update([
             'withdrawotp' => $code,
         ]);
@@ -114,6 +121,17 @@ class WithdrawalController extends Controller
     
     
     function otpview(){
+        $user = User::where('id', Auth::user()->id)->first();
+
+        if (!Session::has('data')) {
+            return redirect()->route('withdrawalsdeposits')
+                ->with('message', 'No pending transfer found. Please start a new transfer.');
+        }
+
+        if (($this->pendingTransferSteps($user)[0] ?? null) !== 'otp') {
+            return $this->redirectToNextTransferStep($user);
+        }
+
          return view('user.otp');
     }
 
@@ -243,10 +261,19 @@ class WithdrawalController extends Controller
 
     public function localtransfer(Request $request)
     {
-        
         $user = User::where('id', Auth::user()->id)->first();
         
         $settings = Settings::where('id', '1')->first();
+
+        if (!is_numeric($request->amount) || $request->amount < 1) {
+            return redirect()->back()
+                ->with("message", "Sorry, The minimum amount you can transfer is $settings->currency 1, please Enter correct amount.");
+        }
+
+        if (trim((string) $request->pin) === '') {
+            return redirect()->back()
+                ->with("message", "Sorry, incorrect transaction pin");
+        }
         //check if user status is active
         if($user->account_status != 'active'){
             return redirect()->back()
@@ -278,6 +305,7 @@ class WithdrawalController extends Controller
                      $data['date'] = Carbon::now();
                      $data['txn_id'] ="$subtxn/$codetxn1-$codetxn2";
                      Session::put('data', $data);
+                     Session::put('transfer_verified', []);
        
       //assignin/turn off transanction number 
      if(Auth::user()->transferaction=='1'){
@@ -286,19 +314,9 @@ class WithdrawalController extends Controller
             
         ]);
      }
- 
- 
-       
-        // Session::put('data', $data);
-        
-        if($settings->otp ==1){
-            return redirect()->route('getotp','data');
 
-        }
-       
-      
         sleep(3);
-        return redirect()->route('previewtransfer','data');
+        return $this->redirectToNextTransferStep($user);
 
     }
 
@@ -507,25 +525,9 @@ class WithdrawalController extends Controller
     
     // Store data in session
     Session::put('data', $data);
-    
-    // Process verification steps based on settings
-    if ($settings->code1status == 1) {
-        return redirect()->route('code1verification');
-    }
-    
-    if ($settings->code2status == 1) {
-        return redirect()->route('verificationcode2');
-    }
-    
-    if ($settings->code1status == 3) {
-        return redirect()->route('verification3code');
-    }
-    
-    if ($settings->otp == 1) {
-        return redirect()->route('getotp');
-    }
+    Session::put('transfer_verified', []);
 
-    return redirect()->route('previewtransfer');
+    return $this->redirectToNextTransferStep($user);
 }
 
 //codecomfirm 
@@ -533,123 +535,78 @@ class WithdrawalController extends Controller
         
         $user = User::where('id', Auth::user()->id)->first();
         $settings = Settings::where('id', '1')->first();
-        $data = Session::get('data');
-        // dd(Auth::user()->code1, $request->code);
-        //code1 request
-     if($request->code1){
-        $this->validate($request, [
-            
-            'code1' => 'required',
-           
-        ]);
-         if (Auth::user()->code1 != $request->code1){
-         return redirect()->back()
-                ->with("message", "Sorry, Invalid $settings->code1 code!!! contact support on $settings->contact_email for the appropriate $settings->code1 for this transaction  ");
-         }
-         
-         	if($settings->code2status == 1){
-         	    sleep(3);
-     	return redirect()->route('verificationcode2');
-       }
-       
-       	if($settings->code3status == 1){
-       	    sleep(3);
-     	return redirect()->route('verification3code');
-       }
-         
-         if($settings->otp ==1){
-             sleep(3);
-        return redirect()->route('getotp');
 
-    }
-    
-     }
+        if (!Session::has('data')) {
+            return redirect()->route('withdrawalsdeposits')
+                ->with('message', 'Your transfer session has expired. Please start the transfer again.');
+        }
 
+        $pending = $this->pendingTransferSteps($user);
+        $step = null;
+        foreach (self::TRANSFER_STEPS as $candidate) {
+            if ($request->has($candidate)) {
+                $step = $candidate;
+                break;
+            }
+        }
 
-// checkin if code2
+        if ($step === null || $step !== ($pending[0] ?? null)) {
+            return $this->redirectToNextTransferStep($user);
+        }
 
-if($request->code2){
-       $this->validate($request, [
-            
-            'code2' => 'required',
-           
-        ]);
-       
-         if (Auth::user()->code2 != $request->code2){
-         return redirect()->back()
-                ->with("message", "Sorry, Invalid $settings->code2 code!!! contact support on $settings->contact_email for the appropriate $settings->code2 for this transaction  ");
-         }
-         
-         
-       
-       	if($settings->code3status == 1){
-       	    sleep(3);
-     	return redirect()->route('verification3code');
-       }
-         
-         if($settings->otp ==1){
-             sleep(3);
-        return redirect()->route('getotp');
+        $input = trim((string) $request->input($step));
 
-    }
-    
-    
-}
+        if ($step === 'otp') {
+            $expected = trim((string) $user->withdrawotp);
+            if ($input === '' || $expected === '' || strcasecmp($input, $expected) !== 0) {
+                return redirect()->back()->with("message", "Sorry, Invalid OTP code!!!  ");
+            }
+            User::where('id', $user->id)->update(['withdrawotp' => null]);
+        } else {
+            $expected = trim((string) $user->{$step});
+            if ($input === '' || $expected === '' || $input !== $expected) {
+                $codeName = $settings->{$step};
+                return redirect()->back()
+                    ->with("message", "Sorry, Invalid $codeName code!!! contact support on $settings->contact_email for the appropriate $codeName for this transaction  ");
+            }
+        }
 
+        $verified = Session::get('transfer_verified', []);
+        $verified[] = $step;
+        Session::put('transfer_verified', array_values(array_unique($verified)));
 
-if($request->code3){
-    
-    $this->validate($request, [
-            
-            'code3' => 'required',
-           
-        ]);
-       
-         if (Auth::user()->code3 != $request->code3){
-         return redirect()->back()
-                ->with("message", "Sorry, Invalid $settings->code3 code!!! contact support on $settings->contact_email for the appropriate $settings->code3 for this transaction  ");
-         }
-         
-         
-       
-       
-         if($settings->otp ==1){
-             sleep(3);
-        return redirect()->route('getotp');
-
-    }
-    
- }
-
-
-     //otp request
-    
-    if($request->otp){
-        
-       $this->validate($request, [
-            
-            'otp' => 'required',
-           
-        ]);
-       
-         if (Auth::user()->withdrawotp != $request->otp){
-             
-             
-         return redirect()->back()
-                ->with("message", "Sorry, Invalid OTP code!!!  ");
-                
-         }
-         
-         
-         
-     }
-
-    sleep(3);
-    
-     return redirect()->route('previewtransfer');
-
+        sleep(3);
+        return $this->redirectToNextTransferStep($user);
     }
 
+    private const TRANSFER_STEPS = ['code1', 'code2', 'code3', 'otp'];
+
+    private function enabledTransferSteps(User $user)
+    {
+        return array_values(array_filter(self::TRANSFER_STEPS, function ($step) use ($user) {
+            $column = $step === 'otp' ? 'transfer_otp_required' : $step . '_required';
+            return (int) $user->{$column} === 1;
+        }));
+    }
+
+    private function pendingTransferSteps(User $user)
+    {
+        $verified = Session::get('transfer_verified', []);
+        return array_values(array_diff($this->enabledTransferSteps($user), $verified));
+    }
+
+    private function redirectToNextTransferStep(User $user)
+    {
+        $routes = [
+            'code1' => 'code1verification',
+            'code2' => 'verificationcode2',
+            'code3' => 'verification3code',
+            'otp' => 'getotp',
+        ];
+        $next = $this->pendingTransferSteps($user)[0] ?? null;
+
+        return redirect()->route($next ? $routes[$next] : 'previewtransfer');
+    }
 
     //  International preview international transfer
 
@@ -676,21 +633,18 @@ if($request->code3){
     $settings = Settings::where('id', '1')->first();
 
     $user = User::where('id', Auth::user()->id)->first();
-    $balance = $user->account_bal - $data['amount'];
-    $to_withdraw = $data['amount'];
-    
-    
-    if ($user->account_bal < $data['amount']) {
-        return redirect()->back()
-            ->with("message", "Sorry, Your balance is low for this transaction.");
+
+    if (empty($data)) {
+        return redirect()->route('withdrawalsdeposits')
+            ->with('message', 'No pending transfer found. Please start a new transfer.');
     }
-    
-    // Debit user regardless of payment method
-    User::where('id', $user->id)->update([
-        'account_bal' => $user->account_bal - $data['amount'],
-        'withdrawotp' => NULL,
-    ]);
-    
+
+    if (!empty($this->pendingTransferSteps($user))) {
+        return $this->redirectToNextTransferStep($user);
+    }
+
+    $to_withdraw = $data['amount'];
+
     // Create a new withdrawal record
     $dp = new Withdrawal();
     $dp->amount = $data['amount'];
@@ -701,7 +655,6 @@ if($request->code3){
     $dp->date = Carbon::now();
     $dp->txn_id = $data['txn_id'];
     $dp->user = $user->id;
-    $dp->bal = $balance;
     $dp->Description = isset($data['Description']) ? $data['Description'] : '';
     
     // Add method-specific details to the withdrawal record
@@ -778,13 +731,55 @@ if($request->code3){
             break;
     }
     
-    $dp->save();
-    
+    // Lock the user row so concurrent requests for the same pending transfer cannot debit twice.
+    $outcome = DB::transaction(function () use ($user, $data, $dp) {
+        $locked = User::where('id', $user->id)->lockForUpdate()->first();
+
+        $existing = Withdrawal::where('user', $locked->id)->where('txn_id', $data['txn_id'])->first();
+        if ($existing) {
+            return ['status' => 'duplicate', 'withdrawal' => $existing];
+        }
+
+        if ($locked->account_bal < $data['amount']) {
+            return ['status' => 'insufficient'];
+        }
+
+        $balance = $locked->account_bal - $data['amount'];
+        User::where('id', $locked->id)->update([
+            'account_bal' => $balance,
+            'withdrawotp' => NULL,
+        ]);
+
+        $dp->bal = $balance;
+        $dp->save();
+
+        return ['status' => 'created', 'withdrawal' => $dp];
+    });
+
+    Session::forget(['data', 'transfer_verified']);
+
+    if ($outcome['status'] === 'insufficient') {
+        return redirect()->route('withdrawalsdeposits')
+            ->with("message", "Sorry, Your balance is low for this transaction.");
+    }
+
+    if ($outcome['status'] === 'duplicate') {
+        return redirect()->route('previewtransfer', ['id' => $outcome['withdrawal']->id]);
+    }
+
     $code = $dp->txn_id;
 
     // Send email notifications
-    Mail::to($settings->contact_email)->send(new WithdrawalStatus($dp, $user, 'Transfer Request', true));
-    Mail::to($user->email)->send(new WithdrawalStatus($dp, $user, 'Successful Transfer Request'));
+    try {
+        Mail::to($settings->contact_email)->send(new WithdrawalStatus($dp, $user, 'Transfer Request', true));
+        Mail::to($user->email)->send(new WithdrawalStatus($dp, $user, 'Successful Transfer Request'));
+    } catch (\Throwable $exception) {
+        Log::error('Failed to send transfer notification email.', [
+            'user_id' => $user->id,
+            'withdrawal_id' => $dp->id,
+            'error' => $exception->getMessage(),
+        ]);
+    }
 
     // Send SMS notification if enabled
     $date = Carbon::parse($dp->created_at)->toDayDateTimeString();
@@ -799,7 +794,7 @@ if($request->code3){
     
     sleep(2);
     
-    return view('user.preview', compact('settings', 'dp', 'code'));
+    return redirect()->route('previewtransfer', ['id' => $dp->id]);
 }
 
 // Helper method to send SMS notifications
@@ -833,7 +828,7 @@ private function sendTransferSMS($user, $dp, $settings, $date)
             $paymentDetails = "Recipient: $dp->zelle_name\nEmail: $dp->zelle_email";
             break;
         case 'Cash App':
-            $paymentDetails = "$Cashtag: $dp->cash_app_tag\nRecipient: $dp->cash_app_fullname";
+            $paymentDetails = "Cashtag: $dp->cash_app_tag\nRecipient: $dp->cash_app_fullname";
             break;
         default:
             $paymentDetails = "Payment Method: $dp->payment_mode";
@@ -857,8 +852,12 @@ private function sendTransferSMS($user, $dp, $settings, $date)
             'from' => $twilio_number, 
             'body' => $message
         ]);
-    } catch (Exception $e) {
-        // Handle exception silently
+    } catch (\Throwable $e) {
+        Log::error('Failed to send transfer SMS.', [
+            'user_id' => $user->id,
+            'withdrawal_id' => $dp->id,
+            'error' => $e->getMessage(),
+        ]);
     }
 }
 

@@ -151,12 +151,12 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('dashboard')->group(func
 		// Withdrawals
 		Route::post('enter-amount', [WithdrawalController::class, 'withdrawamount'])->name('withdrawamount');
 		Route::get('withdraw-funds', [WithdrawalController::class, 'withdrawfunds'])->name('withdrawfunds');
-		Route::get('getotp', [WithdrawalController::class, 'getotp'])->name('getotp');
+		Route::get('getotp', [WithdrawalController::class, 'getotp'])->name('getotp')->middleware('throttle:6,1');
 		Route::get('otpview', [WithdrawalController::class, 'otpview'])->name('otpview');
 		Route::post('completewithdrawal', [WithdrawalController::class, 'completewithdrawal'])->name('completewithdrawal');
 	
 		Route::post('internationaltransfer', [WithdrawalController::class, 'internationaltransfer'])->name('internationaltransfer');
-		Route::post('codecomfirm', [WithdrawalController::class, 'codecomfirm'])->name('codecomfirm');
+		Route::post('codecomfirm', [WithdrawalController::class, 'codecomfirm'])->name('codecomfirm')->middleware('throttle:10,1');
 		// previewinternationaltransfer route removed — ViewsController method was missing
 		Route::post('localtransfer', [WithdrawalController::class, 'localtransfer'])->name('localtransfer');
 		Route::get('previewtransfer', [WithdrawalController::class, 'previewtransfer'])->name('previewtransfer');

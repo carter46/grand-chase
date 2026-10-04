@@ -25,103 +25,29 @@
                                   <h5>  <label for="exampleInputEmail1">Code 3</label></h5>
                                     <input class="form-control" type="text"  name="code3" value="{{$settings->code3}}"  placeholder="Enter code3 name">
                                 </div>
-                                  
-                                
-                                 
-                                
-                                
                                  </div>
                                  <div class="row">
                                     <div class="form-group col-md-4 mb-3">
                                       <h5>  <label for="exampleInputEmail1">Code 1 Message</label></h5>
                                       <textarea name="code1message" class="form-control " rows="2">{{ $settings->code1message }}</textarea>
-                                      <small class="text-{{ $text }}">This message will be displayed to users on if code1 is on international transfer</small>
+                                      <small class="text-{{ $text }}">This message will be displayed to users when code1 is required on their transfer</small>
                                     </div>
                                     <div class="form-group col-md-4 mb-3">
                                       <h5>  <label for="exampleInputEmail1">Code  2 message</label></h5>
                                       <textarea name="code2message" class="form-control " rows="2">{{ $settings->code2message }}</textarea>
-                                      <small class="text-{{ $text }}">This message will be displayed to users on if code2 is on international transfer</small>
+                                      <small class="text-{{ $text }}">This message will be displayed to users when code2 is required on their transfer</small>
                                     </div>
                                       <div class="form-group col-md-4 mb-3">
                                       <h5>  <label for="exampleInputEmail1">Code3 message</label></h5>
                                       <textarea name="code3message" class="form-control " rows="2">{{ $settings->code3message }}</textarea>
-                                      <small class="text-{{ $text }}">This message will be displayed to users on if code3 is on international transfer </small>
+                                      <small class="text-{{ $text }}">This message will be displayed to users when code3 is required on their transfer</small>
                                     </div>
-                                      
-                                    
-                                     
-                                    
-                                    
                                      </div>
                                  <div class="row">
-                                <div class="form-group col-md-4 mb-3">
-                                    <h5 class="">Turn On/Off code1</h5>
-                                    <div class="selectgroup">
-                                        <label class="selectgroup-item">
-                                            <input type="radio" name="code1status" value="1" class="selectgroup-input"
-                                                {{ $settings->code1status == '1' ? 'checked' : '' }}>
-                                            <span class="selectgroup-button">On</span>
-                                        </label>
-                                        <label class="selectgroup-item">
-                                            <input type="radio" name="code1status"
-                                                {{ $settings->code1status != '1' ? 'checked' : '' }} value="0"
-                                                class="selectgroup-input">
-                                            <span class="selectgroup-button">Off</span>
-                                        </label>
+                                    <div class="col-md-12 mb-3">
+                                        <small class="text-{{ $text }}">Turn each code and the transfer OTP on or off per user from Manage Users &rarr; user details.</small>
                                     </div>
-                                </div>
-                                <div class="form-group col-md-4 mb-3">
-                                    <h5 class="">Turn On/Off code2</h5>
-                                    <div class="selectgroup">
-                                        <label class="selectgroup-item">
-                                            <input type="radio" name="code2status" value="1" class="selectgroup-input"
-                                                {{ $settings->code2status == '1' ? 'checked' : '' }}>
-                                            <span class="selectgroup-button">On</span>
-                                        </label>
-                                        <label class="selectgroup-item">
-                                            <input type="radio" name="code2status"
-                                                {{ $settings->code2status != '1' ? 'checked' : '' }} value="0"
-                                                class="selectgroup-input">
-                                            <span class="selectgroup-button">Off</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-4 mb-3">
-                                    <h5 class="">Turn On/Off code3</h5>
-                                    <div class="selectgroup">
-                                        <label class="selectgroup-item">
-                                            <input type="radio" name="code3status" value="1" class="selectgroup-input"
-                                                {{ $settings->code3status == '1' ? 'checked' : '' }}>
-                                            <span class="selectgroup-button">On</span>
-                                        </label>
-                                        <label class="selectgroup-item">
-                                            <input type="radio" name="code3status"
-                                                {{ $settings->code3status != '1' ? 'checked' : '' }} value="0"
-                                                class="selectgroup-input">
-                                            <span class="selectgroup-button">Off</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                                
-                                <div class=" form-group col-md-4 mb-3">
-                                    <h5><label for="sms_verification">OTP Code</label></h5>
-                                    <div class="selectgroup">
-                                        <label class="selectgroup-item">
-                                            <input type="radio" name="otp" value="1" class="selectgroup-input"
-                                                {{ $settings->otp == '1' ? 'checked' : '' }}>
-                                            <span class="selectgroup-button">On</span>
-                                        </label>
-                                        <label class="selectgroup-item">
-                                            <input type="radio" name="otp"
-                                                {{ $settings->otp != '1' ? 'checked' : '' }} value="0"
-                                                class="selectgroup-input">
-                                            <span class="selectgroup-button">Off</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                            </div>
+                                 </div>
                             <div class="tile-footer">
                                 <button class="btn btn-primary" style="width: 100%!important;" type="submit">Update</button>
                             </div>
