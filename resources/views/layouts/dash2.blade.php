@@ -1017,5 +1017,6 @@
     @include('includes.live-chat-widget')
 
     @yield('scripts')
+    @include('partials.password-reveal')
 </body>
 </html>

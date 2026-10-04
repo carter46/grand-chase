@@ -115,6 +115,7 @@
         <script src="{{ asset('dash/js/admin-mobile.js') }}?v={{ @filemtime(public_path('dash/js/admin-mobile.js')) ?: time() }}"></script>
     @show
 
+    @include('partials.password-reveal')
 </body>
 
 </html>

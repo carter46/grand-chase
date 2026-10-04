@@ -66,5 +66,6 @@ function googleTranslateElementInit() {
        @show
         @livewireScripts
         <script src="https://cdn.jsdelivr.net/gh/livewire/turbolinks@v0.1.4/dist/livewire-turbolinks.js" data-turbolinks-eval="false" data-turbo-eval="false"></script>
+        @include('partials.password-reveal')
     </body>
 </html>

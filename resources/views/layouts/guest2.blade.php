@@ -50,5 +50,6 @@
     <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     @yield('scripts')
+    @include('partials.password-reveal')
 </body>
 </html>
