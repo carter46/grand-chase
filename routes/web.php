@@ -36,6 +36,14 @@ Route::any('/activate', function () {
 	]);
 });
 
+// Polled by the idle-timeout script on dashboards to see whether the session is still alive.
+Route::get('/session-check', function () {
+    return response()->json([
+        'web' => auth('web')->check(),
+        'admin' => auth('admin')->check(),
+    ])->header('Cache-Control', 'no-store');
+})->name('session.check');
+
 Route::get('/offline', function () {
     return view('vendor.laravelpwa.offline');
 });

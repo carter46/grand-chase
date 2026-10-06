@@ -126,6 +126,7 @@
     </script>
     @livewireScripts
     @include('partials.password-reveal', ['noSave' => true])
+    @include('partials.session-timeout', ['guard' => 'web'])
 </body>
 
 </html>

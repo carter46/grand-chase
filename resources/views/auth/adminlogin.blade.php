@@ -59,6 +59,10 @@
             <div class="p-4 bg-error-container border border-error text-on-error-container font-body-sm">
                 {{ session('status') }}
             </div>
+            @elseif (request('session') === 'expired')
+            <div class="p-4 bg-error-container border border-error text-on-error-container font-body-sm">
+                Your session expired due to inactivity. Please log in again.
+            </div>
             @endif
 
             @if ($errors->any())

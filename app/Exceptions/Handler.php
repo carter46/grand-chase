@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
@@ -49,6 +51,14 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $e)
     {
+        if ($e instanceof TokenMismatchException) {
+            try {
+                return $this->renderExpiredSession($request);
+            } catch (Throwable $ignored) {
+                // fall through to the default 419 response
+            }
+        }
+
         try {
             if (! $this->container->bound('translator')) {
                 return $this->renderPlain($request, $e);
@@ -69,6 +79,53 @@ class Handler extends ExceptionHandler
 
             return $this->renderPlain($request, $e);
         }
+    }
+
+    /**
+     * A form posted with a stale CSRF token (idle session timed out, or an old tab/back button)
+     * goes to the login page or back to the form instead of the bare "419 Page Expired" screen.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function renderExpiredSession($request)
+    {
+        $isAdmin = $request->is('admin') || $request->is('admin/*');
+        $guard = $isAdmin ? 'admin' : 'web';
+        $loginRoute = $isAdmin ? 'adminloginform' : 'login';
+        $routeName = optional($request->route())->getName();
+        $isLogout = in_array($routeName, ['logout', 'adminlogout'], true);
+        $loggedIn = Auth::guard($guard)->check();
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'message' => 'Your session has expired. Please refresh the page and try again.',
+            ], 419);
+        }
+
+        if ($isLogout) {
+            if ($loggedIn) {
+                Auth::guard($guard)->logout();
+            }
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route($loginRoute)->with('status', 'You have been logged out.');
+        }
+
+        if ($loggedIn) {
+            return redirect()->back()
+                ->withInput($request->except(['_token', '_method', 'password', 'password_confirmation', 'current_password', 'pin', 'otp', 'code1', 'code2', 'code3']))
+                ->with('message', 'This page had expired, so it was refreshed. Please submit again.');
+        }
+
+        $previous = url()->previous();
+        if ($previous && $previous !== $request->fullUrl()) {
+            $request->session()->put('url.intended', $previous);
+        }
+
+        return redirect()->route($loginRoute)
+            ->with('status', 'Your session expired due to inactivity. Please log in again.');
     }
 
     /**

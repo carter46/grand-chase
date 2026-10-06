@@ -116,6 +116,7 @@
     @show
 
     @include('partials.password-reveal', ['noSave' => true])
+    @include('partials.session-timeout', ['guard' => 'admin'])
 </body>
 
 </html>
