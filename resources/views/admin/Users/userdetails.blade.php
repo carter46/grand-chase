@@ -250,6 +250,22 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                         </label>
                                     </div>
                                 </div>
+
+                                <div class="p-3 border row align-items-center">
+                                    <div class="col-md-4 border-right">
+                                        <h5>Login OTP (Email)</h5>
+                                    </div>
+                                    <div class="col-md-8 d-flex align-items-center justify-content-between flex-wrap">
+                                        <h5 class="mb-0">One-time code emailed on each login</h5>
+                                        <label class="transfer-switch mb-0" for="login-otp-toggle">
+                                            <input type="checkbox" class="transfer-step-toggle"
+                                                id="login-otp-toggle" data-step="login_otp"
+                                                {{ ($user->login_otp_required ?? 1) ? 'checked' : '' }}>
+                                            <span class="transfer-switch-slider"></span>
+                                            <span class="transfer-switch-label">Required on login</span>
+                                        </label>
+                                    </div>
+                                </div>
                                 <div class="p-3 border row ">
                                     <div class="col-md-4 border-right">
                                         <h5>Date of birth</h5>

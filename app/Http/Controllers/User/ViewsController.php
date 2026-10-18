@@ -179,15 +179,6 @@ public function internationaltransfer()
     }
 
 
-     //pin route
-     public function pin()
-     {
-         return view('user.pin')
-             ->with(array(
-                 'title' => 'Verify Pin',
-             ));
-     }
-
     //Trading history route
     public function tradinghistory()
     {
@@ -412,29 +403,4 @@ public function loan()
     }
 
 
-    public function pinstatus(Request $request)
-{
-    $user = Auth::user();
-    
-    // Validate PIN
-    if($request->pin != $user->pin){
-        return response()->json([
-            'success' => false,
-            'message' => 'Invalid PIN. Please try again.'
-        ]);
-    }
-    
-    // Update PIN status
-    User::where('id', $user->id)
-        ->update([
-            'pinstatus' => '0'
-        ]);
-    
-    // Return success response
-    return response()->json([
-        'success' => true,
-        'message' => 'PIN verified successfully',
-        'redirect' => route('dashboard')
-    ]);
-}
 }

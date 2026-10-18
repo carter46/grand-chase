@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Controllers\User\LoginOtpController;
 use App\Models\Settings;
 use Closure;
 use Illuminate\Http\Request;
@@ -23,6 +24,10 @@ class EnsureKycIsCompleted
             return $next($request);
         }
 
+        if ($request->session()->get(LoginOtpController::PENDING_KEY)) {
+            return redirect()->route('pin');
+        }
+
         $user = Auth::user();
         $settings = Settings::find(1);
 
@@ -32,10 +37,6 @@ class EnsureKycIsCompleted
             }
 
         }
-        
-        if ($user->pinstatus != 0) {
-                return redirect()->route('pin');
-            }
 
         return $next($request);
     }

@@ -55,6 +55,7 @@ class SocialLoginController extends Controller
 
         if ($user) {
             Auth::login($user);
+            \App\Http\Controllers\User\LoginOtpController::requireFor($request, $user);
             DB::table('activities')->insert([
                 'user' => $user->id,
                 'ip_address' => $request->ip(),

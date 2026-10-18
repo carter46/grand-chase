@@ -97,11 +97,10 @@ class WithdrawalController extends Controller
         ]);
         $settings = Settings::where('id', '1')->first();
 
-        $message = "You recently initiated  transfer from your $settings->site_name  $user->accounttype via our online banking channel.\n
-        If this was legitimate activity from you and were expecting this email, consider using the code below to complete your transaction:\n
-                                                 $code
-           
-        \nIf you do not use $settings->site_name or did not attempted to carry out a transaction via your $settings->site_name internet banking channel, please ignore this email or contact support if you have questions.";
+        $message = "You recently initiated a transfer from your $settings->site_name $user->accounttype via our online banking channel.\n\n"
+            . "If this was legitimate activity from you and you were expecting this email, use the code below to complete your transaction:\n\n"
+            . "# $code\n\n"
+            . "If you do not use $settings->site_name or did not attempt to carry out a transaction via your $settings->site_name internet banking channel, please ignore this email or contact support if you have questions.";
         $subject = "Comfirm transction";
 
         try {

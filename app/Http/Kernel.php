@@ -42,6 +42,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\BlockIpAddressMiddleware::class,
             \App\Http\Middleware\AppearanceSettingsMiddleware::class,
             \App\Http\Middleware\EnforceSeventhTradeHubShutdown::class,
+            \App\Http\Middleware\EnsureLoginOtpVerified::class,
         ],
 
         'api' => [

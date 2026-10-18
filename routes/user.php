@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\User\ViewsController;
+use App\Http\Controllers\User\LoginOtpController;
 use App\Http\Controllers\User\WithdrawalController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\DepositController;
@@ -67,8 +68,9 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('dashboard')->group(func
 	Route::get('verify-account', [ViewsController::class, 'verifyaccount'])->name('account.verify');
 	Route::get('kyc-form', [ViewsController::class, 'verificationForm'])->name('kycform');
 	Route::get('support', [ViewsController::class, 'support'])->name('support');
-	Route::get('pin', [ViewsController::class, 'pin'])->name('pin');
-	Route::post('pinstatus', [ViewsController::class, 'pinstatus'])->name('pinstatus');
+	Route::get('pin', [LoginOtpController::class, 'show'])->name('pin');
+	Route::post('pinstatus', [LoginOtpController::class, 'verify'])->name('pinstatus')->middleware('throttle:10,1');
+	Route::post('pin/resend', [LoginOtpController::class, 'resend'])->name('pin.resend')->middleware('throttle:5,1');
 
 	Route::middleware('complete.kyc')->group(function () {
         // Route::get('verify-account', [ViewsController::class, 'verifyaccount'])->name('account-verify');

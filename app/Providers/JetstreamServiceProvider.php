@@ -58,16 +58,8 @@ class JetstreamServiceProvider extends ServiceProvider
                     'browser'=> $agent->browser(),
                     'os'=> $agent->platform(),
                 ]);
-               
-             
-             
-             
-                
-                 User::where('id',$user->id)
-        ->update([
-            'pinstatus' => '1',
-           
-        ]);
+
+                \App\Http\Controllers\User\LoginOtpController::requireFor($request, $user);
                 return $user;
             }
         });

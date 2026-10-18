@@ -63,6 +63,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'code2_required',
         'code3_required',
         'transfer_otp_required',
+        'login_otp_required',
         'codestatus',
         'withdrawotp',
         'act_session',

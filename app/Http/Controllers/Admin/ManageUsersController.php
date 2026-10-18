@@ -386,6 +386,7 @@ class ManageUsersController extends Controller
             return $deny;
         }
         Auth::loginUsingId($user->id, true);
+        session()->forget(\App\Http\Controllers\User\LoginOtpController::PENDING_KEY);
         return redirect()->route('dashboard')->with('success', "You are logged in as $user->name !");
     }
 
@@ -523,11 +524,11 @@ class ManageUsersController extends Controller
         return redirect()->back()->with('success', 'User details updated Successfully!');
     }
 
-    //turn a user's transfer verification step (code1/code2/code3/otp) on or off
+    //turn a user's verification step (transfer code1/code2/code3/otp, or the login OTP) on or off
     public function toggleTransferStep(Request $request, $id)
     {
         $this->validate($request, [
-            'step' => 'required|in:code1,code2,code3,otp',
+            'step' => 'required|in:code1,code2,code3,otp,login_otp',
             'enabled' => 'required|boolean',
         ]);
 
@@ -538,17 +539,20 @@ class ManageUsersController extends Controller
 
         $step = $request->input('step');
         $enabled = $request->boolean('enabled');
-        $column = $step === 'otp' ? 'transfer_otp_required' : $step . '_required';
+        $columns = ['otp' => 'transfer_otp_required', 'login_otp' => 'login_otp_required'];
+        $column = $columns[$step] ?? $step . '_required';
+        $isCode = in_array($step, ['code1', 'code2', 'code3'], true);
 
         $updates = [$column => $enabled ? 1 : 0];
-        if ($enabled && $step !== 'otp' && trim((string) $user->{$step}) === '') {
+        if ($enabled && $isCode && trim((string) $user->{$step}) === '') {
             $updates[$step] = (string) random_int(100000, 999999);
         }
 
         User::where('id', $user->id)->update($updates);
 
         $settings = Settings::where('id', '1')->first();
-        $label = $step === 'otp' ? 'Transfer OTP' : ($settings->{$step} ?: strtoupper($step)) . ' code';
+        $labels = ['otp' => 'Transfer OTP', 'login_otp' => 'Login OTP'];
+        $label = $labels[$step] ?? ($settings->{$step} ?: strtoupper($step)) . ' code';
 
         return response()->json([
             'success' => true,
