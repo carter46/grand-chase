@@ -44,6 +44,9 @@ Route::get('/session-check', function () {
     ])->header('Cache-Control', 'no-store');
 })->name('session.check');
 
+Route::post('/impersonate/leave', [\App\Http\Controllers\Admin\ImpersonationController::class, 'leave'])
+    ->name('impersonate.leave');
+
 Route::get('/offline', function () {
     return view('vendor.laravelpwa.offline');
 });

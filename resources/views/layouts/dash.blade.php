@@ -41,6 +41,7 @@
         @include('user.sidebar')
         <!-- Content -->
         <div class="main-content position-relative">
+            @include('partials.impersonation-banner', ['variant' => 'bar'])
             <!-- Main nav -->
             @include('user.topmenu')
 

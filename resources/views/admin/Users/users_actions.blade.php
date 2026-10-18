@@ -432,10 +432,11 @@
          <!-- Modal content-->
          <div class="modal-content">
              <div class="modal-header ">
-                 <h4 class="modal-title ">You are about to login as {{ $user->name }}.</strong></h4>
+                 <h4 class="modal-title ">View the dashboard as {{ $user->name }}?</h4>
                  <button type="button" class="close " data-dismiss="modal">&times;</button>
              </div>
              <div class="modal-body ">
+                 <p>You stay logged in as admin. Use <strong>Back to admin</strong> on the user's dashboard to return.</p>
                  <a class="btn btn-success"
                      href="{{ url('admin/dashboard/switchuser') }}/{{ $user->id }}">Proceed</a>
              </div>

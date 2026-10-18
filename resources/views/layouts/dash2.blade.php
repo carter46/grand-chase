@@ -329,6 +329,8 @@
                         @endif
                     </a>
                 </div>
+
+                @include('partials.impersonation-banner', ['variant' => 'sidebar'])
                 
                 <!-- User Info Card - Desktop Sidebar -->
                 <div class="px-4 mb-6">
@@ -480,6 +482,7 @@
         
         <!-- Main Content Area -->
         <div class="flex flex-col flex-1 overflow-hidden">
+            @include('partials.impersonation-banner', ['variant' => 'bar', 'class' => 'md:hidden'])
             <!-- Top Header -->
             <header class="bg-white shadow-sm z-20">
                 <div class="flex items-center justify-between px-4 py-3">

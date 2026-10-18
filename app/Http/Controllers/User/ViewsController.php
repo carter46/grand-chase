@@ -66,7 +66,7 @@ class ViewsController extends Controller
         $total_withdrawal = DB::table('withdrawals')->where('user', $user->id)->where('status', 'Processed')->sum('amount');
         $total_withdrawal_pending = DB::table('withdrawals')->where('user', $user->id)->where('status', 'Pending')->sum('amount');
         //log user out if not blocked by admin
-        if ($user->status != "active") {
+        if ($user->status != "active" && !\App\Support\Impersonation::active()) {
             $request->session()->flush();
             return redirect()->route('dashboard');
         }

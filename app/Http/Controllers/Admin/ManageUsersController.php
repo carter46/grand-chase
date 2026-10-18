@@ -385,9 +385,8 @@ class ManageUsersController extends Controller
         if ($deny) {
             return $deny;
         }
-        Auth::loginUsingId($user->id, true);
-        session()->forget(\App\Http\Controllers\User\LoginOtpController::PENDING_KEY);
-        return redirect()->route('dashboard')->with('success', "You are logged in as $user->name !");
+        \App\Support\Impersonation::start($user);
+        return redirect()->route('dashboard')->with('success', "You are viewing $user->name's account. Use \"Back to admin\" to return.");
     }
 
     //Manually Add Trading History to Users Route
