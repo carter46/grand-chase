@@ -5,8 +5,14 @@
     <div class="main-panel">
         <div class="content">
             <div class="page-inner">
-                <div class="mt-2 mb-4">
-                    <h1 class="title1 text-center">IRS Refund Management</h1>
+                <div class="admin-page-head">
+                    <div>
+                        <h1 class="title1 mb-1">IRS Refund Management</h1>
+                        <p class="text-muted mb-0">All IRS refund requests</p>
+                    </div>
+                    <a href="{{ route('admin.irs-refunds.pending') }}" class="btn btn-primary">
+                        <i class="fa fa-clock mr-1"></i> Pending requests
+                    </a>
                 </div>
                 
                 @if (session('success'))
@@ -29,44 +35,38 @@
                 <div class="mb-5 row">
                     <div class="col-md-12">
                         <div class="card p-3 shadow">
-                            <div class="card-header">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h4 class="card-title">All IRS Refund Requests</h4>
-                                    <a href="{{ route('admin.irs-refunds.pending') }}" class="btn btn-primary btn-sm">
-                                        <i class="fa fa-clock"></i> Pending Requests
-                                    </a>
-                                </div>
-                            </div>
                             <div class="card-body">
-                                <div class="admin-desktop-table table-responsive">
-                                    <table class="table table-hover">
+                                <div class="admin-desktop-table admin-table-fit">
+                                    <table class="table table-hover admin-compact-table">
                                         <thead>
                                             <tr>
-                                                <th>Reference ID</th>
                                                 <th>User</th>
                                                 <th>Amount</th>
-                                                <th>Filing ID</th>
                                                 <th>Status</th>
-                                                <th>Created</th>
-                                                <th>Actions</th>
+                                                <th class="text-right"></th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @forelse ($refunds as $refund)
                                                 <tr>
-                                                    <td>{{ $refund->id }}</td>
                                                     <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <img src="{{ profile_photo_url(optional($refund->user)->profile_photo_path, optional($refund->user)->name ?? 'User') }}" alt="profile" class="mr-2 rounded-circle" style="width: 30px; height: 30px;">
-                                                            <div>
-                                                                {{ $refund->user ? $refund->user->name : 'N/A' }}
-                                                                <div class="small text-muted">{{ $refund->user ? $refund->user->email : 'N/A' }}</div>
-                                                            </div>
-                                                        </div>
+                                                        <span class="admin-user-cell">
+                                                            <img src="{{ profile_photo_url(optional($refund->user)->profile_photo_path, optional($refund->user)->name ?? 'User') }}" alt="">
+                                                            <span class="admin-cell-stack">
+                                                                <strong>{{ $refund->user ? $refund->user->name : 'N/A' }}</strong>
+                                                                <small>{{ $refund->user ? $refund->user->email : 'N/A' }}</small>
+                                                            </span>
+                                                        </span>
                                                     </td>
-                                                    <td>${{ number_format($refund->amount, 2) }}</td>
-                                                    <td>{{ $refund->filing_id }}</td>
                                                     <td>
+                                                        <span class="admin-cell-stack">
+                                                            <strong>${{ number_format($refund->amount, 2) }}</strong>
+                                                            <small>Ref #{{ $refund->id }} &middot; Filing {{ $refund->filing_id }}</small>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="admin-cell-stack">
+                                                        <span>
                                                         @if ($refund->status == 'pending')
                                                             <span class="badge badge-warning">Pending</span>
                                                         @elseif ($refund->status == 'approved')
@@ -78,14 +78,16 @@
                                                         @else
                                                             <span class="badge badge-secondary">{{ $refund->status }}</span>
                                                         @endif
+                                                        </span>
+                                                        <small>{{ $refund->created_at->format('M d, Y') }}</small>
+                                                        </span>
                                                     </td>
-                                                    <td>{{ $refund->created_at->format('M d, Y') }}</td>
-                                                    <td>
+                                                    <td class="text-right">
                                                         <div class="dropdown">
-                                                            <button class="btn btn-primary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton{{ $refund->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                Actions
+                                                            <button class="btn btn-light btn-sm admin-kebab" type="button" id="dropdownMenuButton{{ $refund->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Actions">
+                                                                <i class="fas fa-ellipsis-v"></i>
                                                             </button>
-                                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ $refund->id }}">
+                                                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton{{ $refund->id }}">
                                                                 <a class="dropdown-item" href="{{ route('admin.irs-refunds.view', $refund->id) }}">
                                                                     <i class="fa fa-eye"></i> View Details
                                                                 </a>
@@ -137,7 +139,7 @@
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="7" class="text-center">No refund requests found.</td>
+                                                    <td colspan="4" class="text-center">No refund requests found.</td>
                                                 </tr>
                                             @endforelse
                                         </tbody>

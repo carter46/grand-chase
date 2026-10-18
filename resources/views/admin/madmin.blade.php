@@ -12,67 +12,76 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
     <div class="main-panel ">
         <div class="content ">
             <div class="page-inner">
-                <div class="mt-2 mb-4">
-                    <h1 class="title1 ">Managers List</h1>
+                <div class="admin-page-head">
+                    <div>
+                        <h1 class="title1 mb-1">Administrators</h1>
+                        <p class="text-muted mb-0">People who can sign in to this admin panel</p>
+                    </div>
+                    <a href="{{ url('/admin/dashboard/addmanager') }}" class="btn btn-primary">
+                        <i class="fas fa-user-plus mr-1"></i> Add admin
+                    </a>
                 </div>
                 <x-danger-alert />
                 <x-success-alert />
 
                 <div class="mb-5 row">
                     <div class="col p-4 shadow card ">
-                        <div class="admin-desktop-table table-responsive" data-example-id="hoverable-table">
-                            <table id="ShipTable" class="table table-hover ">
+                        <div class="admin-desktop-table admin-table-fit">
+                            <table id="ShipTable" class="table table-hover admin-compact-table">
                                 <thead>
                                     <tr>
-                                        <th>USER ID</th>
-                                        <th>FIRSTNAME</th>
-                                        <th>LASTNAME</th>
-                                        <th>EMAIL</th>
-                                        <th>PHONE</th>
-                                        <th>TYPE</th>
-                                        <th>STATUS</th>
-                                        <th>ACTION</th>
+                                        <th>Admin</th>
+                                        <th>Phone</th>
+                                        <th>Role</th>
+                                        <th class="text-right"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($admins as $admin)
+                                        @php $adminBlocked = $admin->acnt_type_active == null || $admin->acnt_type_active == 'blocked'; @endphp
                                         <tr>
-                                            <td>{{ $admin->id }}</td>
-                                            <td>{{ $admin->firstName }}</td>
-                                            <td>{{ $admin->lastName }}</td>
-                                            <td>{{ $admin->email }}</td>
-                                            <td>{{ $admin->phone }}</td>
-                                            <td>{{ $admin->type }}</td>
-                                            <td>{{ $admin->acnt_type_active }}</td>
+                                            <td data-order="{{ $admin->id }}">
+                                                <span class="admin-cell-stack">
+                                                    <strong>{{ $admin->firstName }} {{ $admin->lastName }}</strong>
+                                                    <small>{{ $admin->email }}</small>
+                                                </span>
+                                            </td>
+                                            <td>{{ $admin->phone ?: '—' }}</td>
                                             <td>
+                                                <span class="admin-cell-stack">
+                                                    <span>{{ $admin->type }}</span>
+                                                    <small><span class="badge {{ $adminBlocked ? 'badge-danger' : 'badge-success' }}">{{ $admin->acnt_type_active ?: 'blocked' }}</span></small>
+                                                </span>
+                                            </td>
+                                            <td class="text-right">
                                                 <div class="dropdown">
-                                                    <a class="btn btn-secondary btn-sm dropdown-toggle" href="#"
-                                                        role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                                        aria-haspopup="true" aria-expanded="false">
-                                                        Actions
-                                                    </a>
-                                                    <div class="dropdown-menu " aria-labelledby="dropdownMenuLink">
-
-                                                        @if ($admin->acnt_type_active == null || $admin->acnt_type_active == 'blocked')
-                                                            <a class="m-1 btn btn-primary btn-sm"
-                                                                href="{{ url('admin/dashboard/unblock') }}/{{ $admin->id }}">Unblock</a>
+                                                    <button class="btn btn-light btn-sm admin-kebab" type="button"
+                                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Actions">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <a href="#" data-toggle="modal" data-target="#edituser{{ $admin->id }}" class="dropdown-item">
+                                                            <i class="fas fa-pen mr-2"></i> Edit
+                                                        </a>
+                                                        <a href="#" data-toggle="modal" data-target="#resetpswdModal{{ $admin->id }}" class="dropdown-item">
+                                                            <i class="fas fa-key mr-2"></i> Set password
+                                                        </a>
+                                                        <a href="#" data-toggle="modal" data-target="#sendmailModal{{ $admin->id }}" class="dropdown-item">
+                                                            <i class="fas fa-envelope mr-2"></i> Send email
+                                                        </a>
+                                                        @if ($adminBlocked)
+                                                            <a class="dropdown-item text-success" href="{{ url('admin/dashboard/unblock') }}/{{ $admin->id }}">
+                                                                <i class="fas fa-unlock mr-2"></i> Unblock
+                                                            </a>
                                                         @else
-                                                            <a class="m-1 btn btn-danger btn-sm"
-                                                                href="{{ url('admin/dashboard/ublock') }}/{{ $admin->id }}">Block</a>
+                                                            <a class="dropdown-item text-warning" href="{{ url('admin/dashboard/ublock') }}/{{ $admin->id }}">
+                                                                <i class="fas fa-lock mr-2"></i> Block
+                                                            </a>
                                                         @endif
-                                                        <a href="#" data-toggle="modal"
-                                                            data-target="#resetpswdModal{{ $admin->id }}"
-                                                            class="m-1 btn btn-warning btn-sm">Set Password</a>
-
-                                                        <a href="#" data-toggle="modal"
-                                                            data-target="#deleteModal{{ $admin->id }}"
-                                                            class="m-1 btn btn-danger btn-sm">Delete</a>
-                                                        <a href="#" data-toggle="modal"
-                                                            data-target="#edituser{{ $admin->id }}"
-                                                            class="m-1 btn btn-secondary btn-sm">Edit</a>
-                                                        <a href="#" data-toggle="modal"
-                                                            data-target="#sendmailModal{{ $admin->id }}"
-                                                            class="m-1 btn btn-info btn-sm">Send Email</a>
+                                                        <div class="dropdown-divider"></div>
+                                                        <a href="#" data-toggle="modal" data-target="#deleteModal{{ $admin->id }}" class="dropdown-item text-danger">
+                                                            <i class="fas fa-trash mr-2"></i> Delete
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </td>

@@ -11,8 +11,14 @@
     <div class="main-panel">
         <div class="content ">
             <div class="page-inner">
-                <div class="mt-2 mb-4">
-                    <h1 class="title1 text-{{ $text }}">{{ $settings->site_name }} users list</h1>
+                <div class="admin-page-head">
+                    <div>
+                        <h1 class="title1 text-{{ $text }} mb-1">Manage Users</h1>
+                        <p class="text-muted mb-0">{{ $users->total() }} registered {{ \Illuminate\Support\Str::plural('user', $users->total()) }}</p>
+                    </div>
+                    <a href="{{ route('createnewuser') }}" class="btn btn-primary">
+                        <i class="fas fa-user-plus mr-1"></i> Create user
+                    </a>
                 </div>
                 <x-danger-alert />
                 <x-success-alert />
@@ -75,7 +81,7 @@
                                                 <a class="btn btn-info btn-sm " href="{{ route('emailservices') }}">
                                                     <span class="fas fa-envelope"
                                                         data-fa-transform="shrink-3 down-2"></span>
-                                                    <span class="d-none d-sm-inline-block ms-1">Send Message</span>
+                                                    <span class="ms-1">Send Message</span>
                                                 </a>
                                             </div>
                                         @endif
@@ -83,56 +89,67 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="admin-desktop-table table-responsive" data-example-id="hoverable-table">
-                                    <table class="table table-hover text-{{ $text }}">
+                                <div class="admin-desktop-table admin-table-fit">
+                                    <table class="table table-hover admin-compact-table text-{{ $text }}">
                                         <thead>
                                             <tr>
-                                                <th class="white-space-nowrap">
+                                                <th style="width:36px;">
                                                     <input type="checkbox" wire:model='selectPage' />
                                                 </th>
-                                                <th>Client Name</th>
-                                                <th>Username</th>
-                                                <th>Email</th>
-                                                <th>Phone</th>
+                                                <th>User</th>
+                                                <th>Contact</th>
                                                 <th>Status</th>
-                                                <th>Date registered</th>
-                                                <th>Action</th>
+                                                <th class="text-right" style="width:60px;"></th>
                                             </tr>
                                         </thead>
                                         <tbody id="userslisttbl">
 
                                             @forelse ($users as $user)
-                                                <tr>
-                                                    <td class="align-middle">
+                                                <tr wire:key="user-row-{{ $user->id }}">
+                                                    <td>
                                                         <input type="checkbox" wire:model='checkrecord'
                                                             value="{{ $user->id }}" />
                                                     </td>
-                                                    <td><img alt="" src="{{ profile_photo_url($user->profile_photo_path, $user->name) }}" width="35" height="35" style='border-radius: 50%;'>{{ $user->name }}</td>
-                                                    <td>{{ $user->username }}</td>
-                                                    <td>{{ $user->email }}</td>
-                                                    <td>{{ $user->phone }}</td>
                                                     <td>
-                                                        @if ($user->status == 'active')
-                                                            <span
-                                                                class='badge badge-success'>{{ $user->status }}</span>
-                                                        @else
-                                                            <span class='badge badge-danger'>{{ $user->status }}</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        {{ $user->created_at->diffForHumans() }}
-                                                    </td>
-                                                    <td>
-                                                        <a class='btn btn-secondary btn-sm'
-                                                            href="{{ route('viewuser', $user->id) }}" role='button'>
-                                                            Manage
+                                                        <a href="{{ route('viewuser', $user->id) }}" class="admin-user-cell text-{{ $text }}">
+                                                            <img alt="" src="{{ profile_photo_url($user->profile_photo_path, $user->name) }}">
+                                                            <span class="admin-cell-stack">
+                                                                <strong>{{ $user->name }} {{ $user->lastname }}</strong>
+                                                                <small>{{ $user->email }}@if ($user->username) &middot; {{ '@' . $user->username }}@endif</small>
+                                                            </span>
                                                         </a>
+                                                    </td>
+                                                    <td>
+                                                        <span class="admin-cell-stack">
+                                                            <span>{{ $user->phone ?: '—' }}</span>
+                                                            <small title="{{ $user->created_at }}">Joined {{ $user->created_at->format('M j, Y') }}</small>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge {{ $user->status == 'active' ? 'badge-success' : 'badge-danger' }}">{{ $user->status }}</span>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-light btn-sm admin-kebab" type="button"
+                                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Actions">
+                                                                <i class="fas fa-ellipsis-v"></i>
+                                                            </button>
+                                                            <div class="dropdown-menu dropdown-menu-right">
+                                                                <a class="dropdown-item" href="{{ route('viewuser', $user->id) }}">
+                                                                    <i class="fas fa-user-cog mr-2"></i> Manage
+                                                                </a>
+                                                                <a class="dropdown-item" href="{{ url('admin/dashboard/switchuser') }}/{{ $user->id }}"
+                                                                    onclick="return confirm('View the dashboard as {{ addslashes($user->name) }}? You stay logged in as admin.');">
+                                                                    <i class="fas fa-sign-in-alt mr-2"></i> Login as user
+                                                                </a>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             @empty
-                                                <td colspan="9">
-                                                    No Data Available
-                                                </td>
+                                                <tr>
+                                                    <td colspan="5" class="text-center py-4">No Data Available</td>
+                                                </tr>
                                             @endforelse
                                         </tbody>
                                     </table>

@@ -5,8 +5,14 @@
     <div class="main-panel">
         <div class="content">
             <div class="page-inner">
-                <div class="mt-2 mb-4">
-                    <h1 class="title1 text-center">{{ $title }}</h1>
+                <div class="admin-page-head">
+                    <div>
+                        <h1 class="title1 mb-1">{{ $title }}</h1>
+                        <p class="text-muted mb-0">All virtual cards issued to clients</p>
+                    </div>
+                    <a href="{{ route('admin.cards.pending') }}" class="btn btn-primary">
+                        <i class="fa fa-clock mr-1"></i> Pending applications
+                    </a>
                 </div>
                 
                 @if (session('success'))
@@ -29,50 +35,40 @@
                 <div class="mb-5 row">
                     <div class="col-md-12">
                         <div class="card p-3 shadow">
-                            <div class="card-header">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h4 class="card-title">All Virtual Cards</h4>
-                                    <a href="{{ route('admin.cards.pending') }}" class="btn btn-primary btn-sm">
-                                        <i class="fa fa-clock"></i> Pending Applications
-                                    </a>
-                                </div>
-                            </div>
                             <div class="card-body">
-                                <div class="admin-desktop-table table-responsive">
-                                    <table class="table table-hover">
+                                <div class="admin-desktop-table admin-table-fit">
+                                    <table class="table table-hover admin-compact-table">
                                         <thead>
                                             <tr>
-                                                <th>Card Number</th>
                                                 <th>User</th>
-                                                <th>Card Type</th>
-                                                <th>Level</th>
+                                                <th>Card</th>
                                                 <th>Balance</th>
                                                 <th>Status</th>
-                                                <th>Created</th>
-                                                <th>Actions</th>
+                                                <th class="text-right"></th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @forelse ($cards as $card)
                                                 <tr>
                                                     <td>
-                                                        <span class="mask-card-number">
-                                                            **** **** **** {{ substr($card->card_number, -4) }}
+                                                        <span class="admin-user-cell">
+                                                            <img src="{{ profile_photo_url(optional($card->user)->profile_photo_path, optional($card->user)->name ?? 'User') }}" alt="">
+                                                            <span class="admin-cell-stack">
+                                                                <strong>{{ $card->user ? $card->user->name : 'N/A' }}</strong>
+                                                                <small>{{ $card->user ? $card->user->email : 'N/A' }}</small>
+                                                            </span>
                                                         </span>
                                                     </td>
                                                     <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <img src="{{ profile_photo_url(optional($card->user)->profile_photo_path, optional($card->user)->name ?? 'User') }}" alt="profile" class="mr-2 rounded-circle" style="width: 30px; height: 30px;">
-                                                            <div>
-                                                                {{ $card->user ? $card->user->name : 'N/A' }}
-                                                                <div class="small text-muted">{{ $card->user ? $card->user->email : 'N/A' }}</div>
-                                                            </div>
-                                                        </div>
+                                                        <span class="admin-cell-stack">
+                                                            <span class="mask-card-number text-nowrap">**** {{ substr($card->card_number, -4) }}</span>
+                                                            <small>{{ ucfirst(str_replace('_', ' ', $card->card_type)) }} &middot; {{ ucfirst($card->card_level) }}</small>
+                                                        </span>
                                                     </td>
-                                                    <td>{{ ucfirst(str_replace('_', ' ', $card->card_type)) }}</td>
-                                                    <td>{{ ucfirst($card->card_level) }}</td>
-                                                    <td>{{ $card->currency }}{{ number_format($card->balance, 2) }}</td>
+                                                    <td class="text-nowrap">{{ $card->currency }}{{ number_format($card->balance, 2) }}</td>
                                                     <td>
+                                                        <span class="admin-cell-stack">
+                                                        <span>
                                                         @if ($card->status == 'active')
                                                             <span class="badge badge-success">Active</span>
                                                         @elseif ($card->status == 'inactive')
@@ -86,14 +82,16 @@
                                                         @else
                                                             <span class="badge badge-secondary">{{ $card->status }}</span>
                                                         @endif
+                                                        </span>
+                                                        <small>{{ $card->created_at->format('M d, Y') }}</small>
+                                                        </span>
                                                     </td>
-                                                    <td>{{ $card->created_at->format('M d, Y') }}</td>
-                                                    <td>
+                                                    <td class="text-right">
                                                         <div class="dropdown">
-                                                            <button class="btn btn-primary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton{{ $card->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                Actions
+                                                            <button class="btn btn-light btn-sm admin-kebab" type="button" id="dropdownMenuButton{{ $card->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Actions">
+                                                                <i class="fas fa-ellipsis-v"></i>
                                                             </button>
-                                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ $card->id }}">
+                                                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton{{ $card->id }}">
                                                                 <a class="dropdown-item" href="{{ route('admin.cards.view', $card->id) }}">
                                                                     <i class="fa fa-eye"></i> View Details
                                                                 </a>
@@ -151,7 +149,7 @@
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="8" class="text-center">No virtual cards found.</td>
+                                                    <td colspan="5" class="text-center">No virtual cards found.</td>
                                                 </tr>
                                             @endforelse
                                         </tbody>

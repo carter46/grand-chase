@@ -25,18 +25,10 @@
                 </li>
 
  <li
-                        class="nav-item {{ request()->routeIs('manageusers') ? 'active' : '' }} {{ request()->routeIs('loginactivity') ? 'active' : '' }} {{ request()->routeIs('user.plans') ? 'active' : '' }} {{ request()->routeIs('viewuser') ? 'active' : '' }}">
+                        class="nav-item {{ request()->routeIs('manageusers', 'loginactivity', 'user.plans', 'viewuser', 'createnewuser') ? 'active' : '' }}">
                         <a href="{{ url('/admin/dashboard/manageusers') }}">
                             <i class="fa fa-user-circle" aria-hidden="true"></i>
                             <p>Manage Users</p>
-                        </a>
-                    </li>
-
-                
-                    <li class="nav-item {{ request()->routeIs('admin.createnewuser') ? 'active' : '' }}">
-                        <a href="{{ route('createnewuser') }}">
-                            <i class="fas fa-user"></i>
-                            <p>Create New user</p>
                         </a>
                     </li>
 
@@ -296,27 +288,11 @@
                     </li>
                 @endif
                 @if (\App\Support\PlatformSuperAdmin::canManageAdmins())
-                    <li
-                        class="nav-item {{ request()->routeIs('addmanager') ? 'active' : '' }} {{ request()->routeIs('madmin') ? 'active' : '' }}">
-                        <a data-toggle="collapse" href="#adm">
-                            <i class="fa fa-user"></i>
-                            <p>Administrator(s)</p>
-                            <span class="caret"></span>
+                    <li class="nav-item {{ request()->routeIs('addmanager', 'madmin') ? 'active' : '' }}">
+                        <a href="{{ url('/admin/dashboard/madmin') }}">
+                            <i class="fa fa-user-shield"></i>
+                            <p>Administrators</p>
                         </a>
-                        <div class="collapse" id="adm">
-                            <ul class="nav nav-collapse">
-                                <li>
-                                    <a href="{{ url('/admin/dashboard/addmanager') }}">
-                                        <span class="sub-item">Add Manager</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('/admin/dashboard/madmin') }}">
-                                        <span class="sub-item">Manage Admin(s)</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
                     </li>
                 @endif
 

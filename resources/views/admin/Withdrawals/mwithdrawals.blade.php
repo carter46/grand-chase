@@ -12,78 +12,83 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
     <div class="main-panel">
         <div class="content ">
             <div class="page-inner">
-                <div class="mt-2 mb-4">
-                    <h1 class="title1 ">Manage clients withdrawals</h1>
+                <div class="admin-page-head">
+                    <div>
+                        <h1 class="title1 mb-1">Transfer Transactions</h1>
+                        <p class="text-muted mb-0">Review and process client transfers</p>
+                    </div>
                 </div>
                 <x-danger-alert />
                 <x-success-alert />
+                @php
+                    $beneficiaryFields = [
+                        'International Wire Transfer' => 'accountname',
+                        'PayPal' => 'paypal_email',
+                        'Wise Transfer' => 'wise_fullname',
+                        'Skrill' => 'skrill_fullname',
+                        'Venmo' => 'venmo_username',
+                        'Zelle' => 'zelle_name',
+                        'Cash App' => 'cash_app_tag',
+                        'Revolut' => 'revolut_fullname',
+                        'Alipay' => 'alipay_fullname',
+                        'WeChat Pay' => 'wechat_name',
+                    ];
+                    $beneficiaryOf = function ($w) use ($beneficiaryFields) {
+                        if ($w->payment_mode == 'Cryptocurrency') {
+                            return ($w->crypto_currency ?? 'N/A') . ' Wallet';
+                        }
+                        $field = $beneficiaryFields[$w->payment_mode] ?? 'accountname';
+                        return $w->{$field} ?? 'N/A';
+                    };
+                    $statusBadge = function ($status) {
+                        return $status == 'Processed' ? 'badge-success' : ($status == 'On-hold' ? 'badge-warning' : 'badge-danger');
+                    };
+                @endphp
                 <div class="mb-5 row">
                     <div class="col card p-3 shadow ">
-                        <div class="admin-desktop-table bs-example widget-shadow table-responsive" data-example-id="hoverable-table">
-                            <span style="margin:3px;">
-                                <table id="ShipTable" class="table table-hover ">
+                        <div class="admin-desktop-table admin-table-fit">
+                                <table id="ShipTable" class="table table-hover admin-compact-table">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Account Holder</th>
-                                            <th>Amount </th>
-                                            <th>Description</th>
-                                            <th>Type</th>
+                                            <th>Account holder</th>
+                                            <th>Amount</th>
                                             <th>Beneficiary</th>
                                             <th>Status</th>
-                                            <th>Date created</th>
-                                            <th>Option</th>
+                                            <th class="text-right"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($withdrawals as $deposit)
                                             <tr>
-                                                <th scope="row">{{ $deposit->id }}</th>
-                                                <td>{{ $deposit->duser->name }}</td>
-                                                <td>{{ $settings->currency }}{{ number_format($deposit->amount) }}</td>
-                                                <td>{{ $deposit->Description }}</td>
-                                                <td>{{ $deposit->payment_mode }}</td>
-                                                <td>
-                                                    @if($deposit->payment_mode == 'International Wire Transfer')
-                                                        {{ $deposit->accountname ?? 'N/A' }}
-                                                    @elseif($deposit->payment_mode == 'Cryptocurrency')
-                                                        {{ $deposit->crypto_currency ?? 'N/A' }} Wallet
-                                                    @elseif($deposit->payment_mode == 'PayPal')
-                                                        {{ $deposit->paypal_email ?? 'N/A' }}
-                                                    @elseif($deposit->payment_mode == 'Wise Transfer')
-                                                        {{ $deposit->wise_fullname ?? 'N/A' }}
-                                                    @elseif($deposit->payment_mode == 'Skrill')
-                                                        {{ $deposit->skrill_fullname ?? 'N/A' }}
-                                                    @elseif($deposit->payment_mode == 'Venmo')
-                                                        {{ $deposit->venmo_username ?? 'N/A' }}
-                                                    @elseif($deposit->payment_mode == 'Zelle')
-                                                        {{ $deposit->zelle_name ?? 'N/A' }}
-                                                    @elseif($deposit->payment_mode == 'Cash App')
-                                                        {{ $deposit->cash_app_tag ?? 'N/A' }}
-                                                    @elseif($deposit->payment_mode == 'Revolut')
-                                                        {{ $deposit->revolut_fullname ?? 'N/A' }}
-                                                    @elseif($deposit->payment_mode == 'Alipay')
-                                                        {{ $deposit->alipay_fullname ?? 'N/A' }}
-                                                    @elseif($deposit->payment_mode == 'WeChat Pay')
-                                                        {{ $deposit->wechat_name ?? 'N/A' }}
-                                                    @else
-                                                        {{ $deposit->accountname ?? 'N/A' }}
-                                                    @endif
+                                                <td data-order="{{ $deposit->id }}">
+                                                    <span class="admin-cell-stack">
+                                                        <strong>{{ optional($deposit->duser)->name ?? 'N/A' }}</strong>
+                                                        <small>#{{ $deposit->id }}</small>
+                                                    </span>
+                                                </td>
+                                                <td data-order="{{ $deposit->amount }}">
+                                                    <span class="admin-cell-stack">
+                                                        <strong>{{ $settings->currency }}{{ number_format($deposit->amount) }}</strong>
+                                                        <small>{{ $deposit->payment_mode }}</small>
+                                                    </span>
                                                 </td>
                                                 <td>
-                                                    @if ($deposit->status == 'Processed')
-                                                        <span class="badge badge-success">{{ $deposit->status }}</span>
-                                                    @elseif($deposit->status == 'On-hold')
-                                                        <span class="badge badge-warning">{{ $deposit->status }}</span>
-                                                    @else
-                                                    <span class="badge badge-danger">{{ $deposit->status }}</span>
-                                                    @endif
+                                                    <span class="admin-cell-stack">
+                                                        <span>{{ $beneficiaryOf($deposit) }}</span>
+                                                        @if ($deposit->Description)
+                                                            <small title="{{ $deposit->Description }}">{{ \Illuminate\Support\Str::limit($deposit->Description, 40) }}</small>
+                                                        @endif
+                                                    </span>
                                                 </td>
-                                                <td>{{ \Carbon\Carbon::parse($deposit->created_at)->toDayDateTimeString() }}
+                                                <td data-order="{{ \Carbon\Carbon::parse($deposit->created_at)->timestamp }}">
+                                                    <span class="admin-cell-stack">
+                                                        <span><span class="badge {{ $statusBadge($deposit->status) }}">{{ $deposit->status }}</span></span>
+                                                        <small>{{ \Carbon\Carbon::parse($deposit->created_at)->format('M j, Y g:i A') }}</small>
+                                                    </span>
                                                 </td>
-                                                <td>
+                                                <td class="text-right">
                                                     <a href="{{ route('processwithdraw', $deposit->id) }}"
-                                                        class="m-1 btn btn-info btn-sm"><i class="fa fa-eye"></i> View</a>
+                                                        class="btn btn-light btn-sm admin-kebab" title="View" aria-label="View"><i class="fa fa-eye"></i></a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -93,32 +98,8 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                         <div class="admin-mobile-list">
                             @foreach ($withdrawals as $deposit)
                                 @php
-                                    if($deposit->payment_mode == 'International Wire Transfer') {
-                                        $beneficiary = $deposit->accountname ?? 'N/A';
-                                    } elseif($deposit->payment_mode == 'Cryptocurrency') {
-                                        $beneficiary = ($deposit->crypto_currency ?? 'N/A') . ' Wallet';
-                                    } elseif($deposit->payment_mode == 'PayPal') {
-                                        $beneficiary = $deposit->paypal_email ?? 'N/A';
-                                    } elseif($deposit->payment_mode == 'Wise Transfer') {
-                                        $beneficiary = $deposit->wise_fullname ?? 'N/A';
-                                    } elseif($deposit->payment_mode == 'Skrill') {
-                                        $beneficiary = $deposit->skrill_fullname ?? 'N/A';
-                                    } elseif($deposit->payment_mode == 'Venmo') {
-                                        $beneficiary = $deposit->venmo_username ?? 'N/A';
-                                    } elseif($deposit->payment_mode == 'Zelle') {
-                                        $beneficiary = $deposit->zelle_name ?? 'N/A';
-                                    } elseif($deposit->payment_mode == 'Cash App') {
-                                        $beneficiary = $deposit->cash_app_tag ?? 'N/A';
-                                    } elseif($deposit->payment_mode == 'Revolut') {
-                                        $beneficiary = $deposit->revolut_fullname ?? 'N/A';
-                                    } elseif($deposit->payment_mode == 'Alipay') {
-                                        $beneficiary = $deposit->alipay_fullname ?? 'N/A';
-                                    } elseif($deposit->payment_mode == 'WeChat Pay') {
-                                        $beneficiary = $deposit->wechat_name ?? 'N/A';
-                                    } else {
-                                        $beneficiary = $deposit->accountname ?? 'N/A';
-                                    }
-                                    $wBadge = $deposit->status == 'Processed' ? 'badge-success' : ($deposit->status == 'On-hold' ? 'badge-warning' : 'badge-danger');
+                                    $beneficiary = $beneficiaryOf($deposit);
+                                    $wBadge = $statusBadge($deposit->status);
                                 @endphp
                                 <x-admin.mobile-list-card
                                     :title="optional($deposit->duser)->name ?? 'N/A'"

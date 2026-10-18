@@ -5,57 +5,68 @@
     <div class="main-panel">
         <div class="content  ">
             <div class="page-inner">
-                <div class="mt-2 mb-4">
-                    <h1 class="title1 ">Manage clients deposits</h1>
+                <div class="admin-page-head">
+                    <div>
+                        <h1 class="title1 mb-1">Deposits</h1>
+                        <p class="text-muted mb-0">Review and process client deposits</p>
+                    </div>
                 </div>
                 <x-danger-alert />
                 <x-success-alert />
                 <div class="mb-5 row">
 
                     <div class="col-12 card shadow p-4 ">
-                        <div class="admin-desktop-table table-responsive" data-example-id="hoverable-table">
-                            <table id="ShipTable" class="table table-hover ">
+                        <div class="admin-desktop-table admin-table-fit">
+                            <table id="ShipTable" class="table table-hover admin-compact-table">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Client name</th>
-                                        <th>Client email</th>
+                                        <th>Client</th>
                                         <th>Amount</th>
-                                        <th>Payment Method</th>
                                         <th>Status</th>
-                                        <th>Date created</th>
-                                        <th>Option</th>
+                                        <th class="text-right"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($deposits as $deposit)
                                         <tr>
-                                            <th scope="row">{{ $deposit->id }}</th>
-                                            <td>{{ $deposit->duser->name }}</td>
-                                            <td>{{ $deposit->duser->email }}</td>
-                                            <td>{{ $settings->currency }}{{ number_format($deposit->amount) }}</td>
-                                            <td>{{ $deposit->payment_mode }}</td>
-                                            <td>
-                                                @if ($deposit->status == 'Processed')
-                                                    <span class="badge badge-success">{{ $deposit->status }}</span>
-                                                @else
-                                                    <span class="badge badge-danger">{{ $deposit->status }}</span>
-                                                @endif
+                                            <td data-order="{{ $deposit->id }}">
+                                                <span class="admin-cell-stack">
+                                                    <strong>{{ optional($deposit->duser)->name ?? 'N/A' }}</strong>
+                                                    <small>#{{ $deposit->id }} &middot; {{ optional($deposit->duser)->email }}</small>
+                                                </span>
                                             </td>
-                                            <td>{{ $deposit->created_at->toDayDateTimeString() }}
+                                            <td data-order="{{ $deposit->amount }}">
+                                                <span class="admin-cell-stack">
+                                                    <strong>{{ $settings->currency }}{{ number_format($deposit->amount) }}</strong>
+                                                    <small>{{ $deposit->payment_mode }}</small>
+                                                </span>
                                             </td>
-                                            <td>
-                                                <a href="{{ route('viewdepositimage', $deposit->id) }}"
-                                                    class="btn btn-info btn-sm m-1" title="View payment screenshot">
-                                                    <i class="fa fa-eye"></i>
-                                                </a>
-                                                <a href="{{ url('admin/dashboard/deldeposit') }}/{{ $deposit->id }}"
-                                                    class="m-1 btn btn-danger btn-sm">Delete</a>
-
+                                            <td data-order="{{ $deposit->created_at->timestamp }}">
+                                                <span class="admin-cell-stack">
+                                                    <span><span class="badge {{ $deposit->status == 'Processed' ? 'badge-success' : 'badge-danger' }}">{{ $deposit->status }}</span></span>
+                                                    <small>{{ $deposit->created_at->format('M j, Y g:i A') }}</small>
+                                                </span>
+                                            </td>
+                                            <td class="text-right text-nowrap">
                                                 @if ($deposit->status != 'Processed')
                                                     <a class="btn btn-primary btn-sm"
                                                         href="{{ url('admin/dashboard/pdeposit') }}/{{ $deposit->id }}">Process</a>
                                                 @endif
+                                                <div class="dropdown d-inline-block">
+                                                    <button class="btn btn-light btn-sm admin-kebab" type="button"
+                                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Actions">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <a class="dropdown-item" href="{{ route('viewdepositimage', $deposit->id) }}">
+                                                            <i class="fa fa-eye mr-2"></i> View payment proof
+                                                        </a>
+                                                        <a class="dropdown-item text-danger" href="{{ url('admin/dashboard/deldeposit') }}/{{ $deposit->id }}"
+                                                            onclick="return confirm('Delete this deposit?');">
+                                                            <i class="fa fa-trash mr-2"></i> Delete
+                                                        </a>
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
