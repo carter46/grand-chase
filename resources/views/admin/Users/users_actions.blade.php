@@ -339,7 +339,9 @@
                      <div class="form-group">
                          <h6 class="text-{{ $text }}">Account Limit ({{ $user->currency ?? $settings->currency }}) </h6>
                          <input type="number" class="form-control  text-{{ $text }}"
-                             name="limit" value='{{ $user->limit }}' required>
+                             name="limit" value="{{ $user->limit }}" min="0" max="99999999999999.99"
+                             step="0.01" required>
+                         <small class="form-text text-muted">Up to 99,999,999,999,999.99</small>
                      </div>
                     <div class="form-group">
                         <h6 class="text-{{ $text }}">4 Digit Transaction pin</h6>

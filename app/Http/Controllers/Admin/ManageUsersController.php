@@ -475,6 +475,14 @@ class ManageUsersController extends Controller
             return $deny;
         }
 
+        // Strip commas/spaces so pasted amounts like "50,000,000" still save cleanly.
+        $limitRaw = preg_replace('/[,\s]/', '', (string) $request->input('limit', ''));
+        if ($limitRaw === '' || !is_numeric($limitRaw) || (float) $limitRaw < 0 || (float) $limitRaw > 99999999999999.99) {
+            return redirect()->back()
+                ->withInput()
+                ->with('message', 'Account limit must be a number from 0 up to 99,999,999,999,999.99.');
+        }
+
         $userCurrency = $request->input('user_currency');
         $userSymbolCode = $request->input('user_s_currency');
 
@@ -499,7 +507,7 @@ class ManageUsersController extends Controller
             'accounttype' => $request['accounttype'],
             'pin' => $request['pin'],
             'address' => $request['address'],
-            'limit' => $request['limit'],
+            'limit' => $limitRaw,
         ];
 
         // A code that is required on transfers must never be blanked, or the user could not finish a transfer.
@@ -518,7 +526,14 @@ class ManageUsersController extends Controller
             $payload['s_currency'] = $userSymbolCode;
         }
 
-        User::where('id', $request['user_id'])->update($payload);
+        try {
+            User::where('id', $request['user_id'])->update($payload);
+        } catch (\Illuminate\Database\QueryException $e) {
+            report($e);
+            return redirect()->back()
+                ->withInput()
+                ->with('message', 'Could not save these details. If you entered a very large account limit, reload this page once so the database update can finish, then try again.');
+        }
 
         return redirect()->back()->with('success', 'User details updated Successfully!');
     }
