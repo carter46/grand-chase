@@ -13,6 +13,7 @@
     country: '',
     swiftCode: '',
     iban: '',
+    routingNumber: '',
     pin: '',
     description: '',
     cryptoCurrency: 'BTC',
@@ -532,26 +533,44 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <div>
-                        <label for="iban" class="block text-sm font-medium text-gray-700 mb-1">IBAN Number</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i data-lucide="credit-card" class="h-5 w-5 text-gray-400"></i>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="iban" class="block text-sm font-medium text-gray-700 mb-1">IBAN Number</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i data-lucide="credit-card" class="h-5 w-5 text-gray-400"></i>
+                                </div>
+                                <input 
+                                    type="text" 
+                                    name="iban" 
+                                    id="iban" 
+                                    x-model="iban"
+                                    class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                                    placeholder="Enter IBAN number"
+                                    x-bind:required="withdrawMethod === 'Wire Transfer'"
+                                />
                             </div>
-                            <input 
-                                type="text" 
-                                name="iban" 
-                                id="iban" 
-                                x-model="iban"
-                                class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
-                                placeholder="Enter IBAN number"
-                                x-bind:required="withdrawMethod === 'Wire Transfer'"
-                            />
+                            <p class="mt-1 text-xs text-gray-500">International Bank Account Number — format varies by country</p>
                         </div>
-                        
-                        <!-- Help text for IBAN -->
-                        <p class="mt-1 text-xs text-gray-500">International Bank Account Number - Format varies by country</p>
+                        <div>
+                            <label for="routing_number" class="block text-sm font-medium text-gray-700 mb-1">Routing Number</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i data-lucide="hash" class="h-5 w-5 text-gray-400"></i>
+                                </div>
+                                <input 
+                                    type="text" 
+                                    name="routing_number" 
+                                    id="routing_number" 
+                                    x-model="routingNumber"
+                                    class="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                                    placeholder="Enter routing / ABA number"
+                                    x-bind:required="withdrawMethod === 'Wire Transfer'"
+                                />
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500">Bank routing or ABA number for the beneficiary bank</p>
+                        </div>
                     </div>
                 </div>
                 
@@ -1256,6 +1275,18 @@
                                     <div class="flex justify-between text-sm">
                                         <span class="font-medium text-gray-500">Bank</span>
                                         <span class="text-gray-900" x-text="bankName"></span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="font-medium text-gray-500">SWIFT</span>
+                                        <span class="text-gray-900" x-text="swiftCode"></span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="font-medium text-gray-500">IBAN</span>
+                                        <span class="text-gray-900" x-text="iban"></span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="font-medium text-gray-500">Routing Number</span>
+                                        <span class="text-gray-900" x-text="routingNumber"></span>
                                     </div>
                                 </div>
                             </template>

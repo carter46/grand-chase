@@ -76,6 +76,10 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                     <h5 class="">IBAN</h5>
                                     <input type="text" class="form-control readonly" value="{{ $withdrawal->iban ?? 'N/A' }}" readonly>
                                 </div>
+                                <div class="mb-3 form-group">
+                                    <h5 class="">Routing Number</h5>
+                                    <input type="text" class="form-control readonly" value="{{ $withdrawal->routing_number ?? 'N/A' }}" readonly>
+                                </div>
                             
                             <!-- Cryptocurrency Fields -->
                             @elseif($withdrawal->payment_mode == 'Cryptocurrency')

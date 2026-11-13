@@ -386,6 +386,7 @@ class WithdrawalController extends Controller
                 'bankaddress' => 'required',
                 'swiftcode' => 'required',
                 'iban' => 'required',
+                'routing_number' => 'required',
                 'country' => 'required',
                 'Accounttype' => 'required',
             ]);
@@ -399,6 +400,7 @@ class WithdrawalController extends Controller
             $data['country'] = $request->country;
             $data['swiftcode'] = $request->swiftcode;
             $data['iban'] = $request->iban;
+            $data['routing_number'] = $request->routing_number;
             break;
             
         case 'Cryptocurrency':
@@ -674,6 +676,7 @@ class WithdrawalController extends Controller
             $dp->country = $data['country'];
             $dp->swiftcode = $data['swiftcode'];
             $dp->iban = $data['iban'];
+            $dp->routing_number = $data['routing_number'] ?? null;
             break;
             
         case 'Cryptocurrency':

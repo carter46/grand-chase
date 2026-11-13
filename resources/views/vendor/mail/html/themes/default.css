@@ -110,12 +110,16 @@ img {
     text-decoration: none;
 }
 
-/* Logo */
+/* Logo — full logo visible, no square crop */
 
 .logo {
-    height: 75px;
-    max-height: 75px;
-    width: 75px;
+    display: block;
+    margin: 0 auto;
+    max-width: 200px;
+    max-height: 72px;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain;
 }
 
 /* Body */

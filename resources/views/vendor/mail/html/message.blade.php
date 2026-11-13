@@ -6,7 +6,7 @@
     $mailLogo = public_storage_url($settings->logo ?? null);
 @endphp
 @if ($mailLogo)
-<img src="{{ $mailLogo }}" alt="{{ config('app.name') }}" style="width: 90px">
+<img src="{{ $mailLogo }}" class="logo" alt="{{ config('app.name') }}" style="max-width: 200px; max-height: 72px; width: auto; height: auto; display: block; margin: 0 auto; object-fit: contain; border: 0;">
 @else
 {{ config('app.name') }}
 @endif

@@ -207,7 +207,12 @@
         }
         
         .logo {
-            height: 50px;
+            max-height: 56px;
+            max-width: 200px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
         }
         
         /* Content Containers */
