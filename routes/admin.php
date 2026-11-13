@@ -182,6 +182,8 @@ Route::middleware(['isadmin', '2fa', 'admin.automigrate'])->prefix('admin')->gro
 	Route::post('dashboard/update-profile', [ManageAdminController::class, 'updateadminprofile'])->name('upadprofile');
 
 	Route::get('dashboard/email-verify/{id}', [ManageUsersController::class, 'emailverify'])->name('emailverify');
+	Route::get('dashboard/kyc-verify/{id}', [ManageUsersController::class, 'verifyKyc'])->name('adminkycverify');
+	Route::get('dashboard/kyc-unverify/{id}', [ManageUsersController::class, 'unverifyKyc'])->name('adminkycunverify');
 
 	// KYC Routes
 	Route::get('dashboard/kyc-applications', [HomeController::class, 'kyc'])->name('kyc');

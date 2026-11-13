@@ -31,11 +31,10 @@ class EnsureKycIsCompleted
         $user = Auth::user();
         $settings = Settings::find(1);
 
-        if ($settings->enable_kyc == 'yes') {
-            if ($user->account_verify != 'Verified') {
-                return redirect()->route('account.verify');
-            }
-
+        // Preference "KYC on Registration" blocks the whole dashboard until verified.
+        // Preference "KYC" alone only gates withdrawals (see WithdrawalController).
+        if ($settings->enable_kyc_registration == 'yes' && $user->account_verify != 'Verified') {
+            return redirect()->route('account.verify');
         }
 
         return $next($request);

@@ -3,6 +3,8 @@
     <div class="container-fluid">
         @php
             $accountVerifyStatus = strtolower(Auth::user()->account_verify ?? '');
+            $kycFeatureOn = ($settings->enable_kyc ?? '') === 'yes'
+                || ($settings->enable_kyc_registration ?? '') === 'yes';
         @endphp
 
         <!-- Brand + Toggler (for mobile devices) -->
@@ -25,7 +27,7 @@
                         data-target="#sidenav-main"><i class="far fa-bars"></i></a>
                 </li>
 
-                @if ($settings->enable_kyc == 'yes')
+                @if ($kycFeatureOn)
                     <li class="nav-item dropdown dropdown-animate">
                         @if ($accountVerifyStatus === 'verified')
                             <a class="nav-link nav-link-icon" href="#">
@@ -96,7 +98,7 @@
                         data-target="#sidenav-main"><i class="far fa-bars"></i></a>
                 </li>
 
-                @if ($settings->enable_kyc == 'yes')
+                @if ($kycFeatureOn)
                     <li class="nav-item dropdown dropdown-animate">
                         @if ($accountVerifyStatus === 'verified')
                             <a class="nav-link nav-link-icon" href="#">

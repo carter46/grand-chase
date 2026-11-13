@@ -52,6 +52,15 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                                         <a href="{{ url('admin/dashboard/email-verify') }}/{{ $user->id }}"
                                                             class="dropdown-item">Verify Email</a>
                                                     @endif
+                                                    @if (strtolower((string) $user->account_verify) === 'verified')
+                                                        <a href="{{ route('adminkycunverify', $user->id) }}"
+                                                            class="dropdown-item"
+                                                            onclick="return confirm('Remove KYC verification for {{ e($user->name) }}?');">Revoke KYC</a>
+                                                    @else
+                                                        <a href="{{ route('adminkycverify', $user->id) }}"
+                                                            class="dropdown-item"
+                                                            onclick="return confirm('Manually verify KYC for {{ e($user->name) }}?');">Verify KYC</a>
+                                                    @endif
                                                     {{-- <a href="#"  data-toggle="modal" data-target="#userAction" class="dropdown-item">Add upgrade Action</a> --}}
                                                 {{-- <a href="#"  data-toggle="modal" data-target="#userActionsignal" class="dropdown-item">Add signal Action</a> --}}
                                                     <a href="#" data-toggle="modal" data-target="#topupModal"
@@ -144,13 +153,24 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                             <span class="badge badge-danger">Not Verified Yet</span>
                                         @endif
 
-                                        @if (!empty($latestKyc))
-                                            <div class="mt-2">
+                                        <div class="mt-2 d-flex flex-wrap" style="gap:6px;">
+                                            @if (!empty($latestKyc))
                                                 <a href="{{ route('viewkyc', $latestKyc->id) }}" class="btn btn-sm btn-primary">
                                                     View Latest Submission
                                                 </a>
-                                            </div>
-                                        @endif
+                                            @endif
+                                            @if ($kycStatus === 'verified')
+                                                <a href="{{ route('adminkycunverify', $user->id) }}" class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Remove KYC verification for {{ e($user->name) }}?');">
+                                                    Revoke KYC
+                                                </a>
+                                            @else
+                                                <a href="{{ route('adminkycverify', $user->id) }}" class="btn btn-sm btn-success"
+                                                    onclick="return confirm('Manually verify KYC for {{ e($user->name) }}?');">
+                                                    Verify KYC
+                                                </a>
+                                            @endif
+                                        </div>
                                     </div>
                                     {{-- <div class="col-md-3">
                                         <h5>Trade Mode</h5>

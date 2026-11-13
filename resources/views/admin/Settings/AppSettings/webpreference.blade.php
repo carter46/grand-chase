@@ -90,8 +90,8 @@
                         </label>
                     </div>
                     <div>
-                        <small class="">if turned on, Users will need to submit required documents to get
-                            verified before they can place a withdrawal request.</small>
+                        <small class="">If turned on, users must be KYC verified before they can place a
+                            withdrawal request. This does not lock the rest of the dashboard.</small>
                     </div>
                 </div>
 
@@ -112,11 +112,9 @@
                         </label>
                     </div>
                     <div>
-                        <small class="">if turned on, Users will have to go through the verification process upon
-                            registration and they will not be allowed to carry out any operation on your system until
-                            they have been verified by the admin. Note this will affect existing users who have not
-                            completed their KYC. <strong>After they have submitted an application, you will also need to
-                                verify the user from your end before they can procced.</strong>
+                        <small class="">If turned on, users cannot use the dashboard until KYC is verified. This
+                            affects new and existing unverified users. You can approve a submitted application from
+                            KYC Applications, or manually verify a user from their profile Actions menu.
                         </small>
                     </div>
                 </div>

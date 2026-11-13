@@ -296,6 +296,8 @@
 <body class="bg-gray-50">
     @php
         $accountVerifyStatus = strtolower(Auth::user()->account_verify ?? '');
+        $kycFeatureOn = ($settings->enable_kyc ?? '') === 'yes'
+            || ($settings->enable_kyc_registration ?? '') === 'yes';
     @endphp
     <!-- Modern Page Loader -->
     <div class="page-loading active">
@@ -361,6 +363,7 @@
 </div>
 
                         
+                        @if ($kycFeatureOn)
                         <!-- KYC Verification Status -->
                         <div class="mb-3">
                             @if($accountVerifyStatus === 'verified')
@@ -383,6 +386,7 @@
                                 </a>
                             @endif
                         </div>
+                        @endif
                         
                         <div class="flex space-x-2">
                             <a href="{{ route('profile') }}" class="flex-1 inline-flex justify-center items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50">
@@ -647,6 +651,7 @@
                                     <p class="text-sm font-medium text-gray-900">{{ Auth::user()->name }} {{ Auth::user()->lastname }}</p>
                                     <p class="text-xs text-gray-500 mt-1">ID: {{ Auth::user()->usernumber }}</p>
                                     
+                                    @if ($kycFeatureOn)
                                     <!-- KYC Verification Status -->
                                     @if($accountVerifyStatus === 'verified')
                                         <div class="mt-2 flex items-center">
@@ -666,6 +671,7 @@
                                                 <i data-lucide="alert-circle" class="h-3 w-3 mr-1"></i> Verify Account
                                             </a>
                                         </div>
+                                    @endif
                                     @endif
                                 </div>
                                 
@@ -739,6 +745,7 @@
                             <h2 class="text-base font-semibold text-gray-900">{{ Auth::user()->name }} {{ Auth::user()->lastname }}</h2>
                             <p class="text-sm text-gray-500">Account: {{ Auth::user()->usernumber }}</p>
                             
+                            @if ($kycFeatureOn)
                             <!-- KYC Verification Status -->
                             @if($accountVerifyStatus === 'verified')
                                 <div class="mt-1">
@@ -758,6 +765,7 @@
                                         <i data-lucide="alert-circle" class="h-3 w-3 mr-1"></i> Verify Account
                                     </a>
                                 </div>
+                            @endif
                             @endif
                         </div>
                     </div>

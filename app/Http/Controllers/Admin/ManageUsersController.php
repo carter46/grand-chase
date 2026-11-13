@@ -320,6 +320,56 @@ class ManageUsersController extends Controller
         return redirect()->back()->with('success', 'User Email have been verified');
     }
 
+    // Manually mark KYC verified without requiring a document submission.
+    public function verifyKyc($id)
+    {
+        [$user, $deny] = $this->loadUserForPeer($id);
+        if ($deny) {
+            return $deny;
+        }
+        if (!$user) {
+            return redirect()->back()->with('message', 'User not found.');
+        }
+
+        User::where('id', $id)->update([
+            'account_verify' => 'Verified',
+        ]);
+
+        $latestKyc = Kyc::where('user_id', $id)->orderByDesc('id')->first();
+        if ($latestKyc) {
+            $latestKyc->status = 'Verified';
+            $latestKyc->save();
+        }
+
+        NotificationHelper::create(
+            $user,
+            'Your KYC verification has been approved by an administrator. Your account is now fully verified.',
+            'KYC Verification Approved',
+            'success',
+            'check-circle',
+            route('dashboard')
+        );
+
+        return redirect()->back()->with('success', $user->name . ' is now KYC verified.');
+    }
+
+    public function unverifyKyc($id)
+    {
+        [$user, $deny] = $this->loadUserForPeer($id);
+        if ($deny) {
+            return $deny;
+        }
+        if (!$user) {
+            return redirect()->back()->with('message', 'User not found.');
+        }
+
+        User::where('id', $id)->update([
+            'account_verify' => null,
+        ]);
+
+        return redirect()->back()->with('success', 'KYC verification removed for ' . $user->name . '.');
+    }
+
     //Reset Password
     public function resetpswd(Request $request, $id)
     {
