@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Routing\Exceptions\InvalidSignatureException;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
@@ -57,6 +58,11 @@ class Handler extends ExceptionHandler
             } catch (Throwable $ignored) {
                 // fall through to the default 419 response
             }
+        }
+
+        if ($e instanceof InvalidSignatureException) {
+            return redirect()->route('login')
+                ->with('status', 'This verification link is invalid or has expired. Please log in and request a new one.');
         }
 
         try {

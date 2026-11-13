@@ -7,6 +7,7 @@ use App\Models\Settings;
 use App\Models\Paystack;
 use App\Models\SettingsCont;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 
 class SettingsServiceProvider extends ServiceProvider
 {
@@ -74,7 +75,7 @@ class SettingsServiceProvider extends ServiceProvider
             'mail.from.name' => $settings->emailfromname,
             'app.timezone' => $settings->timezone,
             'app.name' => $settings->site_name,
-            'app.url' => $settings->site_address,
+            'app.url' => rtrim((string) $settings->site_address, '/'),
             'paystack.publicKey' => $paystack->paystack_public_key,
             'paystack.secretKey' => $paystack->paystack_secret_key,
             'paystack.paymentUrl' => $paystack->paystack_url,
@@ -85,5 +86,14 @@ class SettingsServiceProvider extends ServiceProvider
             'flutterwave.secretHash' => $settings2->flw_secret_hash,
             'services.telegram-bot-api.token' =>  $settings2->telegram_bot_api,
         ]);
+
+        // Keep signed email links (verify-email, password reset) on the same host as site_address.
+        $rootUrl = config('app.url');
+        if (!empty($rootUrl)) {
+            URL::forceRootUrl($rootUrl);
+            if (stripos($rootUrl, 'https://') === 0) {
+                URL::forceScheme('https');
+            }
+        }
     }
 }

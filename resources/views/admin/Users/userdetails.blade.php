@@ -153,24 +153,13 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                             <span class="badge badge-danger">Not Verified Yet</span>
                                         @endif
 
-                                        <div class="mt-2 d-flex flex-wrap" style="gap:6px;">
-                                            @if (!empty($latestKyc))
+                                        @if (!empty($latestKyc))
+                                            <div class="mt-2">
                                                 <a href="{{ route('viewkyc', $latestKyc->id) }}" class="btn btn-sm btn-primary">
                                                     View Latest Submission
                                                 </a>
-                                            @endif
-                                            @if ($kycStatus === 'verified')
-                                                <a href="{{ route('adminkycunverify', $user->id) }}" class="btn btn-sm btn-outline-danger"
-                                                    onclick="return confirm('Remove KYC verification for {{ e($user->name) }}?');">
-                                                    Revoke KYC
-                                                </a>
-                                            @else
-                                                <a href="{{ route('adminkycverify', $user->id) }}" class="btn btn-sm btn-success"
-                                                    onclick="return confirm('Manually verify KYC for {{ e($user->name) }}?');">
-                                                    Verify KYC
-                                                </a>
-                                            @endif
-                                        </div>
+                                            </div>
+                                        @endif
                                     </div>
                                     {{-- <div class="col-md-3">
                                         <h5>Trade Mode</h5>

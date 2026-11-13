@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\User\ViewsController;
 use App\Http\Controllers\User\LoginOtpController;
+use App\Http\Controllers\User\VerifyEmailController;
 use App\Http\Controllers\User\WithdrawalController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\DepositController;
@@ -25,10 +25,9 @@ use Illuminate\Support\Facades\Route;
 // Email verification routes
 Route::get('/verify-email', 'App\Http\Controllers\User\UsersController@verifyemail')->middleware('auth')->name('verification.notice');;
 
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-	$request->fulfill();
-	return redirect('/dashboard');
-})->middleware(['auth', 'signed'])->name('verification.verify');
+Route::get('/email/verify/{id}/{hash}', VerifyEmailController::class)
+	->middleware(['signed', 'throttle:6,1'])
+	->name('verification.verify');
 
 Route::post('/email/verification-notification', function (Request $request) {
 	try {
