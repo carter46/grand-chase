@@ -37,16 +37,11 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                                     Actions
                                                 </button>
                                                 <div class="dropdown-menu dropdown-menu-lg-right">
-                                                    
-                                                    {{-- @if ($user->trade_mode == 'on')
-                                                        <a class="dropdown-item"
-                                                            href="{{ url('admin/dashboard/usertrademode') }}/{{ $user->id }}/off">Turn
-                                                            off trade</a>
-                                                    @else --}}
-                                                        {{-- <a class="dropdown-item"
-                                                            href="{{ url('admin/dashboard/usertrademode') }}/{{ $user->id }}/on">Turn
-                                                            on trade</a>
-                                                    @endif --}}
+                                                    <a href="#" data-toggle="modal" data-target="#transactionStatusModal"
+                                                        class="dropdown-item font-weight-bold text-primary">
+                                                        Manage Transaction Status
+                                                    </a>
+                                                    <div class="dropdown-divider"></div>
                                                     @if ($user->email_verified_at)
                                                     @else
                                                         <a href="{{ url('admin/dashboard/email-verify') }}/{{ $user->id }}"
@@ -61,10 +56,6 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                                             class="dropdown-item"
                                                             onclick="return confirm('Manually verify KYC for {{ e($user->name) }}?');">Verify KYC</a>
                                                     @endif
-                                                    {{-- <a href="#"  data-toggle="modal" data-target="#userAction" class="dropdown-item">Add upgrade Action</a> --}}
-                                                {{-- <a href="#"  data-toggle="modal" data-target="#userActionsignal" class="dropdown-item">Add signal Action</a> --}}
-                                                    <a href="#" data-toggle="modal" data-target="#transactionStatusModal"
-                                                        class="dropdown-item">Manage Transaction Status</a>
                                                     <a href="#" data-toggle="modal" data-target="#topupModal"
                                                         class="dropdown-item">Fund/Debit Account</a>
                                                         <a href="#" data-toggle="modal" data-target="#TradingModal"
