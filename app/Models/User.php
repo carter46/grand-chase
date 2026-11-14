@@ -76,6 +76,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'last_growth',
         'allowtransfer',
         'transferaction',
+        'transaction_status',
         'limit',
         'amount',
         'kyc_id',

@@ -41,7 +41,13 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                         return $w->{$field} ?? 'N/A';
                     };
                     $statusBadge = function ($status) {
-                        return $status == 'Processed' ? 'badge-success' : ($status == 'On-hold' ? 'badge-warning' : 'badge-danger');
+                        if ($status == 'Processed' || $status == 'Successful' || $status == 'Completed') {
+                            return 'badge-success';
+                        }
+                        if ($status == 'On-hold' || $status == 'Pending') {
+                            return 'badge-warning';
+                        }
+                        return 'badge-danger';
                     };
                 @endphp
                 <div class="mb-5 row">

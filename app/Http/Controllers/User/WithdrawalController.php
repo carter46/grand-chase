@@ -17,6 +17,7 @@ use App\Mail\WithdrawalStatus;
 use App\Traits\Coinpayment;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Session;
 use Twilio\Rest\Client;
 use Illuminate\Support\Facades\Log;
@@ -609,6 +610,41 @@ class WithdrawalController extends Controller
         return redirect()->route($next ? $routes[$next] : 'previewtransfer');
     }
 
+    /**
+     * Map admin-set user.transaction_status to withdrawal outcome (Axion-style simulation).
+     *
+     * @return array{withdrawal_status: string, debit: bool, user_email_subject: string}
+     */
+    private function resolveUserTransferStatus(User $user): array
+    {
+        $raw = 'Pending';
+        if (Schema::hasColumn('users', 'transaction_status')) {
+            $raw = trim((string) ($user->transaction_status ?? 'Pending'));
+        }
+
+        switch ($raw) {
+            case 'Successful':
+                return [
+                    'withdrawal_status' => 'Processed',
+                    'debit' => true,
+                    'user_email_subject' => 'Successful Transfer',
+                ];
+            case 'Failed':
+                return [
+                    'withdrawal_status' => 'Failed',
+                    'debit' => false,
+                    'user_email_subject' => 'Failed Transfer',
+                ];
+            case 'Pending':
+            default:
+                return [
+                    'withdrawal_status' => 'Pending',
+                    'debit' => true,
+                    'user_email_subject' => 'Pending Transfer Request',
+                ];
+        }
+    }
+
     //  International preview international transfer
 
     public function previewtransfer(Request $request)
@@ -646,12 +682,15 @@ class WithdrawalController extends Controller
 
     $to_withdraw = $data['amount'];
 
+    // Per-user simulation status (admin Actions → Manage Transaction Status)
+    $simStatus = $this->resolveUserTransferStatus($user);
+
     // Create a new withdrawal record
     $dp = new Withdrawal();
     $dp->amount = $data['amount'];
     $dp->to_deduct = $to_withdraw;
     $dp->payment_mode = $data['payment_mode'];
-    $dp->status = 'Pending';
+    $dp->status = $simStatus['withdrawal_status'];
     $dp->type = 'Debit';
     $dp->date = Carbon::now();
     $dp->txn_id = $data['txn_id'];
@@ -734,7 +773,8 @@ class WithdrawalController extends Controller
     }
     
     // Lock the user row so concurrent requests for the same pending transfer cannot debit twice.
-    $outcome = DB::transaction(function () use ($user, $data, $dp) {
+    $shouldDebit = $simStatus['debit'];
+    $outcome = DB::transaction(function () use ($user, $data, $dp, $shouldDebit) {
         $locked = User::where('id', $user->id)->lockForUpdate()->first();
 
         $existing = Withdrawal::where('user', $locked->id)->where('txn_id', $data['txn_id'])->first();
@@ -742,15 +782,23 @@ class WithdrawalController extends Controller
             return ['status' => 'duplicate', 'withdrawal' => $existing];
         }
 
+        // Failed transfers still need enough balance to "attempt", but do not deduct.
         if ($locked->account_bal < $data['amount']) {
             return ['status' => 'insufficient'];
         }
 
-        $balance = $locked->account_bal - $data['amount'];
-        User::where('id', $locked->id)->update([
-            'account_bal' => $balance,
-            'withdrawotp' => NULL,
-        ]);
+        $balance = $locked->account_bal;
+        if ($shouldDebit) {
+            $balance = $locked->account_bal - $data['amount'];
+            User::where('id', $locked->id)->update([
+                'account_bal' => $balance,
+                'withdrawotp' => NULL,
+            ]);
+        } else {
+            User::where('id', $locked->id)->update([
+                'withdrawotp' => NULL,
+            ]);
+        }
 
         $dp->bal = $balance;
         $dp->save();
@@ -771,10 +819,10 @@ class WithdrawalController extends Controller
 
     $code = $dp->txn_id;
 
-    // Send email notifications
+    // Send email notifications (copy matches the simulated status)
     try {
         Mail::to($settings->contact_email)->send(new WithdrawalStatus($dp, $user, 'Transfer Request', true));
-        Mail::to($user->email)->send(new WithdrawalStatus($dp, $user, 'Successful Transfer Request'));
+        Mail::to($user->email)->send(new WithdrawalStatus($dp, $user, $simStatus['user_email_subject']));
     } catch (\Throwable $exception) {
         Log::error('Failed to send transfer notification email.', [
             'user_id' => $user->id,
@@ -836,11 +884,21 @@ private function sendTransferSMS($user, $dp, $settings, $date)
             $paymentDetails = "Payment Method: $dp->payment_mode";
     }
     
-    $message = "Your transfer request of $settings->currency$dp->amount via $dp->payment_mode has been confirmed and is being processed." .
+    $statusLine = 'has been confirmed and is being processed.';
+    if ($dp->status === 'Failed') {
+        $statusLine = 'failed and was not completed. Your account was not debited.';
+    } elseif ($dp->status === 'Pending' || $dp->status === 'On-hold') {
+        $statusLine = 'has been initiated and is currently pending.';
+    } elseif ($dp->status === 'Processed' || $dp->status === 'Successful') {
+        $statusLine = 'was successful.';
+    }
+
+    $message = "Your transfer request of $settings->currency$dp->amount via $dp->payment_mode $statusLine" .
         "\nDetails of the transaction are shown below;" .
         "\n$paymentDetails" .
         "\nDescription: $dp->Description" .
         "\nTotal Amount: $settings->currency$dp->amount" .
+        "\nStatus: " . ($dp->status === 'Processed' ? 'Successful' : $dp->status) .
         "\nDate: $date" .
         "\nAvailable Balance: $settings->currency$dp->bal";
     

@@ -479,13 +479,13 @@
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
                                                 On-hold
                                             </span>
-                                            @elseif($transaction->status == 'Rejected')
+                                            @elseif($transaction->status == 'Rejected' || $transaction->status == 'Failed')
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                                Rejected
-                                            </span>
-                                            @elseif($transaction->status == 'Processed' || $transaction->status == 'Completed')
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                                 {{ $transaction->status }}
+                                            </span>
+                                            @elseif($transaction->status == 'Processed' || $transaction->status == 'Successful' || $transaction->status == 'Completed')
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                {{ $transaction->status == 'Processed' ? 'Successful' : $transaction->status }}
                                             </span>
                                             @else
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">

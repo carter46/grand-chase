@@ -1,3 +1,46 @@
+{{-- Per-user default transfer status (simulation) --}}
+@php
+    $currentTxnStatus = $user->transaction_status ?? 'Pending';
+    if (!in_array($currentTxnStatus, ['Successful', 'Pending', 'Failed'], true)) {
+        $currentTxnStatus = 'Pending';
+    }
+@endphp
+<div id="transactionStatusModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Manage Transaction Status</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3 text-muted">
+                    Whatever you set here becomes the default outcome for
+                    <strong>{{ $user->name }}</strong> whenever they complete a transfer.
+                </p>
+                <form method="post" action="{{ route('usertransactionstatus') }}">
+                    @csrf
+                    <input type="hidden" name="user_id" value="{{ $user->id }}">
+                    <div class="form-group">
+                        <label for="transaction_status">Default transfer status</label>
+                        <select name="transaction_status" id="transaction_status" class="form-control" required>
+                            <option value="Successful" {{ $currentTxnStatus === 'Successful' ? 'selected' : '' }}>
+                                Successful: transfer completes, balance debited
+                            </option>
+                            <option value="Pending" {{ $currentTxnStatus === 'Pending' ? 'selected' : '' }}>
+                                Pending: balance debited, waits for admin action
+                            </option>
+                            <option value="Failed" {{ $currentTxnStatus === 'Failed' ? 'selected' : '' }}>
+                                Failed: transfer does not go through, balance not debited
+                            </option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Status</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
  <!-- Top Up Modal -->
  <div id="topupModal" class="modal fade" role="dialog">
      <div class="modal-dialog">

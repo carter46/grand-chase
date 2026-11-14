@@ -125,16 +125,16 @@
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
                                 On-hold
                             </span>
-                            @elseif($withdrawal->status == 'Rejected')
+                            @elseif($withdrawal->status == 'Rejected' || $withdrawal->status == 'Failed')
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                Rejected
+                                {{ $withdrawal->status }}
                             </span>
-                            @elseif($withdrawal->status == 'Processed')
+                            @elseif($withdrawal->status == 'Processed' || $withdrawal->status == 'Successful' || $withdrawal->status == 'Completed')
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                Processed
+                                {{ $withdrawal->status == 'Processed' ? 'Successful' : $withdrawal->status }}
                             </span>
                             @else
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
                                 {{ $withdrawal->status }}
                             </span>
                             @endif

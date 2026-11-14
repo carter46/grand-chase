@@ -86,8 +86,8 @@
                     <form method="POST" action="{{ route('homesendcontact') }}" class="flex flex-col gap-4" id="contactForm">
                         @csrf
                         <div class="flex flex-col gap-1.5">
-                            <label class="font-label-bold text-on-surface uppercase text-[11px]" for="fullname">Full Name</label>
-                            <input id="fullname" name="fullname" required type="text" placeholder="Your full name"
+                            <label class="font-label-bold text-on-surface uppercase text-[11px]" for="name">Full Name</label>
+                            <input id="name" name="name" required type="text" placeholder="Your full name"
                                 class="w-full px-4 py-3 bg-white border border-surface-container-highest focus:outline-none focus:border-primary font-body-md"/>
                         </div>
                         <div class="flex flex-col gap-1.5">

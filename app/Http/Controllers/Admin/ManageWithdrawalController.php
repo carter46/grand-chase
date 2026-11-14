@@ -26,13 +26,17 @@ class ManageWithdrawalController extends Controller
             return $deny;
         }
        
-        if($request->date!=' '){
-         $created_at = $request->date;
-         
-        }else{
-         $created_at = $withdrawal->$created_at;
+        $created_at = (isset($request->date) && trim((string) $request->date) !== '')
+            ? $request->date
+            : $withdrawal->created_at;
+
+        // Already-terminal simulation outcomes should not be re-processed blindly.
+        $currentStatus = (string) ($withdrawal->status ?? '');
+        if (in_array($currentStatus, ['Failed', 'Rejected'], true) && $request->action !== 'Paid') {
+            return redirect()->route('mwithdrawals')
+                ->with('message', 'This transfer is already ' . $currentStatus . ' and cannot be rejected or held again.');
         }
-   
+
         if ($request->action == "Paid") {
             Withdrawal::where('id',$request->id)
             ->update([
@@ -79,10 +83,17 @@ class ManageWithdrawalController extends Controller
         else {
 
             if($withdrawal->user==$user->id){
-                User::where('id',$user->id)
-                ->update([
-                    'account_bal' => $user->account_bal+$withdrawal->to_deduct,
-                ]); 
+                // Only refund if this transfer actually debited the balance.
+                // Failed simulation transfers never debit; refunding them would inflate balances.
+                $wasDebited = !in_array($currentStatus, ['Failed'], true)
+                    && in_array($currentStatus, ['Pending', 'On-hold', 'Processed'], true);
+
+                if ($wasDebited) {
+                    User::where('id',$user->id)
+                    ->update([
+                        'account_bal' => $user->account_bal+$withdrawal->to_deduct,
+                    ]);
+                }
                
                Withdrawal::where('id',$request->id)
             ->update([
@@ -93,7 +104,9 @@ class ManageWithdrawalController extends Controller
                 // Create notification for rejected withdrawal
                 NotificationHelper::create(
                     $user,
-                    'Your withdrawal request of ' . $withdrawal->amount . ' via ' . $withdrawal->payment_mode . ' has been rejected. The funds have been returned to your account.',
+                    $wasDebited
+                        ? 'Your withdrawal request of ' . $withdrawal->amount . ' via ' . $withdrawal->payment_mode . ' has been rejected. The funds have been returned to your account.'
+                        : 'Your withdrawal request of ' . $withdrawal->amount . ' via ' . $withdrawal->payment_mode . ' has been rejected.',
                     'Withdrawal Rejected',
                     'danger',
                     'x-circle',

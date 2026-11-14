@@ -63,6 +63,8 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                                     @endif
                                                     {{-- <a href="#"  data-toggle="modal" data-target="#userAction" class="dropdown-item">Add upgrade Action</a> --}}
                                                 {{-- <a href="#"  data-toggle="modal" data-target="#userActionsignal" class="dropdown-item">Add signal Action</a> --}}
+                                                    <a href="#" data-toggle="modal" data-target="#transactionStatusModal"
+                                                        class="dropdown-item">Manage Transaction Status</a>
                                                     <a href="#" data-toggle="modal" data-target="#topupModal"
                                                         class="dropdown-item">Fund/Debit Account</a>
                                                         <a href="#" data-toggle="modal" data-target="#TradingModal"
@@ -115,6 +117,17 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                     <div class="col-md-3">
                                         <h5>Account Limit</h5>
                                         <p>{{ $user->currency ?? $settings->currency }}{{ number_format($user->limit) }} </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h5>Default Transfer Status</h5>
+                                        @php
+                                            $txnStatusLabel = $user->transaction_status ?? 'Pending';
+                                            if (!in_array($txnStatusLabel, ['Successful', 'Pending', 'Failed'], true)) {
+                                                $txnStatusLabel = 'Pending';
+                                            }
+                                            $txnBadge = $txnStatusLabel === 'Successful' ? 'badge-success' : ($txnStatusLabel === 'Pending' ? 'badge-warning' : 'badge-danger');
+                                        @endphp
+                                        <p><span class="badge {{ $txnBadge }}">{{ $txnStatusLabel }}</span></p>
                                     </div>
                                     
                                     

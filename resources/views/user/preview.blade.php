@@ -65,9 +65,23 @@
                             </div>
                         </div>
                         <div class="flex flex-col items-end shrink-0">
-                            <div class="inline-flex items-center px-3 py-1 rounded-full bg-green-400 text-green-100">
-                                <i data-lucide="check-circle" class="h-4 w-4 mr-1 text-white "></i>
-                                <span class="text-sm text-white font-medium">Successful</span>
+                            @php
+                                $receiptStatus = $dp->status ?? 'Pending';
+                                $receiptLabel = $receiptStatus === 'Processed' ? 'Successful' : $receiptStatus;
+                                if (in_array($receiptStatus, ['Processed', 'Successful', 'Completed'], true)) {
+                                    $receiptBadge = 'bg-green-500';
+                                    $receiptIcon = 'check-circle';
+                                } elseif (in_array($receiptStatus, ['Pending', 'On-hold'], true)) {
+                                    $receiptBadge = 'bg-amber-500';
+                                    $receiptIcon = 'clock';
+                                } else {
+                                    $receiptBadge = 'bg-red-500';
+                                    $receiptIcon = 'x-circle';
+                                }
+                            @endphp
+                            <div class="inline-flex items-center px-3 py-1 rounded-full {{ $receiptBadge }} text-white">
+                                <i data-lucide="{{ $receiptIcon }}" class="h-4 w-4 mr-1 text-white"></i>
+                                <span class="text-sm text-white font-medium">{{ $receiptLabel }}</span>
                             </div>
                             <p class="text-sm mt-1 text-white/80">Ref: {{ $dp->txn_id }}</p>
                         </div>
@@ -172,8 +186,12 @@
                                         <p class="text-sm font-medium text-gray-900">{{ $dp->accountnumber ?? 'N/A' }}</p>
                                     </div>
                                     <div>
-                                        <p class="text-sm text-gray-500 mb-1">Routing/IBAN</p>
+                                        <p class="text-sm text-gray-500 mb-1">IBAN</p>
                                         <p class="text-sm font-medium text-gray-900">{{ $dp->iban ?? 'N/A' }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500 mb-1">Routing Number</p>
+                                        <p class="text-sm font-medium text-gray-900">{{ $dp->routing_number ?? 'N/A' }}</p>
                                     </div>
                                     <div>
                                         <p class="text-sm text-gray-500 mb-1">Bank Name</p>

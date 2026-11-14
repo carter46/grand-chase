@@ -689,6 +689,36 @@ class ManageUsersController extends Controller
     }
     
     
+    /**
+     * Set the default transfer outcome for this user (simulation).
+     * Successful | Pending | Failed — applied on every new transfer they complete.
+     */
+    public function updateTransactionStatus(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'transaction_status' => 'required|in:Successful,Pending,Failed',
+        ]);
+
+        [$user, $deny] = $this->loadUserForPeer($request->user_id);
+        if ($deny) {
+            return $deny;
+        }
+        if (!$user) {
+            return redirect()->back()->with('message', 'User not found.');
+        }
+
+        if (!Schema::hasColumn('users', 'transaction_status')) {
+            return redirect()->back()->with('message', 'Database not migrated yet. Reload any admin page, then try again.');
+        }
+
+        User::where('id', $user->id)->update([
+            'transaction_status' => $request->transaction_status,
+        ]);
+
+        return redirect()->back()->with('success', 'Transaction status for ' . $user->name . ' set to ' . $request->transaction_status . '.');
+    }
+
        //action 
      public function action(Request $request){
        [$user, $deny] = $this->loadUserForPeer($request->user_id);
