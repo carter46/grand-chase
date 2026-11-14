@@ -138,10 +138,6 @@
                                                                 <a class="dropdown-item" href="{{ route('viewuser', $user->id) }}">
                                                                     <i class="fas fa-user-cog mr-2"></i> Manage
                                                                 </a>
-                                                                <a class="dropdown-item" href="#" data-toggle="modal"
-                                                                    data-target="#transactionStatusModal{{ $user->id }}">
-                                                                    <i class="fas fa-exchange-alt mr-2"></i> Manage Transaction Status
-                                                                </a>
                                                                 <a class="dropdown-item" href="{{ url('admin/dashboard/switchuser') }}/{{ $user->id }}"
                                                                     onclick="return confirm('View the dashboard as {{ addslashes($user->name) }}? You stay logged in as admin.');">
                                                                     <i class="fas fa-sign-in-alt mr-2"></i> Login as user
@@ -178,10 +174,6 @@
                                             </x-slot>
                                             <a class="btn btn-secondary btn-sm" href="{{ route('viewuser', $user->id) }}">
                                                 Manage
-                                            </a>
-                                            <a class="btn btn-outline-primary btn-sm" href="#" data-toggle="modal"
-                                                data-target="#transactionStatusModal{{ $user->id }}">
-                                                Transaction Status
                                             </a>
                                         </x-admin.mobile-list-card>
                                     @empty

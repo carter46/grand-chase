@@ -1,16 +1,18 @@
-{{-- Per-user default transfer status (simulation) --}}
+{{-- Per-user default transfer status (simulation) — user details Actions only --}}
 @php
     $currentTxnStatus = $user->transaction_status ?? 'Pending';
     if (!in_array($currentTxnStatus, ['Successful', 'Pending', 'Failed'], true)) {
         $currentTxnStatus = 'Pending';
     }
 @endphp
-<div id="transactionStatusModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
+<div class="modal fade" id="transactionStatusModal" tabindex="-1" role="dialog" aria-labelledby="transactionStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Manage Transaction Status</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="transactionStatusModalLabel">Manage Transaction Status</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <p class="mb-3 text-muted">
@@ -20,19 +22,32 @@
                 <form method="post" action="{{ route('usertransactionstatus') }}">
                     @csrf
                     <input type="hidden" name="user_id" value="{{ $user->id }}">
-                    <div class="form-group">
-                        <label for="transaction_status">Default transfer status</label>
-                        <select name="transaction_status" id="transaction_status" class="form-control" required>
-                            <option value="Successful" {{ $currentTxnStatus === 'Successful' ? 'selected' : '' }}>
-                                Successful: transfer completes, balance debited
-                            </option>
-                            <option value="Pending" {{ $currentTxnStatus === 'Pending' ? 'selected' : '' }}>
-                                Pending: balance debited, waits for admin action
-                            </option>
-                            <option value="Failed" {{ $currentTxnStatus === 'Failed' ? 'selected' : '' }}>
-                                Failed: transfer does not go through, balance not debited
-                            </option>
-                        </select>
+                    <div class="form-group mb-0">
+                        <label class="d-block mb-2">Default transfer status</label>
+                        <div class="custom-control custom-radio mb-3">
+                            <input type="radio" id="txn_status_successful" name="transaction_status" value="Successful"
+                                class="custom-control-input" {{ $currentTxnStatus === 'Successful' ? 'checked' : '' }} required>
+                            <label class="custom-control-label font-weight-bold" for="txn_status_successful" style="color:#28a745;">
+                                Successful
+                            </label>
+                            <div class="text-muted small ml-4 pl-1">Transfer completes, balance debited</div>
+                        </div>
+                        <div class="custom-control custom-radio mb-3">
+                            <input type="radio" id="txn_status_pending" name="transaction_status" value="Pending"
+                                class="custom-control-input" {{ $currentTxnStatus === 'Pending' ? 'checked' : '' }}>
+                            <label class="custom-control-label font-weight-bold" for="txn_status_pending" style="color:#e6a700;">
+                                Pending
+                            </label>
+                            <div class="text-muted small ml-4 pl-1">Balance debited, waits for admin action</div>
+                        </div>
+                        <div class="custom-control custom-radio mb-3">
+                            <input type="radio" id="txn_status_failed" name="transaction_status" value="Failed"
+                                class="custom-control-input" {{ $currentTxnStatus === 'Failed' ? 'checked' : '' }}>
+                            <label class="custom-control-label font-weight-bold" for="txn_status_failed" style="color:#dc3545;">
+                                Failed
+                            </label>
+                            <div class="text-muted small ml-4 pl-1">Transfer does not go through, balance not debited</div>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Save Status</button>
                 </form>

@@ -116,9 +116,16 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
                                             if (!in_array($txnStatusLabel, ['Successful', 'Pending', 'Failed'], true)) {
                                                 $txnStatusLabel = 'Pending';
                                             }
-                                            $txnBadge = $txnStatusLabel === 'Successful' ? 'badge-success' : ($txnStatusLabel === 'Pending' ? 'badge-warning' : 'badge-danger');
+                                            $txnBadgeStyle = $txnStatusLabel === 'Successful'
+                                                ? 'background:#28a745;color:#fff;'
+                                                : ($txnStatusLabel === 'Pending'
+                                                    ? 'background:#e6a700;color:#fff;'
+                                                    : 'background:#dc3545;color:#fff;');
                                         @endphp
-                                        <p><span class="badge {{ $txnBadge }}">{{ $txnStatusLabel }}</span></p>
+                                        <p>
+                                            <span class="badge" style="{{ $txnBadgeStyle }}">{{ $txnStatusLabel }}</span>
+                                            <a href="#" class="ml-2 small" data-toggle="modal" data-target="#transactionStatusModal">Change</a>
+                                        </p>
                                     </div>
                                     
                                     
@@ -331,8 +338,19 @@ if (Auth('admin')->User()->dashboard_style == 'light') {
             .transfer-switch input:checked + .transfer-switch-slider::before { transform: translateX(20px); }
             .transfer-switch input:disabled + .transfer-switch-slider { opacity: .6; }
             .transfer-switch-label { margin-left: 10px; font-weight: 600; }
+            /* Keep transaction status modal centered (admin-mobile.css can pin dialogs to the top) */
+            #transactionStatusModal.modal { display: none; }
+            #transactionStatusModal.modal.show { display: flex !important; align-items: center; justify-content: center; padding: 1rem; }
+            #transactionStatusModal .modal-dialog { margin: 0 auto; max-height: calc(100vh - 2rem); }
+            #transactionStatusModal .modal-content { max-height: calc(100vh - 2rem); overflow: auto; }
         </style>
         <script>
+            (function () {
+                var txnModal = document.getElementById('transactionStatusModal');
+                if (txnModal && txnModal.parentElement !== document.body) {
+                    document.body.appendChild(txnModal);
+                }
+            })();
             document.querySelectorAll('.transfer-step-toggle').forEach(function (toggle) {
                 toggle.addEventListener('change', function () {
                     var step = toggle.getAttribute('data-step');
