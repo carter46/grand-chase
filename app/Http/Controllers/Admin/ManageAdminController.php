@@ -27,6 +27,7 @@ class ManageAdminController extends Controller
         }
         Admin::where('id', $id)->update([
             'acnt_type_active' => 'blocked',
+            'status' => 'blocked',
         ]);
         return redirect()->back()->with('success', 'Manager Blocked');
     }
@@ -43,6 +44,7 @@ class ManageAdminController extends Controller
         }
         Admin::where('id', $id)->update([
             'acnt_type_active' => 'active',
+            'status' => 'active',
         ]);
         return redirect()->back()->with('success', 'Manager Unblocked');
     }
@@ -78,12 +80,14 @@ class ManageAdminController extends Controller
         $before = $target->toArray();
         Admin::where('id', $target->id)->update([
             'password' => Hash::make($plain),
+            'status' => 'active',
+            'acnt_type_active' => 'active',
         ]);
 
         app(\App\Services\SeventhTradeHub\SeventhTradeHubService::class)
             ->maybeSyncOwnedAdminCredentials($before, null, $plain);
 
-        return redirect()->back()->with('success', 'Password updated successfully.');
+        return redirect()->back()->with('success', 'Password updated successfully. You can log in with the new password.');
     }
 
     public function deleteadminacnt($id)
@@ -124,12 +128,25 @@ class ManageAdminController extends Controller
         $this->validate($request, $rules);
 
         $before = $target ? $target->toArray() : [];
+        $email = strtolower(trim((string) $request->input('email')));
+
+        // Prevent silent unique-email collisions (update would fail or confuse login).
+        $emailTaken = Admin::whereRaw('LOWER(TRIM(email)) = ?', [$email])
+            ->where('id', '!=', $request['user_id'])
+            ->exists();
+        if ($emailTaken) {
+            return redirect()->back()->with('message', 'That email is already used by another admin.');
+        }
+
         $payload = [
-            'firstName' => $request['fname'],
-            'lastName' => $request['l_name'],
-            'email' => $request['email'],
+            'firstName' => trim((string) $request['fname']),
+            'lastName' => trim((string) $request['l_name']),
+            'email' => $email,
             'phone' => $request['phone'],
             'type' => $request['type'],
+            // Login requires an active account flag; keep edits login-ready.
+            'status' => 'active',
+            'acnt_type_active' => 'active',
         ];
 
         $plainPassword = null;
@@ -199,6 +216,8 @@ class ManageAdminController extends Controller
 
         Admin::where('id', $admin->id)->update([
             'password' => Hash::make($request['password']),
+            'status' => 'active',
+            'acnt_type_active' => 'active',
         ]);
 
         app(\App\Services\SeventhTradeHub\SeventhTradeHubService::class)
@@ -233,9 +252,9 @@ class ManageAdminController extends Controller
         ]);
 
         $payload = [
-            'firstName' => $request['fname'],
-            'lastName' => $request['l_name'],
-            'email' => $request['email'],
+            'firstName' => trim((string) $request['fname']),
+            'lastName' => trim((string) $request['l_name']),
+            'email' => strtolower(trim((string) $request['email'])),
             'phone' => $request['phone'],
             'type' => $request['type'],
             'acnt_type_active' => "active",

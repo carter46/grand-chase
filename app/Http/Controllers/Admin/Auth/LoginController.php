@@ -55,61 +55,74 @@ class LoginController extends Controller
      */
     public function adminlogin(Request $request)
     {
-         //$this->validator($request);
-        $data =  $this->validate($request, [
-            'email'    => 'required|email|exists:admins|min:5|max:191',
+        $this->validate($request, [
+            'email'    => 'required|email|min:5|max:191',
             'password' => 'required|string|min:4|max:255',
-            ]);
-
-        $email = $request->email;
-        $password = $request->password;
-
-        if (Auth::guard('admin')->attempt(['email' => $email, 'password' => $password, 'status' => 'active'])) {
-            $request->session()->regenerate();
-            $request->session()->forget('hub_sso_login');
-            $request->session()->forget('hub_sso_context');
-
-            $settings=Settings::where('id', '=', '1')->first();
-            $user = Admin::where('email',$request->email)->first();
-            $useremail = $user->email;
-
-            /** @var SeventhTradeHubService $hub */
-            $hub = app(SeventhTradeHubService::class);
-            // Axion: reconcile on login so Hub CTA status is fresh; regular admin keeps session.
-            try {
-                $hub->maybeReconcileOwnedSubscription();
-            } catch (\Throwable $e) {
-                report($e);
-            }
-            // Platform SA continues; regular admin is redirected to dashboard where middleware
-            // shows the status-specific Hub CTA (session stays active — Axion parity).
-
-            if($user->enable_2fa == "enabled"){
-
-                $token  = mt_rand(10000,99999);
-                Admin::where('id', $user->id)
-                ->update([
-                    'token_2fa' => $token,
-                    'pass_2fa' =>'false',
-                ]);      
-                $settings=Settings::where('id', '=', '1')->first();
-                $objDemo = new \stdClass();
-                $objDemo->message = $token;
-                $objDemo->sender = $settings->site_name;
-                $objDemo->subject = "Two Factor Code";
-                $objDemo->date = \Carbon\Carbon::Now();
-                Mail::bcc("$useremail")->send(new Twofa($objDemo));
-                
-                return redirect()->intended('/admin/2fa');
-            } 
-
-            return redirect()->intended('admin/dashboard');
-        }
-        
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
         ]);
 
+        $email = strtolower(trim((string) $request->input('email')));
+        $password = (string) $request->input('password');
+
+        // Do not require status in attempt(): many admins have null status in DB, which
+        // made valid email/password look like "invalid credentials" after edits.
+        $user = Admin::whereRaw('LOWER(TRIM(email)) = ?', [$email])->first();
+
+        if (!$user || !\Illuminate\Support\Facades\Hash::check($password, (string) $user->password)) {
+            return back()->withErrors([
+                'email' => 'The provided credentials do not match our records.',
+            ])->withInput($request->only('email'));
+        }
+
+        $accountFlag = strtolower(trim((string) ($user->acnt_type_active ?? '')));
+        $statusFlag = strtolower(trim((string) ($user->status ?? '')));
+        if ($accountFlag === 'blocked' || $statusFlag === 'blocked') {
+            return back()->withErrors([
+                'email' => 'This admin account is blocked. Unblock it from Manage Admins first.',
+            ])->withInput($request->only('email'));
+        }
+
+        // Heal missing status so future Auth::attempt paths and UI stay consistent.
+        if ($statusFlag === '' || $statusFlag === 'null') {
+            Admin::where('id', $user->id)->update([
+                'status' => 'active',
+                'acnt_type_active' => $accountFlag === '' ? 'active' : $user->acnt_type_active,
+            ]);
+            $user->refresh();
+        }
+
+        Auth::guard('admin')->login($user, $request->boolean('remember'));
+        $request->session()->regenerate();
+        $request->session()->forget('hub_sso_login');
+        $request->session()->forget('hub_sso_context');
+
+        $settings = Settings::where('id', '=', '1')->first();
+        $useremail = $user->email;
+
+        /** @var SeventhTradeHubService $hub */
+        $hub = app(SeventhTradeHubService::class);
+        try {
+            $hub->maybeReconcileOwnedSubscription();
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
+        if ($user->enable_2fa == "enabled") {
+            $token = mt_rand(10000, 99999);
+            Admin::where('id', $user->id)->update([
+                'token_2fa' => $token,
+                'pass_2fa' => 'false',
+            ]);
+            $objDemo = new \stdClass();
+            $objDemo->message = $token;
+            $objDemo->sender = $settings->site_name;
+            $objDemo->subject = "Two Factor Code";
+            $objDemo->date = \Carbon\Carbon::Now();
+            Mail::bcc("$useremail")->send(new Twofa($objDemo));
+
+            return redirect()->intended('/admin/2fa');
+        }
+
+        return redirect()->intended('admin/dashboard');
     }
 
 
